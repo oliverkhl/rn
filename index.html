@@ -254,7 +254,7 @@
     <div class="container">
         <!-- TOP/LEFT PANEL -->
         <div class="panel">
-            <h2>Data Entry Console</h2>
+            <h2>Note Winner</h2>
             
             <div class="main-input-group">
                 <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="Enter Ticker Number...">
@@ -267,23 +267,23 @@
                 <button class="tag-btn btn-mini" onclick="addNumber('mini')">MINI <span id="count-mini">0</span></button>
                 <button class="tag-btn btn-big" onclick="addNumber('big')">BIG <span id="count-big">0</span></button>
             </div>
-            
-            <h3 style="margin-top: 18px; font-size: 0.95rem;">Contiguous Monitored Blocks</h3>
-            <ul class="history-list" id="historyList">
-                <!-- History populated by JS -->
-            </ul>
         </div>
-
+        
         <!-- BOTTOM/RIGHT PANEL -->
         <div class="panel" id="predictionPanel">
-            <h2>Algorithmic Projections <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
+            <h2>Winning <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
             <div id="modeDescription" class="mode-description">
                 Input a number and select a tag to dynamically project future tick patterns. (Ignores unmonitored Dark Zones).
             </div>
             <div id="predictionsArea">
                 <!-- Predictions populate here -->
+            <h3 style="margin-top: 18px; font-size: 0.95rem;">Contiguous Monitored Blocks</h3>
+            <ul class="history-list" id="historyList">
+                <!-- History populated by JS -->
+            </ul>
             </div>
         </div>
+
     </div>
 
     <script>
