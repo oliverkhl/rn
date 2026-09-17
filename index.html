@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Anchor-State Predictor v2</title>
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --panel-bg: #151a23;
+            --text-main: #c7d0d9;
+            --accent-golden: #f3c22b;
+            --accent-parrots: #29b6f6;
+            --accent-minor: #9c27b0;
+            --accent-mini: #ff9800;
+            --accent-big: #ef5350;
+            --border-color: #2b3340;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #fff;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* Dedicated Input Rows */
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            background: var(--bg-color);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .type-label {
+            width: 120px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .type-label span {
+            color: #8892a0;
+            font-size: 0.8rem;
+        }
+
+        /* Color Coding */
+        .color-golden { color: var(--accent-golden); }
+        .color-parrots { color: var(--accent-parrots); }
+        .color-minor { color: var(--accent-minor); }
+        .color-mini { color: var(--accent-mini); }
+        .color-big { color: var(--accent-big); }
+
+        input[type="number"] {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            flex: 1;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        button {
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.8; }
+        
+        .btn-golden { background-color: var(--accent-golden); }
+        .btn-parrots { background-color: var(--accent-parrots); }
+        .btn-minor { background-color: var(--accent-minor); color: #fff;}
+        .btn-mini { background-color: var(--accent-mini); }
+        .btn-big { background-color: var(--accent-big); color: #fff;}
+
+        /* Projections styling */
+        .prediction-category { margin-bottom: 15px; }
+        .prediction-category h3 {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 4px;
+        }
+
+        .pred-card {
+            background-color: var(--bg-color);
+            padding: 8px 15px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid;
+        }
+
+        /* Match card borders to tags */
+        .card-golden { border-left-color: var(--accent-golden); }
+        .card-parrots { border-left-color: var(--accent-parrots); }
+        .card-minor { border-left-color: var(--accent-minor); }
+        .card-mini { border-left-color: var(--accent-mini); }
+        .card-big { border-left-color: var(--accent-big); }
+
+        .pred-val {
+            font-family: monospace;
+            font-size: 1.15rem;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .pred-logic {
+            font-size: 0.8rem;
+            color: #8892a0;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            font-family: monospace;
+        }
+
+        .history-item:last-child { border-bottom: none; }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 12px;
+            background-color: var(--border-color);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- LEFT PANEL: 5 INPUT BOXES & HISTORY -->
+        <div class="panel">
+            <h2>Data Entry Console</h2>
+            
+            <div class="input-row">
+                <div class="type-label color-golden">Golden <span>(<b id="count-golden">0</b>)</span></div>
+                <input type="number" id="input-golden" step="0.01" placeholder="Enter Golden...">
+                <button class="btn-golden" onclick="addNumber('golden')">Add</button>
+            </div>
+            
+            <div class="input-row">
+                <div class="type-label color-parrots">Parrots <span>(<b id="count-parrots">0</b>)</span></div>
+                <input type="number" id="input-parrots" step="0.01" placeholder="Enter Parrots...">
+                <button class="btn-parrots" onclick="addNumber('parrots')">Add</button>
+            </div>
+
+            <div class="input-row">
+                <div class="type-label color-minor">Minor <span>(<b id="count-minor">0</b>)</span></div>
+                <input type="number" id="input-minor" step="0.01" placeholder="Enter Minor...">
+                <button class="btn-minor" onclick="addNumber('minor')">Add</button>
+            </div>
+
+            <div class="input-row">
+                <div class="type-label color-mini">Mini <span>(<b id="count-mini">0</b>)</span></div>
+                <input type="number" id="input-mini" step="0.01" placeholder="Enter Mini...">
+                <button class="btn-mini" onclick="addNumber('mini')">Add</button>
+            </div>
+
+            <div class="input-row">
+                <div class="type-label color-big">Big <span>(<b id="count-big">0</b>)</span></div>
+                <input type="number" id="input-big" step="0.01" placeholder="Enter Big...">
+                <button class="btn-big" onclick="addNumber('big')">Add</button>
+            </div>
+            
+            <h3 style="margin-top: 25px; font-size: 1rem;">Live Dataset (Total: <span id="total-count">0</span>)</h3>
+            <ul class="history-list" id="historyList">
+                <!-- History populated by JS -->
+            </ul>
+        </div>
+
+        <!-- RIGHT PANEL: PREDICTIONS BY TAG -->
+        <div class="panel">
+            <h2>Algorithmic Projections</h2>
+            <div id="predictionsArea">
+                <p style="color: #8892a0; font-size: 0.9rem;">Enter a number in any category to generate projections...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pre-loaded dataset with all user corrections (Tags updated & new numbers added)
+        let dataset = [
+            // 700s Block
+            {val: 753.84, tag: 'golden'}, {val: 755.43, tag: 'golden'}, 
+            {val: 785.43, tag: 'golden'}, {val: 785.53, tag: 'golden'}, 
+            {val: 787.72, tag: 'mini'}, {val: 789.80, tag: 'big'}, 
+            {val: 790.29, tag: 'parrots'}, {val: 790.57, tag: 'golden'}, 
+            {val: 791.30, tag: 'golden'}, {val: 791.39, tag: 'big'}, 
+            {val: 791.84, tag: 'mini'}, {val: 799.37, tag: 'golden'},
+            // 800s Block
+            {val: 812.95, tag: 'golden'}, {val: 813.05, tag: 'parrots'}, {val: 813.17, tag: 'parrots'}, {val: 813.27, tag: 'golden'},
+            {val: 830.52, tag: 'minor'}, {val: 830.66, tag: 'golden'}, {val: 830.68, tag: 'golden'},
+            {val: 846.46, tag: 'parrots'}, {val: 846.67, tag: 'minor'}, {val: 846.70, tag: 'golden'}, {val: 847.18, tag: 'big'},
+            {val: 850.25, tag: 'golden'}, {val: 850.52, tag: 'golden'}, {val: 850.55, tag: 'parrots'}, {val: 850.65, tag: 'parrots'}, {val: 850.71, tag: 'parrots'},
+            {val: 852.66, tag: 'golden'}, {val: 852.70, tag: 'minor'},
+            {val: 861.78, tag: 'golden'}, {val: 862.23, tag: 'golden'},
+            {val: 873.87, tag: 'golden'}, {val: 874.30, tag: 'parrots'}, {val: 874.43, tag: 'golden'}, {val: 874.70, tag: 'golden'}, {val: 875.24, tag: 'golden'},
+            // 900s Block
+            {val: 941.89, tag: 'minor'}, {val: 995.42, tag: 'golden'}, {val: 995.45, tag: 'parrots'}, {val: 995.50, tag: 'golden'},
+            // 1000s & 1100s Block
+            {val: 1018.65, tag: 'golden'}, {val: 1034.37, tag: 'golden'}, {val: 1092.77, tag: 'golden'}, {val: 1114.37, tag: 'golden'}
+        ];
+
+        // Terminal suffixes for Golden/Big caps (.57 and .80 added from new data)
+        const terminalSuffixes = [0.37, 0.43, 0.57, 0.65, 0.66, 0.70, 0.80, 0.84];
+
+        function renderData() {
+            const counts = { golden: 0, parrots: 0, minor: 0, mini: 0, big: 0 };
+            dataset.forEach(item => {
+                if (counts[item.tag] !== undefined) counts[item.tag]++;
+            });
+            
+            document.getElementById('count-golden').innerText = counts.golden;
+            document.getElementById('count-parrots').innerText = counts.parrots;
+            document.getElementById('count-minor').innerText = counts.minor;
+            document.getElementById('count-mini').innerText = counts.mini;
+            document.getElementById('count-big').innerText = counts.big;
+            document.getElementById('total-count').innerText = dataset.length;
+
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+            const sorted = [...dataset].sort((a, b) => b.val - a.val);
+
+            sorted.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                li.innerHTML = `
+                    <span>${item.val.toFixed(2)}</span>
+                    <span class="tag color-${item.tag}">${item.tag}</span>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function addNumber(tagType) {
+            const inputField = document.getElementById(`input-${tagType}`);
+            const numInput = inputField.value;
+            
+            if (!numInput) return;
+            const num = parseFloat(numInput);
+            
+            if (!dataset.find(d => d.val === num && d.tag === tagType)) {
+                dataset.push({val: num, tag: tagType});
+                renderData();
+            }
+            
+            generatePredictions(num);
+            inputField.value = ''; 
+        }
+
+        function generatePredictions(currentNum) {
+            const area = document.getElementById('predictionsArea');
+            area.innerHTML = '';
+
+            const baseInt = Math.floor(currentNum);
+            
+            // Generate exact targets based on hybrid math rules
+            
+            // 1. GOLDEN (Suffix Caps & Mirrors)
+            let nextSuffixes = terminalSuffixes.map(s => {
+                let target = baseInt + s;
+                return target <= currentNum ? baseInt + 1 + s : target;
+            }).sort((a, b) => a - b);
+            
+            let goldenTargets = [
+                { val: nextSuffixes[0], logic: "Nearest Suffix Grid Lock" },
+                { val: nextSuffixes[1], logic: "Secondary Suffix Grid Lock" }
+            ];
+
+            // 2. PARROTS (Tight Micro-Loops: +0.03, +0.10)
+            let parrotsTargets = [
+                { val: currentNum + 0.03, logic: "Tight +0.03 Micro-step" },
+                { val: currentNum + 0.10, logic: "Standard +0.10 Micro-step" }
+            ];
+
+            // 3. MINOR (Mid-Step Extensions: +0.13, +0.27, +0.28)
+            let minorTargets = [
+                { val: currentNum + 0.13, logic: "Mid +0.13 Step" },
+                { val: currentNum + 0.28, logic: "Wider +0.28 Step" }
+            ];
+
+            // 4. MINI (Sub-Micro Steps: +0.04, +0.06)
+            let miniTargets = [
+                { val: currentNum + 0.04, logic: "Sub-micro +0.04 Step" },
+                { val: currentNum + 0.06, logic: "Sub-micro +0.06 Step" }
+            ];
+
+            // 5. BIG (Cluster Breakouts / Major Jumps: +0.45, +0.48)
+            let bigTargets = [
+                { val: currentNum + 0.45, logic: "Cluster Breakout (+0.45)" },
+                { val: currentNum + 0.48, logic: "Major Jump (+0.48)" }
+            ];
+
+            // Helper to render a category
+            function renderCategory(title, tagClass, targets) {
+                let html = `<div class="prediction-category">
+                                <h3 class="color-${tagClass}">${title} Projections</h3>`;
+                targets.forEach(t => {
+                    html += `<div class="pred-card card-${tagClass}">
+                                <span class="pred-val">${t.val.toFixed(2)}</span>
+                                <span class="pred-logic">${t.logic}</span>
+                             </div>`;
+                });
+                html += `</div>`;
+                return html;
+            }
+
+            // Output all 5 categories
+            let fullHtml = renderCategory("Golden", "golden", goldenTargets);
+            fullHtml += renderCategory("Parrots", "parrots", parrotsTargets);
+            fullHtml += renderCategory("Minor", "minor", minorTargets);
+            fullHtml += renderCategory("Mini", "mini", miniTargets);
+            fullHtml += renderCategory("Big", "big", bigTargets);
+
+            area.innerHTML = fullHtml;
+        }
+
+        // Init
+        renderData();
+    </script>
+</body>
+</html>
