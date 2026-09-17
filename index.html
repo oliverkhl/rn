@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dual-State Predictor (Block Boundary Edition)</title>
+    <title>Dual-State Predictor (Monochrome Edition)</title>
     <style>
         :root {
-            --bg-color: #0b0e14;
-            --panel-bg: #151a23;
-            --text-main: #c7d0d9;
-            --accent-golden: #f3c22b;
-            --accent-parrots: #29b6f6;
-            --accent-minor: #9c27b0;
-            --accent-mini: #ff9800;
-            --accent-big: #ef5350;
-            --accent-price: #81e6d9;
-            --border-color: #2b3340;
-            --state-dormant: #455a64;
-            --state-active: #00e676;
-            --state-replay: #29b6f6;
+            /* Black & White Grayscale Palette */
+            --bg-color: #000000;
+            --panel-bg: #111111;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            
+            /* Tag Accents (Shades of Grayscale) */
+            --accent-golden: #ffffff;
+            --accent-parrots: #cccccc;
+            --accent-minor: #999999;
+            --accent-mini: #666666;
+            --accent-big: #333333;
+            --accent-price: #dddddd;
+            
+            /* UI Elements */
+            --border-color: #333333;
+            --state-dormant: #777777;
+            --state-active: #ffffff;
+            --state-replay: #bbbbbb;
         }
 
         * {
@@ -55,7 +61,7 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
             width: 100%;
             transition: border-color 0.3s ease;
         }
@@ -79,13 +85,14 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            background-color: var(--border-color);
-            color: #8892a0;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            background-color: #222222;
         }
 
-        .state-dormant { background-color: rgba(69, 90, 100, 0.2); color: var(--state-dormant); border: 1px solid var(--state-dormant); }
-        .state-active { background-color: rgba(0, 230, 118, 0.1); color: var(--state-active); border: 1px solid var(--state-active); }
-        .state-replay { background-color: rgba(41, 182, 246, 0.1); color: var(--state-replay); border: 1px solid var(--state-replay); }
+        .state-dormant { background-color: #1a1a1a; color: var(--state-dormant); border: 1px solid var(--state-dormant); }
+        .state-active { background-color: #2a2a2a; color: var(--state-active); border: 1px solid var(--state-active); }
+        .state-replay { background-color: #222222; color: var(--state-replay); border: 1px solid var(--state-replay); }
 
         .main-input-group {
             margin-bottom: 16px;
@@ -93,19 +100,20 @@
 
         #main-input {
             width: 100%;
-            background-color: var(--bg-color);
-            border: 2px solid var(--border-color);
-            color: #fff;
+            background-color: #000000;
+            border: 2px solid #555555;
+            color: #ffffff;
             padding: 14px;
             border-radius: 6px;
             font-family: monospace;
             font-size: 1.3rem;
             text-align: center;
+            transition: border-color 0.2s ease;
         }
         
         #main-input:focus {
             outline: none;
-            border-color: var(--text-main);
+            border-color: #ffffff;
         }
 
         .tag-buttons-grid {
@@ -135,19 +143,22 @@
         
         .tag-btn span {
             font-size: 0.8rem;
-            background: rgba(0,0,0,0.2);
+            background: rgba(128,128,128,0.3);
             padding: 2px 6px;
             border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .tag-btn:active { opacity: 0.6; }
         
-        .btn-golden { background-color: var(--accent-golden); color: #000; }
-        .btn-parrots { background-color: var(--accent-parrots); color: #000; }
-        .btn-minor { background-color: var(--accent-minor); color: #fff;}
-        .btn-mini { background-color: var(--accent-mini); color: #000; }
-        .btn-big { background-color: var(--accent-big); color: #fff;}
+        /* B&W Buttons */
+        .btn-golden { background-color: #ffffff; color: #000000; }
+        .btn-parrots { background-color: #cccccc; color: #000000; }
+        .btn-minor { background-color: #999999; color: #000000; }
+        .btn-mini { background-color: #666666; color: #ffffff; }
+        .btn-big { background-color: #333333; color: #ffffff; border: 1px solid #555555; }
 
+        /* B&W Text Colors */
         .color-golden { color: var(--accent-golden); }
         .color-parrots { color: var(--accent-parrots); }
         .color-minor { color: var(--accent-minor); }
@@ -162,6 +173,9 @@
             display: flex;
             flex-direction: column;
             border-left: 4px solid;
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .pred-card-header {
@@ -193,7 +207,7 @@
 
         .pred-logic {
             font-size: 0.8rem;
-            color: #8892a0;
+            color: var(--text-muted);
         }
 
         .history-list {
@@ -229,12 +243,13 @@
             background-color: var(--border-color);
             text-transform: uppercase;
             font-weight: bold;
+            color: #ffffff;
         }
 
         .sys-tag {
             font-size: 0.65rem;
-            color: #fff;
-            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+            background: #444444;
             padding: 2px 5px;
             border-radius: 4px;
             margin-right: 8px;
@@ -242,7 +257,7 @@
         
         .mode-description {
             font-size: 0.85rem;
-            color: #8892a0;
+            color: var(--text-muted);
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px dashed var(--border-color);
@@ -254,7 +269,7 @@
     <div class="container">
         <!-- TOP/LEFT PANEL -->
         <div class="panel">
-            <h2>Note</h2>
+            <h2>Data Entry Console</h2>
             
             <div class="main-input-group">
                 <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="Enter Ticker Number...">
@@ -267,15 +282,16 @@
                 <button class="tag-btn btn-mini" onclick="addNumber('mini')">MINI <span id="count-mini">0</span></button>
                 <button class="tag-btn btn-big" onclick="addNumber('big')">BIG <span id="count-big">0</span></button>
             </div>
+            
             <h3 style="margin-top: 18px; font-size: 0.95rem;">Contiguous Monitored Blocks</h3>
             <ul class="history-list" id="historyList">
                 <!-- History populated by JS -->
             </ul>
         </div>
-        
+
         <!-- BOTTOM/RIGHT PANEL -->
         <div class="panel" id="predictionPanel">
-            <h2>Update <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
+            <h2>Algorithmic Projections <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
             <div id="modeDescription" class="mode-description">
                 Input a number and select a tag to dynamically project future tick patterns. (Ignores unmonitored Dark Zones).
             </div>
@@ -283,7 +299,6 @@
                 <!-- Predictions populate here -->
             </div>
         </div>
-
     </div>
 
     <script>
@@ -507,7 +522,7 @@
                         <h3>Projected Historical Block Gaps</h3>`;
             
             if(uniqueGaps.length === 0) {
-                 html += `<p style="font-size:0.85rem; color:#8892a0;">No contiguous historical data available for this tag.</p>`;
+                 html += `<p style="font-size:0.85rem; color:var(--text-muted);">No contiguous historical data available for this tag.</p>`;
             } else {
                  uniqueGaps.slice(0, 5).forEach(u => {
                      // Don't duplicate the 10-tick if it's already shown above
