@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Synthetic Financial Engine Predictor</title>
+    <title>Synthetic Financial Engine Predictor (Parrot Free Spin Engine)</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -27,6 +27,7 @@
             --state-active: #ffffff;
             --state-replay: #bbbbbb;
             --state-waypoint: #999999;
+            --state-freespin: #ffffff;
             --alert-red: #ff5555;
             --alert-red-muted: #aa3333;
         }
@@ -77,6 +78,7 @@
         .state-active { background-color: #2a2a2a; color: var(--state-active); border: 1px solid var(--state-active); }
         .state-replay { background-color: #222222; color: var(--state-replay); border: 1px solid var(--state-replay); }
         .state-waypoint { background-color: #111111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
+        .state-freespin { background-color: #ffffff; color: #000000; border: 1px solid #ffffff; }
 
         .main-input-group { 
             display: flex; gap: 10px; margin-bottom: 16px; 
@@ -180,10 +182,13 @@
             border-color: var(--alert-red-muted);
             background-color: rgba(170, 51, 51, 0.1);
         }
+        .tactical-warning strong { color: var(--alert-red); }
 
-        .tactical-warning strong {
-            color: var(--alert-red);
+        .tactical-freespin {
+            border-color: #ffffff;
+            background-color: #222222;
         }
+        .tactical-freespin strong { color: #ffffff; }
 
         .history-list {
             list-style: none; padding: 0; margin: 0;
@@ -345,7 +350,6 @@
                 let cents = Math.round(currentNum * 100);
                 let remainder = cents % 5;
                 
-                // Fractional Overflow Logic: Skip the .04 and .09 ghost ticks
                 if (remainder === 3) {
                     currentNum = (cents + 2) / 100;
                 } else {
@@ -484,13 +488,11 @@
             let anchorNum = currentNum;
             let currentBlock = chronoData[historyIndex]?.block || getLatestBlock();
 
-            // Determine Anchor for calculations
             if (tagType === 'blank') {
                 let lastReal = [...chronoData].reverse().find(d => d.tag !== 'blank' && d.val < currentNum && d.block === currentBlock);
                 if (lastReal) { effectiveTag = lastReal.tag; anchorNum = lastReal.val; }
             }
 
-            // SEQUENCE MATCH MODE
             if (tagType !== 'blank' && historyIndex !== -1 && historyIndex < chronoData.length - 1) {
                 let nextTarget = chronoData[historyIndex+1];
                 if (chronoData[historyIndex].block === nextTarget.block && nextTarget.tag !== 'blank') {
@@ -502,7 +504,7 @@
                     let html = `<div class="prediction-category"><h3 style="color:var(--state-replay);">Exact Sequence Replay</h3>`;
                     let max = Math.min(historyIndex + 5, chronoData.length);
                     for(let i = historyIndex + 1; i < max; i++) {
-                        if(chronoData[i].block !== chronoData[historyIndex].block) break;
+                        if(chronoData[i].block !== chronoData[i].block) break;
                         if(chronoData[i].tag === 'blank') continue;
                         html += buildCard(chronoData[i].val, chronoData[i].tag, `Contiguous Match`, currentNum);
                     }
@@ -512,8 +514,9 @@
                 }
             }
 
-            let isDormant = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'blank');
-            let isDarkZone = (tagType === 'blank' && effectiveTag === 'blank'); // No anchor found
+            let isDormant = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'minor' || effectiveTag === 'mini');
+            let isDarkZone = (tagType === 'blank' && effectiveTag === 'blank'); 
+            let isFreeSpin = (effectiveTag === 'parrots'); // Parrot = 6 Free Spins (Volume Bucket Compressor)
             
             if (isDarkZone) {
                 stateBadge.className = 'state-badge state-waypoint';
@@ -525,10 +528,15 @@
                 stateBadge.innerText = `TRACKING BLANK (ANCHORED TO ${effectiveTag.toUpperCase()})`;
                 modeDesc.innerText = `Adjusting remaining volume requirements anchored from ${anchorNum.toFixed(2)}.`;
                 predPanel.style.borderColor = 'var(--state-waypoint)';
+            } else if (isFreeSpin) {
+                stateBadge.className = 'state-badge state-freespin';
+                stateBadge.innerText = 'STATE: FREE SPIN WINDOW (PARROT LOCK)';
+                modeDesc.innerText = 'Price is frozen for 6 free spins. Hidden volume bucket is aggressively loading. Expect an internal GOLDEN drop right here.';
+                predPanel.style.borderColor = '#ffffff';
             } else if (isDormant) {
                 stateBadge.className = 'state-badge state-dormant';
                 stateBadge.innerText = 'STATE: DORMANT (VOID)';
-                modeDesc.innerText = 'System is cooling down. Waiting for required volume to execute next payout roll.';
+                modeDesc.innerText = 'System has dropped a major payout. It is cooling down and waiting for required volume to recoup.';
                 predPanel.style.borderColor = 'var(--state-dormant)';
             } else {
                 stateBadge.className = 'state-badge state-active';
@@ -539,7 +547,6 @@
 
             let html = ``;
 
-            // DARK ZONE TACTICAL MENU
             if (isDarkZone) {
                 let baseInt = Math.floor(currentNum);
                 let nextSuffixes = terminalSuffixes.map(s => {
@@ -571,8 +578,8 @@
                             <div class="tactical-card">
                                 <strong>Hold position and let others fund the pool:</strong><br>
                                 Wait for any tag to drop before injecting capital.<br>
-                                &bull; If Golden drops: System resets to Dormant Void.<br>
-                                &bull; If Parrot/Minor drops: System is HOT. Instantly target the $20 Volume (+0.10) micro-cluster.
+                                &bull; If Jackpot drops: System resets to Dormant Void.<br>
+                                &bull; If Parrot drops: System enters Free Spin Window.
                             </div>
                          </div>`;
                          
@@ -580,7 +587,17 @@
                 return;
             }
 
-            // REGULAR TRACKING (Anchored)
+            // FREE SPIN / PARROT WINDOW TACTICS
+            if (isFreeSpin) {
+                html += `<div class="prediction-category">
+                            <h3 style="color:#ffffff;">⚠️ 6-Spin Compressed Volume Window</h3>
+                            <div class="tactical-card tactical-freespin">
+                                <strong>Internal Golden Drop High Probability</strong>
+                                Price is locked during this Parrot sequence. Unlisted volume is aggressively filling the background overflow bucket without lifting the price tape. Watch closely for an internal <strong>Golden</strong> drop to materialize on this exact frozen price before the free spins release.
+                            </div>
+                         </div>`;
+            }
+
             let historicalNexts = [];
             for(let i = 0; i < chronoData.length - 1; i++) {
                 if(chronoData[i].tag === effectiveTag) {
@@ -604,7 +621,7 @@
             uniqueGaps.sort((a, b) => a.gap - b.gap);
 
             let tenTickTarget = anchorNum + 0.10;
-            if (!isDormant && effectiveTag !== 'blank' && tenTickTarget > currentNum) {
+            if (!isDormant && !isFreeSpin && effectiveTag !== 'blank' && tenTickTarget > currentNum) {
                 html += `<div class="prediction-category">
                             <h3 style="color:var(--state-active);">Primary Active Traps</h3>
                             ${buildCard(tenTickTarget, 'golden', `Absolute $20 Volume Lock (from${anchorNum.toFixed(2)})`, currentNum)}
@@ -618,13 +635,12 @@
                     return target <= currentNum ? baseInt + 1 + s : target;
                 }).sort((a, b) => a - b);
                 
-                // NEW WARNING CARD: 16-Push Stop-Loss 
                 if (isDormant && !isDarkZone) {
                     html += `<div class="prediction-category">
-                                <h3 style="color:var(--alert-red);">⚠️ Deep Void Risk</h3>
+                                <h3 style="color:var(--alert-red);">⚠️ Deep Void Risk (Jackpot Cooldown)</h3>
                                 <div class="tactical-card tactical-warning">
                                     <strong>Enforce a 16-Push Stop-Loss</strong>
-                                    The system just executed a reset. To avoid massive capital drains (like a 160+ tick void), only test up to the next hardcoded resistance node (max 20 ticks / 16 pushes). If the price crosses the next node without a drop, <strong>CUT OFF INPUTS</strong> and wait for others to fund the gap.
+                                    The system just executed a reset or finished a free spin payout. To avoid massive capital drains, only test up to the next hardcoded resistance node (max 20 ticks / 16 pushes). If the price crosses the next node without a drop, <strong>CUT OFF INPUTS</strong> and wait for others to fund the gap.
                                 </div>
                              </div>`;
                 }
