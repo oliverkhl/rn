@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Synthetic Financial Engine Predictor (Parrot Free Spin Engine)</title>
+    <title>Synthetic Financial Engine Predictor (Hold & Spin Edition)</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -155,6 +155,7 @@
         .card-minor { border-left-color: var(--accent-minor); }
         .card-mini { border-left-color: var(--accent-mini); }
         .card-big { border-left-color: var(--accent-big); }
+        .card-void { border-left-color: var(--alert-red); background-color: rgba(255, 0, 0, 0.05); }
 
         .pred-val { font-family: monospace; font-size: 1.05rem; color: #fff; font-weight: bold; }
         .pred-price { font-size: 0.85rem; color: var(--accent-price); font-weight: normal; }
@@ -273,7 +274,7 @@
         <div class="panel" id="predictionPanel">
             <h2>Result <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
             <div id="modeDescription" class="mode-description">
-                Input a number and select a tag. The system converts visual ticks into underlying volume thresholds.
+                Input a number and select a tag. The system calculates engine recovery voids based on exact dollar payouts.
             </div>
             <div id="predictionsArea"></div>
             
@@ -386,20 +387,22 @@
             return sign + price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        function buildCard(val, tag, logicText, currentNum, prefix = "+") {
+        function buildCard(val, tag, logicText, currentNum, prefix = "+", isVoid = false) {
             let priceGap = formatDeltaPrice(val, currentNum);
-            let diff = val - currentNum;
+            let diff = Math.abs(val - currentNum);
             let ticks = Math.round(diff / 0.01);
             
             let isGhostTick = (ticks % 5 === 4);
             let ghostWarning = isGhostTick ? ` <span style="color:#ff5555;font-size:0.7rem;">[Ghost Tick]</span>` : '';
             
-            return `<div class="pred-card card-${tag}">
+            let cardClass = isVoid ? `card-void` : `card-${tag}`;
+            
+            return `<div class="pred-card ${cardClass}">
                         <div class="pred-card-header">
                             <span class="pred-val">${val.toFixed(2)}${ghostWarning}</span>
                             <span class="pred-price">[${prefix}${ticks} Visible Ticks &bull; ${priceGap} Cost]</span>
                         </div>
-                        <span class="pred-logic">${logicText} (Target:${tag.toUpperCase()})</span>
+                        <span class="pred-logic">${logicText}</span>
                     </div>`;
         }
 
@@ -420,8 +423,10 @@
             
             const grouped = {};
             dataset.forEach(d => {
-                if(!grouped[d.val]) grouped[d.val] = { val: d.val, sys: d.sys, tags: [] };
+                if(!grouped[d.val]) grouped[d.val] = { val: d.val, sys: d.sys, tags: [], payout: d.payout };
                 grouped[d.val].tags.push(d.tag);
+                // Keep the max payout if multiple
+                if(d.payout && d.payout > (grouped[d.val].payout || 0)) grouped[d.val].payout = d.payout;
             });
             
             const sortedVals = Object.values(grouped).sort((a, b) => b.val - a.val);
@@ -431,10 +436,12 @@
                 li.className = 'history-item';
                 let tagsHtml = item.tags.map(t => `<span class="tag color-${t}" ${t === 'blank' ? 'style="background:#222;border:1px dashed #555;"' : ''}>${t}</span>`).join('');
                 let sysClass = item.sys === 'Live' ? 'sys-tag sys-tag-live' : 'sys-tag';
+                let payoutText = item.payout ? ` <span style="color:var(--accent-golden);font-size:0.75rem;">[$${item.payout}]</span>` : '';
+                
                 li.innerHTML = `
                     <div>
                         <span class="${sysClass}">Sys ${item.sys}</span>
-                        <span>${item.val.toFixed(2)}</span>
+                        <span>${item.val.toFixed(2)}${payoutText}</span>
                     </div>
                     <div class="tag-group">${tagsHtml}</div>
                 `;
@@ -458,6 +465,23 @@
             if (!numInput) return;
             const num = parseFloat(numInput);
             
+            let payoutAmt = 0;
+            
+            // PROMPT FOR SPECIFIC PAYOUTS
+            if (tagType === 'golden') {
+                let p = prompt(`Enter the total GOLDEN payout amount ($):\n(Include all Hold & Spin blocks + retriggers)`, "30");
+                if (p === null) return; 
+                payoutAmt = parseFloat(p) || 0;
+            } else if (tagType === 'minor') {
+                payoutAmt = 500;
+            } else if (tagType === 'mini') {
+                payoutAmt = 100;
+            } else if (tagType === 'big') {
+                let p = prompt(`Enter the total BIG payout amount ($):`, "0");
+                if (p === null) return;
+                payoutAmt = parseFloat(p) || 0;
+            }
+            
             let sortedDB = [...dataset].sort((a, b) => b.val - a.val);
             let lastVal = sortedDB.length > 0 ? sortedDB[0].val : num;
             let currentBlock = getLatestBlock();
@@ -465,7 +489,7 @@
             if(Math.abs(num - lastVal) > 2.00 && !dataset.find(d => d.val === num)) currentBlock++; 
 
             if (!dataset.find(d => d.val === num && d.tag === tagType)) {
-                dataset.push({val: num, tag: tagType, sys: 'Live', block: currentBlock});
+                dataset.push({val: num, tag: tagType, sys: 'Live', block: currentBlock, payout: payoutAmt});
                 saveData(); 
                 renderData();
             }
@@ -487,10 +511,11 @@
             let effectiveTag = tagType;
             let anchorNum = currentNum;
             let currentBlock = chronoData[historyIndex]?.block || getLatestBlock();
+            let payoutValue = chronoData[historyIndex]?.payout || 0;
 
             if (tagType === 'blank') {
                 let lastReal = [...chronoData].reverse().find(d => d.tag !== 'blank' && d.val < currentNum && d.block === currentBlock);
-                if (lastReal) { effectiveTag = lastReal.tag; anchorNum = lastReal.val; }
+                if (lastReal) { effectiveTag = lastReal.tag; anchorNum = lastReal.val; payoutValue = lastReal.payout || 0; }
             }
 
             if (tagType !== 'blank' && historyIndex !== -1 && historyIndex < chronoData.length - 1) {
@@ -504,9 +529,9 @@
                     let html = `<div class="prediction-category"><h3 style="color:var(--state-replay);">Exact Sequence Replay</h3>`;
                     let max = Math.min(historyIndex + 5, chronoData.length);
                     for(let i = historyIndex + 1; i < max; i++) {
-                        if(chronoData[i].block !== chronoData[i].block) break;
+                        if(chronoData[i].block !== chronoData[historyIndex].block) break;
                         if(chronoData[i].tag === 'blank') continue;
-                        html += buildCard(chronoData[i].val, chronoData[i].tag, `Contiguous Match`, currentNum);
+                        html += buildCard(chronoData[i].val, chronoData[i].tag, `Contiguous Match (Target: ${chronoData[i].tag.toUpperCase()})`, currentNum);
                     }
                     html += `</div>`;
                     area.innerHTML = html;
@@ -516,7 +541,7 @@
 
             let isDormant = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'minor' || effectiveTag === 'mini');
             let isDarkZone = (tagType === 'blank' && effectiveTag === 'blank'); 
-            let isFreeSpin = (effectiveTag === 'parrots'); // Parrot = 6 Free Spins (Volume Bucket Compressor)
+            let isFreeSpin = (effectiveTag === 'parrots'); 
             
             if (isDarkZone) {
                 stateBadge.className = 'state-badge state-waypoint';
@@ -535,8 +560,8 @@
                 predPanel.style.borderColor = '#ffffff';
             } else if (isDormant) {
                 stateBadge.className = 'state-badge state-dormant';
-                stateBadge.innerText = 'STATE: DORMANT (VOID)';
-                modeDesc.innerText = 'System has dropped a major payout. It is cooling down and waiting for required volume to recoup.';
+                stateBadge.innerText = 'STATE: DORMANT (ALGORITHMIC RECOVERY)';
+                modeDesc.innerText = `System paid out $${payoutValue.toFixed(2)}. Calculating exact volume required to recoup liquidity before next drop.`;
                 predPanel.style.borderColor = 'var(--state-dormant)';
             } else {
                 stateBadge.className = 'state-badge state-active';
@@ -560,8 +585,8 @@
                                 <strong>Push toward nearest decimal grid traps:</strong>
                                 Fund the pool to hit these specific resistance lines and force a payout roll.
                             </div>
-                            ${buildCard(nextSuffixes[0], 'golden', `Primary Decimal Resistance`, currentNum)}
-                            ${buildCard(nextSuffixes[1], 'golden', `Secondary Decimal Resistance`, currentNum)}
+                            ${buildCard(nextSuffixes[0], 'golden', `Primary Decimal Resistance`, currentNum, "+")}
+                            ${buildCard(nextSuffixes[1], 'golden', `Secondary Decimal Resistance`, currentNum, "+")}
                          </div>`;
 
                 html += `<div class="prediction-category">
@@ -578,7 +603,7 @@
                             <div class="tactical-card">
                                 <strong>Hold position and let others fund the pool:</strong><br>
                                 Wait for any tag to drop before injecting capital.<br>
-                                &bull; If Jackpot drops: System resets to Dormant Void.<br>
+                                &bull; If Jackpot drops: System resets to Algorithmic Recovery.<br>
                                 &bull; If Parrot drops: System enters Free Spin Window.
                             </div>
                          </div>`;
@@ -587,7 +612,6 @@
                 return;
             }
 
-            // FREE SPIN / PARROT WINDOW TACTICS
             if (isFreeSpin) {
                 html += `<div class="prediction-category">
                             <h3 style="color:#ffffff;">⚠️ 6-Spin Compressed Volume Window</h3>
@@ -595,6 +619,46 @@
                                 <strong>Internal Golden Drop High Probability</strong>
                                 Price is locked during this Parrot sequence. Unlisted volume is aggressively filling the background overflow bucket without lifting the price tape. Watch closely for an internal <strong>Golden</strong> drop to materialize on this exact frozen price before the free spins release.
                             </div>
+                         </div>`;
+            }
+
+            // DYNAMIC COOLDOWN CALCULATION (If Dormant & Payout logged)
+            if (isDormant && payoutValue > 0) {
+                // Every $2.00 of volume = 1 tick (0.01)
+                let recoveryTicks = Math.ceil(payoutValue / 2);
+                let recoveryDistance = recoveryTicks * 0.01;
+                let safeTarget = anchorNum + recoveryDistance;
+                
+                html += `<div class="prediction-category">
+                            <h3 style="color:var(--alert-red);">⚠️ Calculated Dead Zone ($${payoutValue} Recovery)</h3>
+                            <div class="tactical-card tactical-warning">
+                                <strong>Engine Drain Active</strong>
+                                The system just lost $${payoutValue.toFixed(2)}. It must absorb this exact amount in public volume before opening another payout window. This mathematically forces a dead zone of at least <strong>${recoveryTicks} ticks</strong>. Do not inject capital until the price crosses the safe zone line.
+                            </div>
+                            ${buildCard(safeTarget, 'golden', `Calculated Recovery Line (End of Dead Zone)`, currentNum, "Min ", true)}
+                         </div>`;
+            } else if (isDormant) {
+                let baseInt = Math.floor(currentNum);
+                let nextSuffixes = terminalSuffixes.map(s => {
+                    let target = baseInt + s;
+                    return target <= currentNum ? baseInt + 1 + s : target;
+                }).sort((a, b) => a - b);
+                
+                html += `<div class="prediction-category">
+                            <h3 style="color:var(--alert-red);">⚠️ Unknown Payout Dead Zone</h3>
+                            <div class="tactical-card tactical-warning">
+                                <strong>No Payout Value Entered</strong>
+                                Because the payout value is unknown, the recovery void length cannot be calculated. Enforce a strict stop-loss. Only test up to the next hardcoded resistance node. If it fails, cut inputs immediately.
+                            </div>
+                            ${buildCard(nextSuffixes[0], 'golden', `Primary Decimal Resistance (Stop-Loss)`, currentNum, "+")}
+                         </div>`;
+            }
+
+            let tenTickTarget = anchorNum + 0.10;
+            if (!isDormant && !isFreeSpin && effectiveTag !== 'blank' && tenTickTarget > currentNum) {
+                html += `<div class="prediction-category">
+                            <h3 style="color:var(--state-active);">Primary Active Traps</h3>
+                            ${buildCard(tenTickTarget, 'golden', `Absolute $20 Volume Lock (from${anchorNum.toFixed(2)})`, currentNum, "+")}
                          </div>`;
             }
 
@@ -619,53 +683,24 @@
                 if(!seenGaps.has(h.gap)) { seenGaps.add(h.gap); uniqueGaps.push(h); }
             }
             uniqueGaps.sort((a, b) => a.gap - b.gap);
-
-            let tenTickTarget = anchorNum + 0.10;
-            if (!isDormant && !isFreeSpin && effectiveTag !== 'blank' && tenTickTarget > currentNum) {
-                html += `<div class="prediction-category">
-                            <h3 style="color:var(--state-active);">Primary Active Traps</h3>
-                            ${buildCard(tenTickTarget, 'golden', `Absolute $20 Volume Lock (from${anchorNum.toFixed(2)})`, currentNum)}
-                         </div>`;
-            }
-
-            if (isDormant || tagType === 'blank') {
-                let baseInt = Math.floor(currentNum);
-                let nextSuffixes = terminalSuffixes.map(s => {
-                    let target = baseInt + s;
-                    return target <= currentNum ? baseInt + 1 + s : target;
-                }).sort((a, b) => a - b);
-                
-                if (isDormant && !isDarkZone) {
-                    html += `<div class="prediction-category">
-                                <h3 style="color:var(--alert-red);">⚠️ Deep Void Risk (Jackpot Cooldown)</h3>
-                                <div class="tactical-card tactical-warning">
-                                    <strong>Enforce a 16-Push Stop-Loss</strong>
-                                    The system just executed a reset or finished a free spin payout. To avoid massive capital drains, only test up to the next hardcoded resistance node (max 20 ticks / 16 pushes). If the price crosses the next node without a drop, <strong>CUT OFF INPUTS</strong> and wait for others to fund the gap.
-                                </div>
-                             </div>`;
-                }
-
-                html += `<div class="prediction-category">
-                            <h3 style="color:var(--state-dormant);">Nearest Liquidity Nodes (Grid Locks)</h3>
-                            ${buildCard(nextSuffixes[0], 'golden', `Primary Decimal Resistance`, currentNum)}
-                            ${buildCard(nextSuffixes[1], 'golden', `Secondary Decimal Resistance`, currentNum)}
-                         </div>`;
-            }
-
-            html += `<div class="prediction-category"><h3>Projected Volume Thresholds</h3>`;
+            
+            html += `<div class="prediction-category"><h3>Projected Historical Drop Gaps</h3>`;
             
             let displayedCount = 0;
             uniqueGaps.forEach(u => {
                 if (displayedCount >= 5) return;
                 let projectedVal = anchorNum + (u.gap * 0.01);
-                if (projectedVal > currentNum && (!isDormant ? u.gap !== 10 : true)) {
-                    html += buildCard(projectedVal, u.nextTag, `Verified Dollar Gap (Anchored to ${anchorNum.toFixed(2)})`, currentNum);
+                // If we are in a calculated dead zone, don't suggest targets inside the dead zone
+                let isInsideDeadZone = (isDormant && payoutValue > 0 && projectedVal < (anchorNum + (payoutValue/2)*0.01));
+                
+                if (projectedVal > currentNum && (!isDormant ? u.gap !== 10 : true) && !isInsideDeadZone) {
+                    html += buildCard(projectedVal, u.nextTag, `Verified Dollar Gap (Anchored to ${anchorNum.toFixed(2)})`, currentNum, "+");
                     displayedCount++;
                 }
             });
 
             if(displayedCount === 0) {
-                 html += `<p style="font-size:0.85rem; color:var(--text-muted);">No remaining historical targets found for this zone.</p>`;
+                 html += `<p style="font-size:0.85rem; color:var(--text-muted);">No valid historical targets found for this zone.</p>`;
             }
             
             html += `</div>`;
