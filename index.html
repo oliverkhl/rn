@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dual-State Predictor (Segmented Data Edition)</title>
+    <title>Dual-State Predictor (Continuous Tracking Edition)</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -76,7 +76,9 @@
         .state-replay { background-color: #222222; color: var(--state-replay); border: 1px solid var(--state-replay); }
         .state-waypoint { background-color: #111111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
 
-        .main-input-group { margin-bottom: 16px; }
+        .main-input-group { 
+            display: flex; gap: 10px; margin-bottom: 16px; 
+        }
 
         #main-input {
             width: 100%; background-color: #000000; border: 2px solid #555555;
@@ -87,16 +89,26 @@
         
         #main-input:focus { outline: none; border-color: #ffffff; }
 
+        .btn-step {
+            background-color: #222222; border: 1px solid #555555; color: #ffffff;
+            padding: 0 16px; border-radius: 6px; font-weight: bold; font-size: 0.9rem;
+            cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+        }
+        
+        .btn-step:active {
+            background-color: #ffffff; color: #000000; border-color: #ffffff;
+        }
+
         .tag-buttons-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
         }
-        
-        .tag-buttons-grid .full-width { grid-column: 1 / -1; }
 
         .tag-btn {
             border: none; padding: 12px; border-radius: 6px;
             cursor: pointer; font-weight: bold; font-size: 0.95rem;
             display: flex; justify-content: space-between; align-items: center;
+            transition: opacity 0.2s;
+            touch-action: manipulation;
         }
         
         .tag-btn span {
@@ -106,6 +118,7 @@
 
         .tag-btn:active { opacity: 0.6; }
         
+        /* B&W Buttons */
         .btn-golden { background-color: #ffffff; color: #000000; }
         .btn-parrots { background-color: #cccccc; color: #000000; }
         .btn-minor { background-color: #999999; color: #000000; }
@@ -113,6 +126,7 @@
         .btn-big { background-color: #333333; color: #ffffff; border: 1px solid #555555; }
         .btn-blank { background-color: #111111; color: #aaaaaa; border: 1px dashed #555555; }
 
+        /* B&W Text Colors */
         .color-golden { color: var(--accent-golden); }
         .color-parrots { color: var(--accent-parrots); }
         .color-minor { color: var(--accent-minor); }
@@ -177,29 +191,25 @@
         }
 
         .util-bar {
-            display: flex; justify-content: flex-end; margin-top: 10px;
+            display: flex; margin-top: 10px; width: 100%;
         }
         
         .btn-clear {
             background: none; border: 1px solid #555; color: #888;
-            padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;
+            padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer;
+            width: 100%; font-weight: bold; text-transform: uppercase;
         }
-        .btn-clear:hover { color: #fff; border-color: #fff; }
+        .btn-clear:hover { background: #222; color: #fff; border-color: #fff; }
         
         .section-divider {
-            margin-top: 24px;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-            color: #fff;
-            border-bottom: 1px dashed var(--border-color);
+            margin-top: 24px; margin-bottom: 8px; font-size: 0.95rem;
+            color: #fff; border-bottom: 1px dashed var(--border-color);
             padding-bottom: 4px;
         }
         
         .empty-placeholder {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-style: italic;
-            padding: 8px 4px;
+            font-size: 0.85rem; color: var(--text-muted);
+            font-style: italic; padding: 8px 4px;
         }
 
     </style>
@@ -208,19 +218,26 @@
 
     <div class="container">
         <div class="panel">
-            <h2>Notes</h2>
+            <h2>Note</h2>
             
             <div class="main-input-group">
-                <input type="number" id="main-input" step="0.01" inputmode="decimal">
+                <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="0.00">
+                <button id="btn-step" class="btn-step" onclick="stepNumber()">TICK</button>
             </div>
 
             <div class="tag-buttons-grid">
+                <!-- GOLDEN & BLANK SIDE BY SIDE -->
                 <button class="tag-btn btn-golden" onclick="addNumber('golden')">GOLDEN <span id="count-golden">0</span></button>
                 <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK <span id="count-blank">0</span></button>
+                
                 <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">PARROTS <span id="count-parrots">0</span></button>
                 <button class="tag-btn btn-minor" onclick="addNumber('minor')">MINOR <span id="count-minor">0</span></button>
+                
                 <button class="tag-btn btn-mini" onclick="addNumber('mini')">MINI <span id="count-mini">0</span></button>
                 <button class="tag-btn btn-big" onclick="addNumber('big')">BIG <span id="count-big">0</span></button>
+            </div>
+            
+            <div class="util-bar">
                 <button class="btn-clear" onclick="clearData()">Reset to Baseline</button>
             </div>
         </div>
@@ -228,11 +245,11 @@
         <div class="panel" id="predictionPanel">
             <h2>Result <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
             <div id="modeDescription" class="mode-description">
-                Input a number and select a tag. Auto-save is active.
+                Input a number and select a tag. Use the TICK button to manually step the counter. Pricing uses Fractional Overflow engine.
             </div>
             <div id="predictionsArea"></div>
             
-            <div class="section-divider">Live Entries</div>
+            <div class="section-divider">Live Entries (New Data)</div>
             <ul class="history-list" id="historyListLive"></ul>
             
             <div class="section-divider">Baseline Database</div>
@@ -241,7 +258,7 @@
     </div>
 
     <script>
-        // BASELINE DATASET (Hardcoded baseline facts)
+        // BASELINE DATASET
         const baselineDataset = [
             {val: 785.43, tag: 'golden', sys: 'A', block: 1}, {val: 785.53, tag: 'golden', sys: 'A', block: 1}, 
             {val: 787.72, tag: 'mini', sys: 'A', block: 1}, {val: 789.80, tag: 'big', sys: 'A', block: 1}, 
@@ -259,16 +276,28 @@
             {val: 873.87, tag: 'golden', sys: 'A', block: 6}, {val: 874.30, tag: 'parrots', sys: 'A', block: 6}, {val: 874.43, tag: 'golden', sys: 'A', block: 6}, 
             {val: 874.70, tag: 'golden', sys: 'A', block: 6}, {val: 875.24, tag: 'golden', sys: 'A', block: 6},
             {val: 941.89, tag: 'mini', sys: 'A', block: 7},
+            
             {val: 827.34, tag: 'golden', sys: 'B', block: 8}, {val: 827.91, tag: 'golden', sys: 'B', block: 8}, 
             {val: 828.21, tag: 'parrots', sys: 'B', block: 8}, {val: 828.96, tag: 'golden', sys: 'B', block: 8}, 
             {val: 829.35, tag: 'parrots', sys: 'B', block: 8}, {val: 829.54, tag: 'parrots', sys: 'B', block: 8}, 
             {val: 830.08, tag: 'parrots', sys: 'B', block: 8}, {val: 830.30, tag: 'golden', sys: 'B', block: 8},
             {val: 831.02, tag: 'mini', sys: 'B', block: 8}, {val: 831.13, tag: 'golden', sys: 'B', block: 8},
             {val: 832.22, tag: 'parrots', sys: 'B', block: 8}, {val: 832.32, tag: 'golden', sys: 'B', block: 8},
-            {val: 995.42, tag: 'golden', sys: 'B', block: 9}, {val: 995.45, tag: 'parrots', sys: 'B', block: 9}, {val: 995.50, tag: 'golden', sys: 'B', block: 9}
+            {val: 995.42, tag: 'golden', sys: 'B', block: 9}, {val: 995.45, tag: 'parrots', sys: 'B', block: 9}, {val: 995.50, tag: 'golden', sys: 'B', block: 9},
+            
+            {val: 1078.14, tag: 'golden', sys: 'C', block: 10}, {val: 1078.48, tag: 'golden', sys: 'C', block: 10},
+            {val: 1079.46, tag: 'parrots', sys: 'C', block: 10}, {val: 1079.84, tag: 'parrots', sys: 'C', block: 10},
+            {val: 1080.30, tag: 'parrots', sys: 'C', block: 10}, {val: 1081.60, tag: 'minor', sys: 'C', block: 10},
+            {val: 1084.03, tag: 'parrots', sys: 'C', block: 10}, {val: 1085.21, tag: 'golden', sys: 'C', block: 10},
+            {val: 1085.78, tag: 'golden', sys: 'C', block: 10}, {val: 1086.62, tag: 'golden', sys: 'C', block: 10},
+            {val: 1086.78, tag: 'parrots', sys: 'C', block: 10}, {val: 1086.93, tag: 'parrots', sys: 'C', block: 10},
+            {val: 1086.97, tag: 'parrots', sys: 'C', block: 10}, {val: 1087.39, tag: 'golden', sys: 'C', block: 10},
+            {val: 1087.99, tag: 'golden', sys: 'C', block: 10}, {val: 1088.06, tag: 'parrots', sys: 'C', block: 10},
+
+            {val: 1145.84, tag: 'golden', sys: 'D', block: 11}, {val: 1146.50, tag: 'golden', sys: 'D', block: 11},
+            {val: 1148.11, tag: 'parrots', sys: 'D', block: 11}, {val: 1148.43, tag: 'golden', sys: 'D', block: 11}
         ];
 
-        // DYNAMIC DATASET (Loaded from browser memory if exists, otherwise uses baseline)
         let dataset = [];
         let storedData = localStorage.getItem('rngTrackerData');
         if (storedData) {
@@ -277,19 +306,46 @@
             dataset = [...baselineDataset];
         }
 
-        const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.70, 0.84];
+        const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.50, 0.70, 0.84];
+        
+        let isManualTracking = false;
 
-        // SAVING FUNCTION
+        document.getElementById('main-input').addEventListener('focus', function() {
+            this.value = '';
+            isManualTracking = false;
+        });
+        
+        function stepNumber() {
+            const input = document.getElementById('main-input');
+            if (!input.value) return;
+            let currentNum = parseFloat(input.value);
+            if (!isNaN(currentNum)) {
+                let cents = Math.round(currentNum * 100);
+                let remainder = cents % 5;
+                
+                // Fractional Overflow Logic: Skip the .04 and .09 ghost ticks
+                if (remainder === 3) {
+                    currentNum = (cents + 2) / 100;
+                } else {
+                    currentNum = (cents + 1) / 100;
+                }
+                
+                input.value = currentNum.toFixed(2);
+                isManualTracking = true; 
+            }
+        }
+
         function saveData() {
             localStorage.setItem('rngTrackerData', JSON.stringify(dataset));
         }
 
-        // CLEAR FUNCTION
         function clearData() {
             if(confirm("Are you sure you want to delete all manually entered numbers and reset to the original baseline?")) {
                 localStorage.removeItem('rngTrackerData');
                 dataset = [...baselineDataset];
                 document.getElementById('predictionsArea').innerHTML = '';
+                isManualTracking = false;
+                document.getElementById('main-input').value = '';
                 renderData();
             }
         }
@@ -298,19 +354,26 @@
 
         function formatDeltaPrice(targetNum, currentNum) {
             let diff = Math.abs(targetNum - currentNum);
-            let ticks = Math.round(diff / 0.01);
-            let price = ticks * 2.5;
-            return (targetNum >= currentNum ? "+$" : "-$") + price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            let totalTicks = Math.round(diff / 0.01);
+            let blocksOfFive = Math.floor(totalTicks / 5);
+            let remainderTicks = totalTicks % 5;
+            let price = (blocksOfFive * 10.00) + (remainderTicks * 2.50);
+            let sign = targetNum >= currentNum ? "+$" : "-$";
+            return sign + price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
         function buildCard(val, tag, logicText, currentNum, prefix = "+") {
             let priceGap = formatDeltaPrice(val, currentNum);
             let diff = val - currentNum;
             let ticks = Math.round(diff / 0.01);
+            
+            let isGhostTick = (ticks % 5 === 4);
+            let ghostWarning = isGhostTick ? ` <span style="color:#ff5555;font-size:0.7rem;">[Ghost Tick]</span>` : '';
+            
             return `<div class="pred-card card-${tag}">
                         <div class="pred-card-header">
-                            <span class="pred-val">${val.toFixed(2)}</span>
-                            <span class="pred-price">[${prefix}${ticks} Ticks \vert{}${priceGap}]</span>
+                            <span class="pred-val">${val.toFixed(2)}${ghostWarning}</span>
+                            <span class="pred-price">[${prefix}${ticks} Visible Ticks &bull; ${priceGap} Cost]</span>
                         </div>
                         <span class="pred-logic">${logicText} (Target:${tag.toUpperCase()})</span>
                     </div>`;
@@ -330,7 +393,6 @@
             listBaseline.innerHTML = '';
             
             let hasLive = false;
-            let hasBaseline = false;
             
             const grouped = {};
             dataset.forEach(d => {
@@ -358,7 +420,6 @@
                     hasLive = true;
                 } else {
                     listBaseline.appendChild(li);
-                    hasBaseline = true;
                 }
             });
             
@@ -381,12 +442,13 @@
 
             if (!dataset.find(d => d.val === num && d.tag === tagType)) {
                 dataset.push({val: num, tag: tagType, sys: 'Live', block: currentBlock});
-                saveData(); // Trigger Auto-Save
+                saveData(); 
                 renderData();
             }
             
             generatePredictions(num, tagType);
-            inputField.value = ''; inputField.blur(); 
+            
+            inputField.blur(); 
         }
 
         function generatePredictions(currentNum, tagType) {
@@ -444,7 +506,7 @@
             } else {
                 stateBadge.className = 'state-badge state-active';
                 stateBadge.innerText = 'STATE: ACTIVE (CLUSTER)';
-                modeDesc.innerText = 'System is HOT. Prioritizing the 10-Tick Hard-Lock and exact historical cluster gaps.';
+                modeDesc.innerText = 'System is HOT. Prioritizing the 8-Push (10-Tick) Hard-Lock and exact historical gaps.';
                 predPanel.style.borderColor = 'var(--state-active)';
             }
 
@@ -475,7 +537,7 @@
             if (!isDormant && effectiveTag !== 'blank' && tenTickTarget > currentNum) {
                 html += `<div class="prediction-category">
                             <h3 style="color:var(--state-active);">Primary Active Traps</h3>
-                            ${buildCard(tenTickTarget, 'golden', `Absolute 10-Tick Lock (from ${anchorNum.toFixed(2)})`, currentNum)}
+                            ${buildCard(tenTickTarget, 'golden', `Absolute 8-Push (10-Tick) Lock (from ${anchorNum.toFixed(2)})`, currentNum)}
                          </div>`;
             }
 
