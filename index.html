@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dual-State Predictor (Continuous Tracking Edition)</title>
+    <title>Synthetic Financial Engine Predictor</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -27,6 +27,8 @@
             --state-active: #ffffff;
             --state-replay: #bbbbbb;
             --state-waypoint: #999999;
+            --alert-red: #ff5555;
+            --alert-red-muted: #aa3333;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -156,6 +158,33 @@
         .pred-price { font-size: 0.85rem; color: var(--accent-price); font-weight: normal; }
         .pred-logic { font-size: 0.8rem; color: var(--text-muted); }
 
+        .tactical-card {
+            background-color: #1a1a1a;
+            border: 1px dashed var(--text-muted);
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 0.85rem;
+            color: #cccccc;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .tactical-card strong { 
+            color: var(--accent-golden); 
+            display: block; 
+            margin-bottom: 4px; 
+            font-size: 0.9rem;
+        }
+
+        .tactical-warning {
+            border-color: var(--alert-red-muted);
+            background-color: rgba(170, 51, 51, 0.1);
+        }
+
+        .tactical-warning strong {
+            color: var(--alert-red);
+        }
+
         .history-list {
             list-style: none; padding: 0; margin: 0;
             max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch;
@@ -181,18 +210,14 @@
             padding: 2px 5px; border-radius: 4px; margin-right: 8px;
         }
         
-        .sys-tag-live {
-            background: #ffffff; color: #000000;
-        }
+        .sys-tag-live { background: #ffffff; color: #000000; }
 
         .mode-description {
             font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;
             padding-bottom: 10px; border-bottom: 1px dashed var(--border-color);
         }
 
-        .util-bar {
-            display: flex; margin-top: 10px; width: 100%;
-        }
+        .util-bar { display: flex; margin-top: 10px; width: 100%; }
         
         .btn-clear {
             background: none; border: 1px solid #555; color: #888;
@@ -211,14 +236,13 @@
             font-size: 0.85rem; color: var(--text-muted);
             font-style: italic; padding: 8px 4px;
         }
-
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="panel">
-            <h2>Note</h2>
+            <h2>Data Entry Console</h2>
             
             <div class="main-input-group">
                 <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="0.00">
@@ -226,7 +250,6 @@
             </div>
 
             <div class="tag-buttons-grid">
-                <!-- GOLDEN & BLANK SIDE BY SIDE -->
                 <button class="tag-btn btn-golden" onclick="addNumber('golden')">GOLDEN <span id="count-golden">0</span></button>
                 <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK <span id="count-blank">0</span></button>
                 
@@ -245,7 +268,7 @@
         <div class="panel" id="predictionPanel">
             <h2>Result <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
             <div id="modeDescription" class="mode-description">
-                Input a number and select a tag. Use the TICK button to manually step the counter. Pricing uses Fractional Overflow engine.
+                Input a number and select a tag. The system converts visual ticks into underlying volume thresholds.
             </div>
             <div id="predictionsArea"></div>
             
@@ -307,7 +330,6 @@
         }
 
         const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.50, 0.70, 0.84];
-        
         let isManualTracking = false;
 
         document.getElementById('main-input').addEventListener('focus', function() {
@@ -335,9 +357,7 @@
             }
         }
 
-        function saveData() {
-            localStorage.setItem('rngTrackerData', JSON.stringify(dataset));
-        }
+        function saveData() { localStorage.setItem('rngTrackerData', JSON.stringify(dataset)); }
 
         function clearData() {
             if(confirm("Are you sure you want to delete all manually entered numbers and reset to the original baseline?")) {
@@ -447,7 +467,6 @@
             }
             
             generatePredictions(num, tagType);
-            
             inputField.blur(); 
         }
 
@@ -465,25 +484,27 @@
             let anchorNum = currentNum;
             let currentBlock = chronoData[historyIndex]?.block || getLatestBlock();
 
+            // Determine Anchor for calculations
             if (tagType === 'blank') {
                 let lastReal = [...chronoData].reverse().find(d => d.tag !== 'blank' && d.val < currentNum && d.block === currentBlock);
                 if (lastReal) { effectiveTag = lastReal.tag; anchorNum = lastReal.val; }
             }
 
+            // SEQUENCE MATCH MODE
             if (tagType !== 'blank' && historyIndex !== -1 && historyIndex < chronoData.length - 1) {
                 let nextTarget = chronoData[historyIndex+1];
                 if (chronoData[historyIndex].block === nextTarget.block && nextTarget.tag !== 'blank') {
                     stateBadge.className = 'state-badge state-replay';
                     stateBadge.innerText = 'STATE: SEQUENCE MATCH';
-                    modeDesc.innerText = `The number ${currentNum.toFixed(2)} is in the database. Projecting the exact monitored sequence.`;
+                    modeDesc.innerText = `The price is anchored in the database. Projecting exact historical sequence.`;
                     predPanel.style.borderColor = 'var(--state-replay)';
 
-                    let html = `<div class="prediction-category"><h3 style="color:var(--state-replay);">Exact Block Replay</h3>`;
+                    let html = `<div class="prediction-category"><h3 style="color:var(--state-replay);">Exact Sequence Replay</h3>`;
                     let max = Math.min(historyIndex + 5, chronoData.length);
                     for(let i = historyIndex + 1; i < max; i++) {
                         if(chronoData[i].block !== chronoData[historyIndex].block) break;
                         if(chronoData[i].tag === 'blank') continue;
-                        html += buildCard(chronoData[i].val, chronoData[i].tag, `Contiguous Monitored Match`, currentNum);
+                        html += buildCard(chronoData[i].val, chronoData[i].tag, `Contiguous Match`, currentNum);
                     }
                     html += `</div>`;
                     area.innerHTML = html;
@@ -492,24 +513,74 @@
             }
 
             let isDormant = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'blank');
+            let isDarkZone = (tagType === 'blank' && effectiveTag === 'blank'); // No anchor found
             
-            if (tagType === 'blank') {
+            if (isDarkZone) {
+                stateBadge.className = 'state-badge state-waypoint';
+                stateBadge.innerText = `DARK ZONE (NO ANCHOR)`;
+                modeDesc.innerText = `You entered a blind waypoint. Use Liquidity Nodes or Overflow Probes to navigate.`;
+                predPanel.style.borderColor = 'var(--state-waypoint)';
+            } else if (tagType === 'blank') {
                 stateBadge.className = 'state-badge state-waypoint';
                 stateBadge.innerText = `TRACKING BLANK (ANCHORED TO ${effectiveTag.toUpperCase()})`;
-                modeDesc.innerText = `You are at an unselected number. Adjusting remaining distance to targets anchored from ${anchorNum.toFixed(2)}.`;
+                modeDesc.innerText = `Adjusting remaining volume requirements anchored from ${anchorNum.toFixed(2)}.`;
                 predPanel.style.borderColor = 'var(--state-waypoint)';
             } else if (isDormant) {
                 stateBadge.className = 'state-badge state-dormant';
                 stateBadge.innerText = 'STATE: DORMANT (VOID)';
-                modeDesc.innerText = 'System is cooling down. Searching historical database for exact gaps that followed this tag.';
+                modeDesc.innerText = 'System is cooling down. Waiting for required volume to execute next payout roll.';
                 predPanel.style.borderColor = 'var(--state-dormant)';
             } else {
                 stateBadge.className = 'state-badge state-active';
                 stateBadge.innerText = 'STATE: ACTIVE (CLUSTER)';
-                modeDesc.innerText = 'System is HOT. Prioritizing the 8-Push (10-Tick) Hard-Lock and exact historical gaps.';
+                modeDesc.innerText = 'System is HOT. Prioritizing the 8-Push ($20.00 Volume) Hard-Lock.';
                 predPanel.style.borderColor = 'var(--state-active)';
             }
 
+            let html = ``;
+
+            // DARK ZONE TACTICAL MENU
+            if (isDarkZone) {
+                let baseInt = Math.floor(currentNum);
+                let nextSuffixes = terminalSuffixes.map(s => {
+                    let target = baseInt + s;
+                    return target <= currentNum ? baseInt + 1 + s : target;
+                }).sort((a, b) => a - b);
+
+                html += `<div class="prediction-category">
+                            <h3 style="color:var(--state-waypoint);">Option 1: Liquidity Node Intercept (Aggressive)</h3>
+                            <div class="tactical-card">
+                                <strong>Push toward nearest decimal grid traps:</strong>
+                                Fund the pool to hit these specific resistance lines and force a payout roll.
+                            </div>
+                            ${buildCard(nextSuffixes[0], 'golden', `Primary Decimal Resistance`, currentNum)}
+                            ${buildCard(nextSuffixes[1], 'golden', `Secondary Decimal Resistance`, currentNum)}
+                         </div>`;
+
+                html += `<div class="prediction-category">
+                            <h3 style="color:var(--state-waypoint);">Option 2: Overflow Probe (Test)</h3>
+                            <div class="tactical-card">
+                                <strong>Input exactly $2.50 (1 Push) and watch the ticker:</strong><br>
+                                &bull; If it ticks +0.01: The bucket is empty. Stagnant volume.<br>
+                                &bull; If it skips +0.02: The bucket is heavy (holds +$1.50). System is highly active.
+                            </div>
+                         </div>`;
+
+                html += `<div class="prediction-category">
+                            <h3 style="color:var(--state-waypoint);">Option 3: Waypoint Ambush (Safe)</h3>
+                            <div class="tactical-card">
+                                <strong>Hold position and let others fund the pool:</strong><br>
+                                Wait for any tag to drop before injecting capital.<br>
+                                &bull; If Golden drops: System resets to Dormant Void.<br>
+                                &bull; If Parrot/Minor drops: System is HOT. Instantly target the $20 Volume (+0.10) micro-cluster.
+                            </div>
+                         </div>`;
+                         
+                area.innerHTML = html;
+                return;
+            }
+
+            // REGULAR TRACKING (Anchored)
             let historicalNexts = [];
             for(let i = 0; i < chronoData.length - 1; i++) {
                 if(chronoData[i].tag === effectiveTag) {
@@ -532,12 +603,11 @@
             }
             uniqueGaps.sort((a, b) => a.gap - b.gap);
 
-            let html = ``;
             let tenTickTarget = anchorNum + 0.10;
             if (!isDormant && effectiveTag !== 'blank' && tenTickTarget > currentNum) {
                 html += `<div class="prediction-category">
                             <h3 style="color:var(--state-active);">Primary Active Traps</h3>
-                            ${buildCard(tenTickTarget, 'golden', `Absolute 8-Push (10-Tick) Lock (from ${anchorNum.toFixed(2)})`, currentNum)}
+                            ${buildCard(tenTickTarget, 'golden', `Absolute $20 Volume Lock (from${anchorNum.toFixed(2)})`, currentNum)}
                          </div>`;
             }
 
@@ -548,21 +618,32 @@
                     return target <= currentNum ? baseInt + 1 + s : target;
                 }).sort((a, b) => a - b);
                 
+                // NEW WARNING CARD: 16-Push Stop-Loss 
+                if (isDormant && !isDarkZone) {
+                    html += `<div class="prediction-category">
+                                <h3 style="color:var(--alert-red);">⚠️ Deep Void Risk</h3>
+                                <div class="tactical-card tactical-warning">
+                                    <strong>Enforce a 16-Push Stop-Loss</strong>
+                                    The system just executed a reset. To avoid massive capital drains (like a 160+ tick void), only test up to the next hardcoded resistance node (max 20 ticks / 16 pushes). If the price crosses the next node without a drop, <strong>CUT OFF INPUTS</strong> and wait for others to fund the gap.
+                                </div>
+                             </div>`;
+                }
+
                 html += `<div class="prediction-category">
-                            <h3 style="color:var(--state-dormant);">Nearest Grid Locks</h3>
-                            ${buildCard(nextSuffixes[0], 'golden', `Nearest Hardcoded Decimal Trap`, currentNum)}
-                            ${buildCard(nextSuffixes[1], 'golden', `Secondary Decimal Trap`, currentNum)}
+                            <h3 style="color:var(--state-dormant);">Nearest Liquidity Nodes (Grid Locks)</h3>
+                            ${buildCard(nextSuffixes[0], 'golden', `Primary Decimal Resistance`, currentNum)}
+                            ${buildCard(nextSuffixes[1], 'golden', `Secondary Decimal Resistance`, currentNum)}
                          </div>`;
             }
 
-            html += `<div class="prediction-category"><h3>Projected Historical Block Gaps</h3>`;
+            html += `<div class="prediction-category"><h3>Projected Volume Thresholds</h3>`;
             
             let displayedCount = 0;
             uniqueGaps.forEach(u => {
                 if (displayedCount >= 5) return;
                 let projectedVal = anchorNum + (u.gap * 0.01);
                 if (projectedVal > currentNum && (!isDormant ? u.gap !== 10 : true)) {
-                    html += buildCard(projectedVal, u.nextTag, `Verified Drop Gap (Anchored to ${anchorNum.toFixed(2)})`, currentNum);
+                    html += buildCard(projectedVal, u.nextTag, `Verified Dollar Gap (Anchored to ${anchorNum.toFixed(2)})`, currentNum);
                     displayedCount++;
                 }
             });
