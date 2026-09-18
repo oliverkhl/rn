@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Synthetic Financial Engine Predictor (Hold & Spin Edition)</title>
+    <title>Synthetic Financial Engine Predictor (Ledger Edition)</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -15,8 +15,6 @@
             /* Tag Accents */
             --accent-golden: #ffffff;
             --accent-parrots: #cccccc;
-            --accent-minor: #999999;
-            --accent-mini: #666666;
             --accent-big: #333333;
             --accent-blank: #444444; 
             --accent-price: #dddddd;
@@ -79,6 +77,7 @@
         .state-replay { background-color: #222222; color: var(--state-replay); border: 1px solid var(--state-replay); }
         .state-waypoint { background-color: #111111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
         .state-freespin { background-color: #ffffff; color: #000000; border: 1px solid #ffffff; }
+        .state-nuclear { background-color: #330000; color: var(--alert-red); border: 1px solid var(--alert-red); }
 
         .main-input-group { 
             display: flex; gap: 10px; margin-bottom: 16px; 
@@ -125,16 +124,12 @@
         /* B&W Buttons */
         .btn-golden { background-color: #ffffff; color: #000000; }
         .btn-parrots { background-color: #cccccc; color: #000000; }
-        .btn-minor { background-color: #999999; color: #000000; }
-        .btn-mini { background-color: #666666; color: #ffffff; }
         .btn-big { background-color: #333333; color: #ffffff; border: 1px solid #555555; }
         .btn-blank { background-color: #111111; color: #aaaaaa; border: 1px dashed #555555; }
 
         /* B&W Text Colors */
         .color-golden { color: var(--accent-golden); }
         .color-parrots { color: var(--accent-parrots); }
-        .color-minor { color: var(--accent-minor); }
-        .color-mini { color: var(--accent-mini); }
         .color-big { color: var(--accent-big); }
         .color-blank { color: var(--accent-blank); }
 
@@ -152,8 +147,6 @@
 
         .card-golden { border-left-color: var(--accent-golden); }
         .card-parrots { border-left-color: var(--accent-parrots); }
-        .card-minor { border-left-color: var(--accent-minor); }
-        .card-mini { border-left-color: var(--accent-mini); }
         .card-big { border-left-color: var(--accent-big); }
         .card-void { border-left-color: var(--alert-red); background-color: rgba(255, 0, 0, 0.05); }
 
@@ -242,6 +235,40 @@
             font-size: 0.85rem; color: var(--text-muted);
             font-style: italic; padding: 8px 4px;
         }
+
+        /* MODAL STYLES */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 20px;
+            width: 90%; max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+        }
+        .modal-content h3 { margin-top: 0; color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .modal-input-group { margin-bottom: 15px; }
+        .modal-input-group label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 5px; }
+        .modal-input-group input[type="number"] {
+            width: 100%; background: #000; border: 1px solid #555;
+            color: #fff; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 1.1rem;
+        }
+        .checkbox-group {
+            display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;
+            background: #000; padding: 15px; border-radius: 4px; border: 1px solid #333;
+        }
+        .checkbox-group label {
+            display: flex; align-items: center; gap: 10px; font-weight: bold; cursor: pointer; color: #fff; font-size: 0.9rem;
+        }
+        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; accent-color: #fff; cursor: pointer; }
+        .grand-price-display { color: var(--accent-golden); font-family: monospace; }
+        .modal-actions { display: flex; gap: 10px; }
+        .btn-modal-submit { flex: 2; background-color: #fff; color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .btn-modal-cancel { flex: 1; background-color: #222; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -255,15 +282,13 @@
                 <button id="btn-step" class="btn-step" onclick="stepNumber()">TICK</button>
             </div>
 
+            <!-- Simplified to 4 main actions based on exact engine mechanics -->
             <div class="tag-buttons-grid">
-                <button class="tag-btn btn-golden" onclick="addNumber('golden')">GOLDEN <span id="count-golden">0</span></button>
+                <button class="tag-btn btn-golden" onclick="openGoldenModal()">GOLDEN <span id="count-golden">0</span></button>
                 <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK <span id="count-blank">0</span></button>
                 
                 <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">PARROTS <span id="count-parrots">0</span></button>
-                <button class="tag-btn btn-minor" onclick="addNumber('minor')">MINOR <span id="count-minor">0</span></button>
-                
-                <button class="tag-btn btn-mini" onclick="addNumber('mini')">MINI <span id="count-mini">0</span></button>
-                <button class="tag-btn btn-big" onclick="addNumber('big')">BIG <span id="count-big">0</span></button>
+                <button class="tag-btn btn-big" onclick="addNumber('big')">BIG DROP <span id="count-big">0</span></button>
             </div>
             
             <div class="util-bar">
@@ -286,45 +311,69 @@
         </div>
     </div>
 
-    <script>
-        // BASELINE DATASET
-        const baselineDataset = [
-            {val: 785.43, tag: 'golden', sys: 'A', block: 1}, {val: 785.53, tag: 'golden', sys: 'A', block: 1}, 
-            {val: 787.72, tag: 'mini', sys: 'A', block: 1}, {val: 789.80, tag: 'big', sys: 'A', block: 1}, 
-            {val: 790.29, tag: 'parrots', sys: 'A', block: 1}, {val: 790.57, tag: 'golden', sys: 'A', block: 1}, 
-            {val: 791.30, tag: 'golden', sys: 'A', block: 1}, {val: 791.39, tag: 'big', sys: 'A', block: 1}, {val: 791.84, tag: 'mini', sys: 'A', block: 1},
-            {val: 812.95, tag: 'golden', sys: 'A', block: 2}, {val: 813.05, tag: 'parrots', sys: 'A', block: 2}, 
-            {val: 813.17, tag: 'parrots', sys: 'A', block: 2}, {val: 813.27, tag: 'golden', sys: 'A', block: 2},
-            {val: 829.88, tag: 'parrots', sys: 'A', block: 3}, {val: 829.97, tag: 'parrots', sys: 'A', block: 3}, 
-            {val: 830.52, tag: 'minor', sys: 'A', block: 3}, {val: 830.66, tag: 'golden', sys: 'A', block: 3}, {val: 830.68, tag: 'golden', sys: 'A', block: 3},
-            {val: 846.46, tag: 'parrots', sys: 'A', block: 4}, {val: 846.67, tag: 'minor', sys: 'A', block: 4}, {val: 846.70, tag: 'golden', sys: 'A', block: 4}, 
-            {val: 847.18, tag: 'big', sys: 'A', block: 4}, {val: 850.25, tag: 'golden', sys: 'A', block: 4}, {val: 850.52, tag: 'golden', sys: 'A', block: 4}, 
-            {val: 850.55, tag: 'parrots', sys: 'A', block: 4}, {val: 850.65, tag: 'parrots', sys: 'A', block: 4}, {val: 850.71, tag: 'parrots', sys: 'A', block: 4}, 
-            {val: 852.66, tag: 'golden', sys: 'A', block: 4}, {val: 852.70, tag: 'parrots', sys: 'A', block: 4}, {val: 852.70, tag: 'mini', sys: 'A', block: 4}, 
-            {val: 861.78, tag: 'golden', sys: 'A', block: 5}, {val: 862.23, tag: 'golden', sys: 'A', block: 5},
-            {val: 873.87, tag: 'golden', sys: 'A', block: 6}, {val: 874.30, tag: 'parrots', sys: 'A', block: 6}, {val: 874.43, tag: 'golden', sys: 'A', block: 6}, 
-            {val: 874.70, tag: 'golden', sys: 'A', block: 6}, {val: 875.24, tag: 'golden', sys: 'A', block: 6},
-            {val: 941.89, tag: 'mini', sys: 'A', block: 7},
+    <!-- HOLD & SPIN CALCULATOR MODAL -->
+    <div id="golden-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <h3>Hold & Spin Ledger</h3>
             
-            {val: 827.34, tag: 'golden', sys: 'B', block: 8}, {val: 827.91, tag: 'golden', sys: 'B', block: 8}, 
-            {val: 828.21, tag: 'parrots', sys: 'B', block: 8}, {val: 828.96, tag: 'golden', sys: 'B', block: 8}, 
-            {val: 829.35, tag: 'parrots', sys: 'B', block: 8}, {val: 829.54, tag: 'parrots', sys: 'B', block: 8}, 
-            {val: 830.08, tag: 'parrots', sys: 'B', block: 8}, {val: 830.30, tag: 'golden', sys: 'B', block: 8},
-            {val: 831.02, tag: 'mini', sys: 'B', block: 8}, {val: 831.13, tag: 'golden', sys: 'B', block: 8},
-            {val: 832.22, tag: 'parrots', sys: 'B', block: 8}, {val: 832.32, tag: 'golden', sys: 'B', block: 8},
-            {val: 995.42, tag: 'golden', sys: 'B', block: 9}, {val: 995.45, tag: 'parrots', sys: 'B', block: 9}, {val: 995.50, tag: 'golden', sys: 'B', block: 9},
+            <div class="modal-input-group">
+                <label>Standard Blocks Total ($)</label>
+                <input type="number" id="hs-standard" value="0" step="1" inputmode="numeric">
+            </div>
             
-            {val: 1078.14, tag: 'golden', sys: 'C', block: 10}, {val: 1078.48, tag: 'golden', sys: 'C', block: 10},
-            {val: 1079.46, tag: 'parrots', sys: 'C', block: 10}, {val: 1079.84, tag: 'parrots', sys: 'C', block: 10},
-            {val: 1080.30, tag: 'parrots', sys: 'C', block: 10}, {val: 1081.60, tag: 'minor', sys: 'C', block: 10},
-            {val: 1084.03, tag: 'parrots', sys: 'C', block: 10}, {val: 1085.21, tag: 'golden', sys: 'C', block: 10},
-            {val: 1085.78, tag: 'golden', sys: 'C', block: 10}, {val: 1086.62, tag: 'golden', sys: 'C', block: 10},
-            {val: 1086.78, tag: 'parrots', sys: 'C', block: 10}, {val: 1086.93, tag: 'parrots', sys: 'C', block: 10},
-            {val: 1086.97, tag: 'parrots', sys: 'C', block: 10}, {val: 1087.39, tag: 'golden', sys: 'C', block: 10},
-            {val: 1087.99, tag: 'golden', sys: 'C', block: 10}, {val: 1088.06, tag: 'parrots', sys: 'C', block: 10},
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="hs-mini"> MINI JACKPOT ($100)</label>
+                <label><input type="checkbox" id="hs-minor"> MINOR JACKPOT ($500)</label>
+                <label><input type="checkbox" id="hs-grand"> GRAND JACKPOT (<span class="grand-price-display" id="display-grand-val">$0.00</span>)</label>
+                <label style="color:var(--alert-red);"><input type="checkbox" id="hs-ultimate"> ULTIMATE ($23,000 Wipe)</label>
+            </div>
+            
+            <div class="modal-actions">
+                <button onclick="submitGolden()" class="btn-modal-submit">LOG FINAL PAYOUT</button>
+                <button onclick="closeGoldenModal()" class="btn-modal-cancel">CANCEL</button>
+            </div>
+        </div>
+    </div>
 
-            {val: 1145.84, tag: 'golden', sys: 'D', block: 11}, {val: 1146.50, tag: 'golden', sys: 'D', block: 11},
-            {val: 1148.11, tag: 'parrots', sys: 'D', block: 11}, {val: 1148.43, tag: 'golden', sys: 'D', block: 11}
+    <script>
+        // BASELINE DATASET (Minor/Mini converted to Golden + Payouts for ledger accuracy)
+        const baselineDataset = [
+            {val: 785.43, tag: 'golden', sys: 'A', block: 1, payout: 30}, 
+            {val: 785.53, tag: 'golden', sys: 'A', block: 1, payout: 25}, 
+            {val: 787.72, tag: 'golden', sys: 'A', block: 1, payout: 100}, // Was Mini
+            {val: 789.80, tag: 'big', sys: 'A', block: 1, payout: 150}, 
+            {val: 790.29, tag: 'parrots', sys: 'A', block: 1}, 
+            {val: 790.57, tag: 'golden', sys: 'A', block: 1, payout: 40}, 
+            {val: 791.30, tag: 'golden', sys: 'A', block: 1, payout: 55}, 
+            {val: 791.39, tag: 'big', sys: 'A', block: 1, payout: 150}, 
+            {val: 791.84, tag: 'golden', sys: 'A', block: 1, payout: 100}, // Was Mini
+            {val: 812.95, tag: 'golden', sys: 'A', block: 2, payout: 35}, 
+            {val: 813.05, tag: 'parrots', sys: 'A', block: 2}, 
+            {val: 813.17, tag: 'parrots', sys: 'A', block: 2}, 
+            {val: 813.27, tag: 'golden', sys: 'A', block: 2, payout: 60},
+            {val: 829.88, tag: 'parrots', sys: 'A', block: 3}, 
+            {val: 829.97, tag: 'parrots', sys: 'A', block: 3}, 
+            {val: 830.52, tag: 'golden', sys: 'A', block: 3, payout: 500}, // Was Minor
+            {val: 830.66, tag: 'golden', sys: 'A', block: 3, payout: 20}, 
+            {val: 830.68, tag: 'golden', sys: 'A', block: 3, payout: 45},
+            {val: 846.46, tag: 'parrots', sys: 'A', block: 4}, 
+            {val: 846.67, tag: 'golden', sys: 'A', block: 4, payout: 500}, // Was Minor
+            {val: 846.70, tag: 'golden', sys: 'A', block: 4, payout: 75}, 
+            {val: 847.18, tag: 'big', sys: 'A', block: 4, payout: 180}, 
+            {val: 850.25, tag: 'golden', sys: 'A', block: 4, payout: 30}, 
+            {val: 850.52, tag: 'golden', sys: 'A', block: 4, payout: 25}, 
+            {val: 850.55, tag: 'parrots', sys: 'A', block: 4}, 
+            {val: 850.65, tag: 'parrots', sys: 'A', block: 4}, 
+            {val: 850.71, tag: 'parrots', sys: 'A', block: 4}, 
+            {val: 852.66, tag: 'golden', sys: 'A', block: 4, payout: 60}, 
+            {val: 852.70, tag: 'parrots', sys: 'A', block: 4}, 
+            {val: 852.70, tag: 'golden', sys: 'A', block: 4, payout: 100}, // Was Mini
+            {val: 861.78, tag: 'golden', sys: 'A', block: 5, payout: 45}, 
+            {val: 862.23, tag: 'golden', sys: 'A', block: 5, payout: 80},
+            {val: 1145.84, tag: 'golden', sys: 'D', block: 11, payout: 40}, 
+            {val: 1146.50, tag: 'golden', sys: 'D', block: 11, payout: 95},
+            {val: 1148.11, tag: 'parrots', sys: 'D', block: 11}, 
+            {val: 1148.43, tag: 'golden', sys: 'D', block: 11, payout: 50}
         ];
 
         let dataset = [];
@@ -337,6 +386,7 @@
 
         const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.50, 0.70, 0.84];
         let isManualTracking = false;
+        let pendingGoldenNum = 0;
 
         document.getElementById('main-input').addEventListener('focus', function() {
             this.value = '';
@@ -350,13 +400,8 @@
             if (!isNaN(currentNum)) {
                 let cents = Math.round(currentNum * 100);
                 let remainder = cents % 5;
-                
-                if (remainder === 3) {
-                    currentNum = (cents + 2) / 100;
-                } else {
-                    currentNum = (cents + 1) / 100;
-                }
-                
+                if (remainder === 3) currentNum = (cents + 2) / 100;
+                else currentNum = (cents + 1) / 100;
                 input.value = currentNum.toFixed(2);
                 isManualTracking = true; 
             }
@@ -394,7 +439,6 @@
             
             let isGhostTick = (ticks % 5 === 4);
             let ghostWarning = isGhostTick ? ` <span style="color:#ff5555;font-size:0.7rem;">[Ghost Tick]</span>` : '';
-            
             let cardClass = isVoid ? `card-void` : `card-${tag}`;
             
             return `<div class="pred-card ${cardClass}">
@@ -407,10 +451,10 @@
         }
 
         function renderData() {
-            const counts = { golden: 0, parrots: 0, minor: 0, mini: 0, big: 0, blank: 0 };
+            const counts = { golden: 0, parrots: 0, big: 0, blank: 0 };
             dataset.forEach(item => { if (counts[item.tag] !== undefined) counts[item.tag]++; });
             
-            ['golden', 'parrots', 'minor', 'mini', 'big', 'blank'].forEach(t => {
+            ['golden', 'parrots', 'big', 'blank'].forEach(t => {
                 document.getElementById(`count-${t}`).innerText = counts[t];
             });
 
@@ -420,12 +464,11 @@
             listBaseline.innerHTML = '';
             
             let hasLive = false;
-            
             const grouped = {};
+            
             dataset.forEach(d => {
                 if(!grouped[d.val]) grouped[d.val] = { val: d.val, sys: d.sys, tags: [], payout: d.payout };
                 grouped[d.val].tags.push(d.tag);
-                // Keep the max payout if multiple
                 if(d.payout && d.payout > (grouped[d.val].payout || 0)) grouped[d.val].payout = d.payout;
             });
             
@@ -436,7 +479,7 @@
                 li.className = 'history-item';
                 let tagsHtml = item.tags.map(t => `<span class="tag color-${t}" ${t === 'blank' ? 'style="background:#222;border:1px dashed #555;"' : ''}>${t}</span>`).join('');
                 let sysClass = item.sys === 'Live' ? 'sys-tag sys-tag-live' : 'sys-tag';
-                let payoutText = item.payout ? ` <span style="color:var(--accent-golden);font-size:0.75rem;">[$${item.payout}]</span>` : '';
+                let payoutText = item.payout ? ` <span style="color:var(--accent-golden);font-size:0.75rem;">[$${item.payout.toLocaleString()}]</span>` : '';
                 
                 li.innerHTML = `
                     <div>
@@ -446,12 +489,8 @@
                     <div class="tag-group">${tagsHtml}</div>
                 `;
                 
-                if (item.sys === 'Live') {
-                    listLive.appendChild(li);
-                    hasLive = true;
-                } else {
-                    listBaseline.appendChild(li);
-                }
+                if (item.sys === 'Live') { listLive.appendChild(li); hasLive = true; } 
+                else { listBaseline.appendChild(li); }
             });
             
             if (!hasLive) {
@@ -459,6 +498,52 @@
             }
         }
 
+        // --- MODAL LOGIC ---
+        function openGoldenModal() {
+            const inputField = document.getElementById('main-input');
+            const numInput = inputField.value;
+            if (!numInput) {
+                alert("Please enter a valid price before selecting Golden.");
+                return;
+            }
+            pendingGoldenNum = parseFloat(numInput);
+            
+            // Reset Modal Fields
+            document.getElementById('hs-standard').value = "0";
+            document.getElementById('hs-mini').checked = false;
+            document.getElementById('hs-minor').checked = false;
+            document.getElementById('hs-grand').checked = false;
+            document.getElementById('hs-ultimate').checked = false;
+            
+            // Display Current Ticker as Grand Value
+            document.getElementById('display-grand-val').innerText = "$" + pendingGoldenNum.toFixed(2);
+            
+            document.getElementById('golden-modal').style.display = 'flex';
+        }
+
+        function closeGoldenModal() {
+            document.getElementById('golden-modal').style.display = 'none';
+            pendingGoldenNum = 0;
+        }
+
+        function submitGolden() {
+            let standardBlocks = parseFloat(document.getElementById('hs-standard').value) || 0;
+            let hasMini = document.getElementById('hs-mini').checked;
+            let hasMinor = document.getElementById('hs-minor').checked;
+            let hasGrand = document.getElementById('hs-grand').checked;
+            let hasUltimate = document.getElementById('hs-ultimate').checked;
+            
+            let totalPayout = standardBlocks;
+            if (hasMini) totalPayout += 100;
+            if (hasMinor) totalPayout += 500;
+            if (hasGrand) totalPayout += pendingGoldenNum;
+            if (hasUltimate) totalPayout += 23000;
+            
+            processDataEntry(pendingGoldenNum, 'golden', totalPayout);
+            closeGoldenModal();
+        }
+
+        // --- MAIN ENTRY LOGIC ---
         function addNumber(tagType) {
             const inputField = document.getElementById('main-input');
             const numInput = inputField.value;
@@ -466,22 +551,17 @@
             const num = parseFloat(numInput);
             
             let payoutAmt = 0;
-            
-            // PROMPT FOR SPECIFIC PAYOUTS
-            if (tagType === 'golden') {
-                let p = prompt(`Enter the total GOLDEN payout amount ($):\n(Include all Hold & Spin blocks + retriggers)`, "30");
-                if (p === null) return; 
-                payoutAmt = parseFloat(p) || 0;
-            } else if (tagType === 'minor') {
-                payoutAmt = 500;
-            } else if (tagType === 'mini') {
-                payoutAmt = 100;
-            } else if (tagType === 'big') {
-                let p = prompt(`Enter the total BIG payout amount ($):`, "0");
+            if (tagType === 'big') {
+                let p = prompt(`Enter the total BIG payout amount ($):`, "150");
                 if (p === null) return;
                 payoutAmt = parseFloat(p) || 0;
             }
             
+            processDataEntry(num, tagType, payoutAmt);
+            inputField.blur();
+        }
+        
+        function processDataEntry(num, tagType, payoutAmt) {
             let sortedDB = [...dataset].sort((a, b) => b.val - a.val);
             let lastVal = sortedDB.length > 0 ? sortedDB[0].val : num;
             let currentBlock = getLatestBlock();
@@ -495,7 +575,6 @@
             }
             
             generatePredictions(num, tagType);
-            inputField.blur(); 
         }
 
         function generatePredictions(currentNum, tagType) {
@@ -539,9 +618,11 @@
                 }
             }
 
-            let isDormant = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'minor' || effectiveTag === 'mini');
+            let isDormant = (effectiveTag === 'golden' || effectiveTag === 'big');
             let isDarkZone = (tagType === 'blank' && effectiveTag === 'blank'); 
             let isFreeSpin = (effectiveTag === 'parrots'); 
+            let isNuclear = (isDormant && payoutValue >= 23000);
+            let isGrand = (isDormant && payoutValue >= anchorNum && anchorNum > 200 && !isNuclear);
             
             if (isDarkZone) {
                 stateBadge.className = 'state-badge state-waypoint';
@@ -558,10 +639,20 @@
                 stateBadge.innerText = 'STATE: FREE SPIN WINDOW (PARROT LOCK)';
                 modeDesc.innerText = 'Price is frozen for 6 free spins. Hidden volume bucket is aggressively loading. Expect an internal GOLDEN drop right here.';
                 predPanel.style.borderColor = '#ffffff';
+            } else if (isNuclear) {
+                stateBadge.className = 'state-badge state-nuclear';
+                stateBadge.innerText = 'STATE: NUCLEAR WINTER (SYSTEM WIPE)';
+                modeDesc.innerText = `Ultimate Jackpot ($23,000) hit. The system has suffered catastrophic ledger loss and entered total algorithmic lockdown.`;
+                predPanel.style.borderColor = 'var(--alert-red)';
+            } else if (isGrand) {
+                stateBadge.className = 'state-badge state-nuclear';
+                stateBadge.innerText = 'STATE: GRAND RECOVERY';
+                modeDesc.innerText = `Grand Jackpot hit. The system is executing a massive algorithmic drain to recover liability.`;
+                predPanel.style.borderColor = 'var(--alert-red)';
             } else if (isDormant) {
                 stateBadge.className = 'state-badge state-dormant';
                 stateBadge.innerText = 'STATE: DORMANT (ALGORITHMIC RECOVERY)';
-                modeDesc.innerText = `System paid out $${payoutValue.toFixed(2)}. Calculating exact volume required to recoup liquidity before next drop.`;
+                modeDesc.innerText = `System paid out $${payoutValue.toLocaleString()}. Calculating exact volume required to recoup liquidity before next drop.`;
                 predPanel.style.borderColor = 'var(--state-dormant)';
             } else {
                 stateBadge.className = 'state-badge state-active';
@@ -622,18 +713,24 @@
                          </div>`;
             }
 
-            // DYNAMIC COOLDOWN CALCULATION (If Dormant & Payout logged)
+            // EXACT LEDGER CALCULATION (If Dormant & Payout logged)
             if (isDormant && payoutValue > 0) {
-                // Every $2.00 of volume = 1 tick (0.01)
+                // Every $2.00 of volume = 1 tick (0.01 price movement)
+                // Therefore, 100% of the payout value divided by 2 = required ticks.
+                // Distance = (Payout / 2) * 0.01 = Payout / 200
                 let recoveryTicks = Math.ceil(payoutValue / 2);
-                let recoveryDistance = recoveryTicks * 0.01;
+                let recoveryDistance = payoutValue / 200;
                 let safeTarget = anchorNum + recoveryDistance;
                 
+                let titleText = isNuclear ? `⚠️ ULTIMATE RECOVERY LOCKDOWN ($${payoutValue.toLocaleString()} Deficit)` : 
+                               (isGrand ? `⚠️ GRAND RECOVERY ($${payoutValue.toLocaleString()} Deficit)` : 
+                               `⚠️ Exact Calculated Dead Zone ($${payoutValue.toLocaleString()} Recovery)`);
+
                 html += `<div class="prediction-category">
-                            <h3 style="color:var(--alert-red);">⚠️ Calculated Dead Zone ($${payoutValue} Recovery)</h3>
+                            <h3 style="color:var(--alert-red);">${titleText}</h3>
                             <div class="tactical-card tactical-warning">
-                                <strong>Engine Drain Active</strong>
-                                The system just lost $${payoutValue.toFixed(2)}. It must absorb this exact amount in public volume before opening another payout window. This mathematically forces a dead zone of at least <strong>${recoveryTicks} ticks</strong>. Do not inject capital until the price crosses the safe zone line.
+                                <strong>Ledger Deficit Enforcement</strong>
+                                The system just lost $${payoutValue.toLocaleString()}. Because every 1 visual tick generates $2.00 in public volume, the algorithm is forced to harvest exactly <strong>${recoveryTicks.toLocaleString()} visual ticks</strong> ($${recoveryDistance.toFixed(2)} in total price climb) just to repair the damage. <strong>DO NOT PUSH</strong> until the price crosses the safe zone line below.
                             </div>
                             ${buildCard(safeTarget, 'golden', `Calculated Recovery Line (End of Dead Zone)`, currentNum, "Min ", true)}
                          </div>`;
@@ -690,8 +787,9 @@
             uniqueGaps.forEach(u => {
                 if (displayedCount >= 5) return;
                 let projectedVal = anchorNum + (u.gap * 0.01);
-                // If we are in a calculated dead zone, don't suggest targets inside the dead zone
-                let isInsideDeadZone = (isDormant && payoutValue > 0 && projectedVal < (anchorNum + (payoutValue/2)*0.01));
+                
+                // Do not suggest targets inside a mathematically calculated dead zone
+                let isInsideDeadZone = (isDormant && payoutValue > 0 && projectedVal < (anchorNum + (payoutValue/200)));
                 
                 if (projectedVal > currentNum && (!isDormant ? u.gap !== 10 : true) && !isInsideDeadZone) {
                     html += buildCard(projectedVal, u.nextTag, `Verified Dollar Gap (Anchored to ${anchorNum.toFixed(2)})`, currentNum, "+");
@@ -700,7 +798,7 @@
             });
 
             if(displayedCount === 0) {
-                 html += `<p style="font-size:0.85rem; color:var(--text-muted);">No valid historical targets found for this zone.</p>`;
+                 html += `<p style="font-size:0.85rem; color:var(--text-muted);">No valid historical targets found outside the dead zone.</p>`;
             }
             
             html += `</div>`;
