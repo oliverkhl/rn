@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dual-State Predictor (Waypoint Edition)</title>
+    <title>Dual-State Predictor (Segmented Data Edition)</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -18,7 +18,7 @@
             --accent-minor: #999999;
             --accent-mini: #666666;
             --accent-big: #333333;
-            --accent-blank: #444444; /* New Blank Tag */
+            --accent-blank: #444444; 
             --accent-price: #dddddd;
             
             /* UI Elements */
@@ -29,28 +29,19 @@
             --state-waypoint: #999999;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 0; padding: 12px;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            max-width: 1200px;
-            width: 100%;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+            max-width: 1200px; width: 100%;
         }
 
         @media (max-width: 768px) {
@@ -61,34 +52,22 @@
         .panel {
             background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
+            border-radius: 8px; padding: 16px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-            width: 100%;
-            transition: border-color 0.3s ease;
+            width: 100%; transition: border-color 0.3s ease;
         }
 
         h2 {
-            margin-top: 0;
-            color: #fff;
-            font-size: 1.1rem;
+            margin-top: 0; color: #fff; font-size: 1.1rem;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding-bottom: 10px; margin-bottom: 16px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
         .state-badge {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
+            font-size: 0.75rem; padding: 4px 8px; border-radius: 12px;
+            font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--text-muted); border: 1px solid var(--border-color);
             background-color: #222222;
         }
 
@@ -97,65 +76,36 @@
         .state-replay { background-color: #222222; color: var(--state-replay); border: 1px solid var(--state-replay); }
         .state-waypoint { background-color: #111111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
 
-        .main-input-group {
-            margin-bottom: 16px;
-        }
+        .main-input-group { margin-bottom: 16px; }
 
         #main-input {
-            width: 100%;
-            background-color: #000000;
-            border: 2px solid #555555;
-            color: #ffffff;
-            padding: 14px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 1.3rem;
-            text-align: center;
+            width: 100%; background-color: #000000; border: 2px solid #555555;
+            color: #ffffff; padding: 14px; border-radius: 6px;
+            font-family: monospace; font-size: 1.3rem; text-align: center;
             transition: border-color 0.2s ease;
         }
         
-        #main-input:focus {
-            outline: none;
-            border-color: #ffffff;
-        }
+        #main-input:focus { outline: none; border-color: #ffffff; }
 
-        /* 3-Column Grid for Buttons to fit BLANK */
         .tag-buttons-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
         }
         
-        .tag-buttons-grid .full-width {
-            grid-column: 1 / -1; 
-        }
+        .tag-buttons-grid .full-width { grid-column: 1 / -1; }
 
         .tag-btn {
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.95rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: opacity 0.2s;
-            touch-action: manipulation;
+            border: none; padding: 12px; border-radius: 6px;
+            cursor: pointer; font-weight: bold; font-size: 0.95rem;
+            display: flex; justify-content: space-between; align-items: center;
         }
         
         .tag-btn span {
-            font-size: 0.8rem;
-            background: rgba(128,128,128,0.3);
-            padding: 2px 6px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.8rem; background: rgba(128,128,128,0.3);
+            padding: 2px 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
         }
 
         .tag-btn:active { opacity: 0.6; }
         
-        /* B&W Buttons */
         .btn-golden { background-color: #ffffff; color: #000000; }
         .btn-parrots { background-color: #cccccc; color: #000000; }
         .btn-minor { background-color: #999999; color: #000000; }
@@ -163,7 +113,6 @@
         .btn-big { background-color: #333333; color: #ffffff; border: 1px solid #555555; }
         .btn-blank { background-color: #111111; color: #aaaaaa; border: 1px dashed #555555; }
 
-        /* B&W Text Colors */
         .color-golden { color: var(--accent-golden); }
         .color-parrots { color: var(--accent-parrots); }
         .color-minor { color: var(--accent-minor); }
@@ -172,24 +121,15 @@
         .color-blank { color: var(--accent-blank); }
 
         .pred-card {
-            background-color: var(--bg-color);
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            border-left: 4px solid;
-            border-top: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-color); padding: 10px 12px;
+            margin-bottom: 8px; border-radius: 4px; display: flex; flex-direction: column;
+            border-left: 4px solid; border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
         }
 
         .pred-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 4px;
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; margin-bottom: 4px;
         }
 
         .card-golden { border-left-color: var(--accent-golden); }
@@ -198,82 +138,75 @@
         .card-mini { border-left-color: var(--accent-mini); }
         .card-big { border-left-color: var(--accent-big); }
 
-        .pred-val {
-            font-family: monospace;
-            font-size: 1.05rem;
-            color: #fff;
-            font-weight: bold;
-        }
-
-        .pred-price {
-            font-size: 0.85rem;
-            color: var(--accent-price);
-            font-weight: normal;
-        }
-
-        .pred-logic {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
+        .pred-val { font-family: monospace; font-size: 1.05rem; color: #fff; font-weight: bold; }
+        .pred-price { font-size: 0.85rem; color: var(--accent-price); font-weight: normal; }
+        .pred-logic { font-size: 0.8rem; color: var(--text-muted); }
 
         .history-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 250px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            list-style: none; padding: 0; margin: 0;
+            max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch;
         }
 
         .history-item {
-            padding: 8px 4px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: monospace;
-            font-size: 0.95rem;
+            padding: 8px 4px; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            font-family: monospace; font-size: 0.95rem;
         }
 
         .history-item:last-child { border-bottom: none; }
         
-        .tag-group {
-            display: flex;
-            gap: 4px;
-        }
-
+        .tag-group { display: flex; gap: 4px; }
         .tag {
-            font-size: 0.65rem;
-            padding: 3px 6px;
-            border-radius: 4px;
-            background-color: var(--border-color);
-            text-transform: uppercase;
-            font-weight: bold;
-            color: #ffffff;
+            font-size: 0.65rem; padding: 3px 6px; border-radius: 4px;
+            background-color: var(--border-color); text-transform: uppercase;
+            font-weight: bold; color: #ffffff;
         }
 
         .sys-tag {
-            font-size: 0.65rem;
-            color: #ffffff;
-            background: #444444;
-            padding: 2px 5px;
-            border-radius: 4px;
-            margin-right: 8px;
+            font-size: 0.65rem; color: #ffffff; background: #444444;
+            padding: 2px 5px; border-radius: 4px; margin-right: 8px;
         }
         
+        .sys-tag-live {
+            background: #ffffff; color: #000000;
+        }
+
         .mode-description {
+            font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;
+            padding-bottom: 10px; border-bottom: 1px dashed var(--border-color);
+        }
+
+        .util-bar {
+            display: flex; justify-content: flex-end; margin-top: 10px;
+        }
+        
+        .btn-clear {
+            background: none; border: 1px solid #555; color: #888;
+            padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;
+        }
+        .btn-clear:hover { color: #fff; border-color: #fff; }
+        
+        .section-divider {
+            margin-top: 24px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: #fff;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 4px;
+        }
+        
+        .empty-placeholder {
             font-size: 0.85rem;
             color: var(--text-muted);
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed var(--border-color);
+            font-style: italic;
+            padding: 8px 4px;
         }
+
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- TOP/LEFT PANEL -->
         <div class="panel">
             <h2>Notes</h2>
             
@@ -289,75 +222,88 @@
                 <button class="tag-btn btn-mini" onclick="addNumber('mini')">MINI <span id="count-mini">0</span></button>
                 <button class="tag-btn btn-big" onclick="addNumber('big')">BIG <span id="count-big">0</span></button>
             </div>
+            
+            <div class="util-bar">
+                <button class="btn-clear" onclick="clearData()">Reset to Baseline</button>
+            </div>
         </div>
 
-        <!-- BOTTOM/RIGHT PANEL -->
         <div class="panel" id="predictionPanel">
             <h2>Result <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
             <div id="modeDescription" class="mode-description">
-                Input a number and select a tag. Use BLANK to track unselected numbers and adjust target distances dynamically.
+                Input a number and select a tag. Auto-save is active.
             </div>
-            <div id="predictionsArea">
-                <!-- Predictions populate here -->
-            </div>
+            <div id="predictionsArea"></div>
             
-            <h3 style="margin-top: 18px; font-size: 0.95rem;">Contiguous Monitored Blocks</h3>
-            <ul class="history-list" id="historyList">
-                <!-- History populated by JS -->
-            </ul>
+            <div class="section-divider">Live Entries</div>
+            <ul class="history-list" id="historyListLive"></ul>
+            
+            <div class="section-divider">Baseline Database</div>
+            <ul class="history-list" id="historyListBaseline"></ul>
         </div>
     </div>
 
     <script>
-        let dataset = [
-            // SYSTEM A
+        // BASELINE DATASET (Hardcoded baseline facts)
+        const baselineDataset = [
             {val: 785.43, tag: 'golden', sys: 'A', block: 1}, {val: 785.53, tag: 'golden', sys: 'A', block: 1}, 
             {val: 787.72, tag: 'mini', sys: 'A', block: 1}, {val: 789.80, tag: 'big', sys: 'A', block: 1}, 
             {val: 790.29, tag: 'parrots', sys: 'A', block: 1}, {val: 790.57, tag: 'golden', sys: 'A', block: 1}, 
             {val: 791.30, tag: 'golden', sys: 'A', block: 1}, {val: 791.39, tag: 'big', sys: 'A', block: 1}, {val: 791.84, tag: 'mini', sys: 'A', block: 1},
-            
             {val: 812.95, tag: 'golden', sys: 'A', block: 2}, {val: 813.05, tag: 'parrots', sys: 'A', block: 2}, 
             {val: 813.17, tag: 'parrots', sys: 'A', block: 2}, {val: 813.27, tag: 'golden', sys: 'A', block: 2},
-            
             {val: 829.88, tag: 'parrots', sys: 'A', block: 3}, {val: 829.97, tag: 'parrots', sys: 'A', block: 3}, 
             {val: 830.52, tag: 'minor', sys: 'A', block: 3}, {val: 830.66, tag: 'golden', sys: 'A', block: 3}, {val: 830.68, tag: 'golden', sys: 'A', block: 3},
-            
             {val: 846.46, tag: 'parrots', sys: 'A', block: 4}, {val: 846.67, tag: 'minor', sys: 'A', block: 4}, {val: 846.70, tag: 'golden', sys: 'A', block: 4}, 
             {val: 847.18, tag: 'big', sys: 'A', block: 4}, {val: 850.25, tag: 'golden', sys: 'A', block: 4}, {val: 850.52, tag: 'golden', sys: 'A', block: 4}, 
             {val: 850.55, tag: 'parrots', sys: 'A', block: 4}, {val: 850.65, tag: 'parrots', sys: 'A', block: 4}, {val: 850.71, tag: 'parrots', sys: 'A', block: 4}, 
             {val: 852.66, tag: 'golden', sys: 'A', block: 4}, {val: 852.70, tag: 'parrots', sys: 'A', block: 4}, {val: 852.70, tag: 'mini', sys: 'A', block: 4}, 
-            
             {val: 861.78, tag: 'golden', sys: 'A', block: 5}, {val: 862.23, tag: 'golden', sys: 'A', block: 5},
-            
             {val: 873.87, tag: 'golden', sys: 'A', block: 6}, {val: 874.30, tag: 'parrots', sys: 'A', block: 6}, {val: 874.43, tag: 'golden', sys: 'A', block: 6}, 
             {val: 874.70, tag: 'golden', sys: 'A', block: 6}, {val: 875.24, tag: 'golden', sys: 'A', block: 6},
-            
             {val: 941.89, tag: 'mini', sys: 'A', block: 7},
-
-            // SYSTEM B
             {val: 827.34, tag: 'golden', sys: 'B', block: 8}, {val: 827.91, tag: 'golden', sys: 'B', block: 8}, 
             {val: 828.21, tag: 'parrots', sys: 'B', block: 8}, {val: 828.96, tag: 'golden', sys: 'B', block: 8}, 
             {val: 829.35, tag: 'parrots', sys: 'B', block: 8}, {val: 829.54, tag: 'parrots', sys: 'B', block: 8}, 
             {val: 830.08, tag: 'parrots', sys: 'B', block: 8}, {val: 830.30, tag: 'golden', sys: 'B', block: 8},
             {val: 831.02, tag: 'mini', sys: 'B', block: 8}, {val: 831.13, tag: 'golden', sys: 'B', block: 8},
             {val: 832.22, tag: 'parrots', sys: 'B', block: 8}, {val: 832.32, tag: 'golden', sys: 'B', block: 8},
-            
             {val: 995.42, tag: 'golden', sys: 'B', block: 9}, {val: 995.45, tag: 'parrots', sys: 'B', block: 9}, {val: 995.50, tag: 'golden', sys: 'B', block: 9}
         ];
 
-        const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.70, 0.84];
-
-        function getLatestBlock() {
-            return Math.max(...dataset.map(d => d.block));
+        // DYNAMIC DATASET (Loaded from browser memory if exists, otherwise uses baseline)
+        let dataset = [];
+        let storedData = localStorage.getItem('rngTrackerData');
+        if (storedData) {
+            dataset = JSON.parse(storedData);
+        } else {
+            dataset = [...baselineDataset];
         }
 
-        // Price Delta is calculated from current ticker position, NOT anchor
+        const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.70, 0.84];
+
+        // SAVING FUNCTION
+        function saveData() {
+            localStorage.setItem('rngTrackerData', JSON.stringify(dataset));
+        }
+
+        // CLEAR FUNCTION
+        function clearData() {
+            if(confirm("Are you sure you want to delete all manually entered numbers and reset to the original baseline?")) {
+                localStorage.removeItem('rngTrackerData');
+                dataset = [...baselineDataset];
+                document.getElementById('predictionsArea').innerHTML = '';
+                renderData();
+            }
+        }
+
+        function getLatestBlock() { return Math.max(...dataset.map(d => d.block)); }
+
         function formatDeltaPrice(targetNum, currentNum) {
             let diff = Math.abs(targetNum - currentNum);
             let ticks = Math.round(diff / 0.01);
             let price = ticks * 2.5;
-            let sign = targetNum >= currentNum ? "+$" : "-$";
-            return sign + price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            return (targetNum >= currentNum ? "+$" : "-$") + price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
         function buildCard(val, tag, logicText, currentNum, prefix = "+") {
@@ -375,19 +321,19 @@
 
         function renderData() {
             const counts = { golden: 0, parrots: 0, minor: 0, mini: 0, big: 0, blank: 0 };
-            dataset.forEach(item => {
-                if (counts[item.tag] !== undefined) counts[item.tag]++;
-            });
+            dataset.forEach(item => { if (counts[item.tag] !== undefined) counts[item.tag]++; });
             
-            document.getElementById('count-golden').innerText = counts.golden;
-            document.getElementById('count-parrots').innerText = counts.parrots;
-            document.getElementById('count-minor').innerText = counts.minor;
-            document.getElementById('count-mini').innerText = counts.mini;
-            document.getElementById('count-big').innerText = counts.big;
-            document.getElementById('count-blank').innerText = counts.blank;
+            ['golden', 'parrots', 'minor', 'mini', 'big', 'blank'].forEach(t => {
+                document.getElementById(`count-${t}`).innerText = counts[t];
+            });
 
-            const list = document.getElementById('historyList');
-            list.innerHTML = '';
+            const listLive = document.getElementById('historyListLive');
+            const listBaseline = document.getElementById('historyListBaseline');
+            listLive.innerHTML = '';
+            listBaseline.innerHTML = '';
+            
+            let hasLive = false;
+            let hasBaseline = false;
             
             const grouped = {};
             dataset.forEach(d => {
@@ -395,32 +341,38 @@
                 grouped[d.val].tags.push(d.tag);
             });
             
-            const sortedVals = Object.values(grouped).sort((a, b) => a.val - b.val);
+            const sortedVals = Object.values(grouped).sort((a, b) => b.val - a.val);
 
             sortedVals.forEach(item => {
                 const li = document.createElement('li');
                 li.className = 'history-item';
-                
-                let tagsHtml = item.tags.map(t => {
-                    let style = t === 'blank' ? 'background: #222; border: 1px dashed #555;' : '';
-                    return `<span class="tag color-${t}" style="${style}">${t}</span>`;
-                }).join('');
-                
+                let tagsHtml = item.tags.map(t => `<span class="tag color-${t}" ${t === 'blank' ? 'style="background:#222;border:1px dashed #555;"' : ''}>${t}</span>`).join('');
+                let sysClass = item.sys === 'Live' ? 'sys-tag sys-tag-live' : 'sys-tag';
                 li.innerHTML = `
                     <div>
-                        <span class="sys-tag">Sys ${item.sys || 'Live'}</span>
+                        <span class="${sysClass}">Sys ${item.sys}</span>
                         <span>${item.val.toFixed(2)}</span>
                     </div>
                     <div class="tag-group">${tagsHtml}</div>
                 `;
-                list.appendChild(li);
+                
+                if (item.sys === 'Live') {
+                    listLive.appendChild(li);
+                    hasLive = true;
+                } else {
+                    listBaseline.appendChild(li);
+                    hasBaseline = true;
+                }
             });
+            
+            if (!hasLive) {
+                listLive.innerHTML = '<div class="empty-placeholder">No new data entries yet. Use the data entry console to add live numbers.</div>';
+            }
         }
 
         function addNumber(tagType) {
             const inputField = document.getElementById('main-input');
             const numInput = inputField.value;
-            
             if (!numInput) return;
             const num = parseFloat(numInput);
             
@@ -428,19 +380,16 @@
             let lastVal = sortedDB.length > 0 ? sortedDB[0].val : num;
             let currentBlock = getLatestBlock();
             
-            if(Math.abs(num - lastVal) > 2.00 && !dataset.find(d => d.val === num)) {
-                currentBlock++; 
-            }
+            if(Math.abs(num - lastVal) > 2.00 && !dataset.find(d => d.val === num)) currentBlock++; 
 
             if (!dataset.find(d => d.val === num && d.tag === tagType)) {
                 dataset.push({val: num, tag: tagType, sys: 'Live', block: currentBlock});
+                saveData(); // Trigger Auto-Save
                 renderData();
             }
             
             generatePredictions(num, tagType);
-            
-            inputField.value = ''; 
-            inputField.blur(); 
+            inputField.value = ''; inputField.blur(); 
         }
 
         function generatePredictions(currentNum, tagType) {
@@ -453,23 +402,16 @@
             let chronoData = [...dataset].sort((a, b) => a.val - b.val);
             let historyIndex = chronoData.findIndex(d => d.val === currentNum && d.tag === tagType);
 
-            // Determine Anchor and Effective State
             let effectiveTag = tagType;
             let anchorNum = currentNum;
             let currentBlock = chronoData[historyIndex]?.block || getLatestBlock();
 
-            // IF BLANK: Find the last REAL tag to anchor the probability wave
             if (tagType === 'blank') {
                 let lastReal = [...chronoData].reverse().find(d => d.tag !== 'blank' && d.val < currentNum && d.block === currentBlock);
-                if (lastReal) {
-                    effectiveTag = lastReal.tag;
-                    anchorNum = lastReal.val;
-                }
+                if (lastReal) { effectiveTag = lastReal.tag; anchorNum = lastReal.val; }
             }
 
-            // MODE 1: HISTORICAL SEQUENCE MATCH (Ignore if logging a Blank waypoint)
             if (tagType !== 'blank' && historyIndex !== -1 && historyIndex < chronoData.length - 1) {
-                // Must be in same contiguous block, and next target must not be a blank
                 let nextTarget = chronoData[historyIndex+1];
                 if (chronoData[historyIndex].block === nextTarget.block && nextTarget.tag !== 'blank') {
                     stateBadge.className = 'state-badge state-replay';
@@ -478,7 +420,6 @@
                     predPanel.style.borderColor = 'var(--state-replay)';
 
                     let html = `<div class="prediction-category"><h3 style="color:var(--state-replay);">Exact Block Replay</h3>`;
-                    
                     let max = Math.min(historyIndex + 5, chronoData.length);
                     for(let i = historyIndex + 1; i < max; i++) {
                         if(chronoData[i].block !== chronoData[historyIndex].block) break;
@@ -491,7 +432,6 @@
                 }
             }
 
-            // MODE 2: LIVE DYNAMIC PATTERN
             let isDormant = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'blank');
             
             if (tagType === 'blank') {
@@ -511,17 +451,13 @@
                 predPanel.style.borderColor = 'var(--state-active)';
             }
 
-            // Database Scan: Look for real tags that followed our effectiveTag
             let historicalNexts = [];
             for(let i = 0; i < chronoData.length - 1; i++) {
                 if(chronoData[i].tag === effectiveTag) {
                     let nextReal = null;
                     for(let j = i + 1; j < chronoData.length; j++) {
                         if(chronoData[j].block !== chronoData[i].block) break;
-                        if(chronoData[j].tag !== 'blank') {
-                            nextReal = chronoData[j];
-                            break;
-                        }
+                        if(chronoData[j].tag !== 'blank') { nextReal = chronoData[j]; break; }
                     }
                     if(nextReal) {
                         let gap = Math.round((nextReal.val - chronoData[i].val) / 0.01);
@@ -533,16 +469,11 @@
             let uniqueGaps = [];
             let seenGaps = new Set();
             for(let h of historicalNexts) {
-                if(!seenGaps.has(h.gap)) {
-                    seenGaps.add(h.gap);
-                    uniqueGaps.push(h);
-                }
+                if(!seenGaps.has(h.gap)) { seenGaps.add(h.gap); uniqueGaps.push(h); }
             }
             uniqueGaps.sort((a, b) => a.gap - b.gap);
 
             let html = ``;
-
-            // Active 10-Tick Lock (Anchored to last real tag)
             let tenTickTarget = anchorNum + 0.10;
             if (!isDormant && effectiveTag !== 'blank' && tenTickTarget > currentNum) {
                 html += `<div class="prediction-category">
@@ -551,7 +482,6 @@
                          </div>`;
             }
 
-            // Grid Traps (Always calculated from current live position)
             if (isDormant || tagType === 'blank') {
                 let baseInt = Math.floor(currentNum);
                 let nextSuffixes = terminalSuffixes.map(s => {
@@ -566,15 +496,12 @@
                          </div>`;
             }
 
-            html += `<div class="prediction-category">
-                        <h3>Projected Historical Block Gaps</h3>`;
+            html += `<div class="prediction-category"><h3>Projected Historical Block Gaps</h3>`;
             
             let displayedCount = 0;
             uniqueGaps.forEach(u => {
                 if (displayedCount >= 5) return;
                 let projectedVal = anchorNum + (u.gap * 0.01);
-                
-                // CRITICAL: Only show targets that are still IN THE FUTURE relative to the current Blank position
                 if (projectedVal > currentNum && (!isDormant ? u.gap !== 10 : true)) {
                     html += buildCard(projectedVal, u.nextTag, `Verified Drop Gap (Anchored to ${anchorNum.toFixed(2)})`, currentNum);
                     displayedCount++;
