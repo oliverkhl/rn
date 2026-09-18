@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dual-State Predictor (Monochrome Edition)</title>
+    <title>Dual-State Predictor (Waypoint Edition)</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -12,12 +12,13 @@
             --text-main: #ffffff;
             --text-muted: #888888;
             
-            /* Tag Accents (Shades of Grayscale) */
+            /* Tag Accents */
             --accent-golden: #ffffff;
             --accent-parrots: #cccccc;
             --accent-minor: #999999;
             --accent-mini: #666666;
             --accent-big: #333333;
+            --accent-blank: #444444; /* New Blank Tag */
             --accent-price: #dddddd;
             
             /* UI Elements */
@@ -25,6 +26,7 @@
             --state-dormant: #777777;
             --state-active: #ffffff;
             --state-replay: #bbbbbb;
+            --state-waypoint: #999999;
         }
 
         * {
@@ -93,6 +95,7 @@
         .state-dormant { background-color: #1a1a1a; color: var(--state-dormant); border: 1px solid var(--state-dormant); }
         .state-active { background-color: #2a2a2a; color: var(--state-active); border: 1px solid var(--state-active); }
         .state-replay { background-color: #222222; color: var(--state-replay); border: 1px solid var(--state-replay); }
+        .state-waypoint { background-color: #111111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
 
         .main-input-group {
             margin-bottom: 16px;
@@ -116,6 +119,7 @@
             border-color: #ffffff;
         }
 
+        /* 3-Column Grid for Buttons to fit BLANK */
         .tag-buttons-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -157,6 +161,7 @@
         .btn-minor { background-color: #999999; color: #000000; }
         .btn-mini { background-color: #666666; color: #ffffff; }
         .btn-big { background-color: #333333; color: #ffffff; border: 1px solid #555555; }
+        .btn-blank { background-color: #111111; color: #aaaaaa; border: 1px dashed #555555; }
 
         /* B&W Text Colors */
         .color-golden { color: var(--accent-golden); }
@@ -164,6 +169,7 @@
         .color-minor { color: var(--accent-minor); }
         .color-mini { color: var(--accent-mini); }
         .color-big { color: var(--accent-big); }
+        .color-blank { color: var(--accent-blank); }
 
         .pred-card {
             background-color: var(--bg-color);
@@ -269,18 +275,30 @@
     <div class="container">
         <!-- TOP/LEFT PANEL -->
         <div class="panel">
-            <h2>Data Entry Console</h2>
+            <h2>Notes</h2>
             
             <div class="main-input-group">
-                <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="Enter Ticker Number...">
+                <input type="number" id="main-input" step="0.01" inputmode="decimal">
             </div>
 
             <div class="tag-buttons-grid">
-                <button class="tag-btn btn-golden full-width" onclick="addNumber('golden')">GOLDEN <span id="count-golden">0</span></button>
+                <button class="tag-btn btn-golden" onclick="addNumber('golden')">GOLDEN <span id="count-golden">0</span></button>
+                <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK <span id="count-blank">0</span></button>
                 <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">PARROTS <span id="count-parrots">0</span></button>
                 <button class="tag-btn btn-minor" onclick="addNumber('minor')">MINOR <span id="count-minor">0</span></button>
                 <button class="tag-btn btn-mini" onclick="addNumber('mini')">MINI <span id="count-mini">0</span></button>
                 <button class="tag-btn btn-big" onclick="addNumber('big')">BIG <span id="count-big">0</span></button>
+            </div>
+        </div>
+
+        <!-- BOTTOM/RIGHT PANEL -->
+        <div class="panel" id="predictionPanel">
+            <h2>Result <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
+            <div id="modeDescription" class="mode-description">
+                Input a number and select a tag. Use BLANK to track unselected numbers and adjust target distances dynamically.
+            </div>
+            <div id="predictionsArea">
+                <!-- Predictions populate here -->
             </div>
             
             <h3 style="margin-top: 18px; font-size: 0.95rem;">Contiguous Monitored Blocks</h3>
@@ -288,24 +306,11 @@
                 <!-- History populated by JS -->
             </ul>
         </div>
-
-        <!-- BOTTOM/RIGHT PANEL -->
-        <div class="panel" id="predictionPanel">
-            <h2>Algorithmic Projections <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
-            <div id="modeDescription" class="mode-description">
-                Input a number and select a tag to dynamically project future tick patterns. (Ignores unmonitored Dark Zones).
-            </div>
-            <div id="predictionsArea">
-                <!-- Predictions populate here -->
-            </div>
-        </div>
     </div>
 
     <script>
-        // The definitive dataset. 'block' ID groups continually monitored sequences. 
-        // Gaps between different blocks are "Dark Zones" and will NOT be used for logic.
         let dataset = [
-            // SYSTEM A (Blocks 1-7)
+            // SYSTEM A
             {val: 785.43, tag: 'golden', sys: 'A', block: 1}, {val: 785.53, tag: 'golden', sys: 'A', block: 1}, 
             {val: 787.72, tag: 'mini', sys: 'A', block: 1}, {val: 789.80, tag: 'big', sys: 'A', block: 1}, 
             {val: 790.29, tag: 'parrots', sys: 'A', block: 1}, {val: 790.57, tag: 'golden', sys: 'A', block: 1}, 
@@ -320,7 +325,7 @@
             {val: 846.46, tag: 'parrots', sys: 'A', block: 4}, {val: 846.67, tag: 'minor', sys: 'A', block: 4}, {val: 846.70, tag: 'golden', sys: 'A', block: 4}, 
             {val: 847.18, tag: 'big', sys: 'A', block: 4}, {val: 850.25, tag: 'golden', sys: 'A', block: 4}, {val: 850.52, tag: 'golden', sys: 'A', block: 4}, 
             {val: 850.55, tag: 'parrots', sys: 'A', block: 4}, {val: 850.65, tag: 'parrots', sys: 'A', block: 4}, {val: 850.71, tag: 'parrots', sys: 'A', block: 4}, 
-            {val: 852.66, tag: 'golden', sys: 'A', block: 4}, {val: 852.70, tag: 'parrots', sys: 'A', block: 4}, {val: 852.70, tag: 'mini', sys: 'A', block: 4}, // Dual Tag
+            {val: 852.66, tag: 'golden', sys: 'A', block: 4}, {val: 852.70, tag: 'parrots', sys: 'A', block: 4}, {val: 852.70, tag: 'mini', sys: 'A', block: 4}, 
             
             {val: 861.78, tag: 'golden', sys: 'A', block: 5}, {val: 862.23, tag: 'golden', sys: 'A', block: 5},
             
@@ -329,7 +334,7 @@
             
             {val: 941.89, tag: 'mini', sys: 'A', block: 7},
 
-            // SYSTEM B (Blocks 8-9)
+            // SYSTEM B
             {val: 827.34, tag: 'golden', sys: 'B', block: 8}, {val: 827.91, tag: 'golden', sys: 'B', block: 8}, 
             {val: 828.21, tag: 'parrots', sys: 'B', block: 8}, {val: 828.96, tag: 'golden', sys: 'B', block: 8}, 
             {val: 829.35, tag: 'parrots', sys: 'B', block: 8}, {val: 829.54, tag: 'parrots', sys: 'B', block: 8}, 
@@ -340,14 +345,13 @@
             {val: 995.42, tag: 'golden', sys: 'B', block: 9}, {val: 995.45, tag: 'parrots', sys: 'B', block: 9}, {val: 995.50, tag: 'golden', sys: 'B', block: 9}
         ];
 
-        // Terminal Grid Traps mapped from System A & B Convergence
         const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.70, 0.84];
 
-        // Helper to get active block ID (highest block + 1 for new numbers)
         function getLatestBlock() {
             return Math.max(...dataset.map(d => d.block));
         }
 
+        // Price Delta is calculated from current ticker position, NOT anchor
         function formatDeltaPrice(targetNum, currentNum) {
             let diff = Math.abs(targetNum - currentNum);
             let ticks = Math.round(diff / 0.01);
@@ -363,14 +367,14 @@
             return `<div class="pred-card card-${tag}">
                         <div class="pred-card-header">
                             <span class="pred-val">${val.toFixed(2)}</span>
-                            <span class="pred-price">[${prefix}${ticks} Ticks | ${priceGap}]</span>
+                            <span class="pred-price">[${prefix}${ticks} Ticks \vert{}${priceGap}]</span>
                         </div>
-                        <span class="pred-logic">${logicText} (Target: ${tag.toUpperCase()})</span>
+                        <span class="pred-logic">${logicText} (Target:${tag.toUpperCase()})</span>
                     </div>`;
         }
 
         function renderData() {
-            const counts = { golden: 0, parrots: 0, minor: 0, mini: 0, big: 0 };
+            const counts = { golden: 0, parrots: 0, minor: 0, mini: 0, big: 0, blank: 0 };
             dataset.forEach(item => {
                 if (counts[item.tag] !== undefined) counts[item.tag]++;
             });
@@ -380,11 +384,11 @@
             document.getElementById('count-minor').innerText = counts.minor;
             document.getElementById('count-mini').innerText = counts.mini;
             document.getElementById('count-big').innerText = counts.big;
+            document.getElementById('count-blank').innerText = counts.blank;
 
             const list = document.getElementById('historyList');
             list.innerHTML = '';
             
-            // Group by value to handle dual-tags elegantly
             const grouped = {};
             dataset.forEach(d => {
                 if(!grouped[d.val]) grouped[d.val] = { val: d.val, sys: d.sys, tags: [] };
@@ -397,7 +401,10 @@
                 const li = document.createElement('li');
                 li.className = 'history-item';
                 
-                let tagsHtml = item.tags.map(t => `<span class="tag color-${t}">${t}</span>`).join('');
+                let tagsHtml = item.tags.map(t => {
+                    let style = t === 'blank' ? 'background: #222; border: 1px dashed #555;' : '';
+                    return `<span class="tag color-${t}" style="${style}">${t}</span>`;
+                }).join('');
                 
                 li.innerHTML = `
                     <div>
@@ -417,14 +424,12 @@
             if (!numInput) return;
             const num = parseFloat(numInput);
             
-            // Determine block logic: if we are adding a totally new number, assume it's a new isolated block
-            // UNLESS it's very close to the last added number (within 2 points)
             let sortedDB = [...dataset].sort((a, b) => b.val - a.val);
             let lastVal = sortedDB.length > 0 ? sortedDB[0].val : num;
             let currentBlock = getLatestBlock();
             
             if(Math.abs(num - lastVal) > 2.00 && !dataset.find(d => d.val === num)) {
-                currentBlock++; // Create new Dark Zone boundary
+                currentBlock++; 
             }
 
             if (!dataset.find(d => d.val === num && d.tag === tagType)) {
@@ -446,27 +451,39 @@
             
             area.innerHTML = '';
             let chronoData = [...dataset].sort((a, b) => a.val - b.val);
-            let historyIndex = chronoData.findIndex(d => d.val === currentNum);
+            let historyIndex = chronoData.findIndex(d => d.val === currentNum && d.tag === tagType);
 
-            // MODE 1: HISTORICAL SEQUENCE MATCH
-            if (historyIndex !== -1 && historyIndex < chronoData.length - 1) {
-                // Verify the next number is in the SAME contiguous block (no dark zones)
-                if (chronoData[historyIndex].block === chronoData[historyIndex+1].block) {
+            // Determine Anchor and Effective State
+            let effectiveTag = tagType;
+            let anchorNum = currentNum;
+            let currentBlock = chronoData[historyIndex]?.block || getLatestBlock();
+
+            // IF BLANK: Find the last REAL tag to anchor the probability wave
+            if (tagType === 'blank') {
+                let lastReal = [...chronoData].reverse().find(d => d.tag !== 'blank' && d.val < currentNum && d.block === currentBlock);
+                if (lastReal) {
+                    effectiveTag = lastReal.tag;
+                    anchorNum = lastReal.val;
+                }
+            }
+
+            // MODE 1: HISTORICAL SEQUENCE MATCH (Ignore if logging a Blank waypoint)
+            if (tagType !== 'blank' && historyIndex !== -1 && historyIndex < chronoData.length - 1) {
+                // Must be in same contiguous block, and next target must not be a blank
+                let nextTarget = chronoData[historyIndex+1];
+                if (chronoData[historyIndex].block === nextTarget.block && nextTarget.tag !== 'blank') {
                     stateBadge.className = 'state-badge state-replay';
                     stateBadge.innerText = 'STATE: SEQUENCE MATCH';
-                    modeDesc.innerText = `The number ${currentNum.toFixed(2)} is in the database. Projecting the exact monitored sequence that followed it.`;
+                    modeDesc.innerText = `The number ${currentNum.toFixed(2)} is in the database. Projecting the exact monitored sequence.`;
                     predPanel.style.borderColor = 'var(--state-replay)';
 
-                    let html = `<div class="prediction-category">
-                                    <h3 style="color:var(--state-replay);">Exact Block Replay</h3>`;
+                    let html = `<div class="prediction-category"><h3 style="color:var(--state-replay);">Exact Block Replay</h3>`;
                     
                     let max = Math.min(historyIndex + 5, chronoData.length);
                     for(let i = historyIndex + 1; i < max; i++) {
-                        // Stop if we cross a block boundary (dark zone)
                         if(chronoData[i].block !== chronoData[historyIndex].block) break;
-                        
-                        let nextTarget = chronoData[i];
-                        html += buildCard(nextTarget.val, nextTarget.tag, `Contiguous Monitored Match`, currentNum);
+                        if(chronoData[i].tag === 'blank') continue;
+                        html += buildCard(chronoData[i].val, chronoData[i].tag, `Contiguous Monitored Match`, currentNum);
                     }
                     html += `</div>`;
                     area.innerHTML = html;
@@ -475,12 +492,17 @@
             }
 
             // MODE 2: LIVE DYNAMIC PATTERN
-            let isDormant = (tagType === 'golden' || tagType === 'big');
+            let isDormant = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'blank');
             
-            if (isDormant) {
+            if (tagType === 'blank') {
+                stateBadge.className = 'state-badge state-waypoint';
+                stateBadge.innerText = `TRACKING BLANK (ANCHORED TO ${effectiveTag.toUpperCase()})`;
+                modeDesc.innerText = `You are at an unselected number. Adjusting remaining distance to targets anchored from ${anchorNum.toFixed(2)}.`;
+                predPanel.style.borderColor = 'var(--state-waypoint)';
+            } else if (isDormant) {
                 stateBadge.className = 'state-badge state-dormant';
                 stateBadge.innerText = 'STATE: DORMANT (VOID)';
-                modeDesc.innerText = 'System is cooling down. Searching historical database for exact gaps that followed this tag inside contiguous blocks.';
+                modeDesc.innerText = 'System is cooling down. Searching historical database for exact gaps that followed this tag.';
                 predPanel.style.borderColor = 'var(--state-dormant)';
             } else {
                 stateBadge.className = 'state-badge state-active';
@@ -489,12 +511,22 @@
                 predPanel.style.borderColor = 'var(--state-active)';
             }
 
-            // Database Scan: ONLY look at gaps within the same contiguous block (ignore Dark Zones)
+            // Database Scan: Look for real tags that followed our effectiveTag
             let historicalNexts = [];
             for(let i = 0; i < chronoData.length - 1; i++) {
-                if(chronoData[i].tag === tagType && chronoData[i].block === chronoData[i+1].block) {
-                    let gap = Math.round((chronoData[i+1].val - chronoData[i].val) / 0.01);
-                    historicalNexts.push({ gap: gap, nextTag: chronoData[i+1].tag });
+                if(chronoData[i].tag === effectiveTag) {
+                    let nextReal = null;
+                    for(let j = i + 1; j < chronoData.length; j++) {
+                        if(chronoData[j].block !== chronoData[i].block) break;
+                        if(chronoData[j].tag !== 'blank') {
+                            nextReal = chronoData[j];
+                            break;
+                        }
+                    }
+                    if(nextReal) {
+                        let gap = Math.round((nextReal.val - chronoData[i].val) / 0.01);
+                        historicalNexts.push({ gap: gap, nextTag: nextReal.tag });
+                    }
                 }
             }
 
@@ -510,26 +542,47 @@
 
             let html = ``;
 
-            // If ACTIVE, always inject the Absolute 10-Tick Rule first
-            if (!isDormant) {
+            // Active 10-Tick Lock (Anchored to last real tag)
+            let tenTickTarget = anchorNum + 0.10;
+            if (!isDormant && effectiveTag !== 'blank' && tenTickTarget > currentNum) {
                 html += `<div class="prediction-category">
                             <h3 style="color:var(--state-active);">Primary Active Traps</h3>
-                            ${buildCard(currentNum + 0.10, 'golden', `Absolute 10-Tick Hard-Lock`, currentNum)}
+                            ${buildCard(tenTickTarget, 'golden', `Absolute 10-Tick Lock (from ${anchorNum.toFixed(2)})`, currentNum)}
+                         </div>`;
+            }
+
+            // Grid Traps (Always calculated from current live position)
+            if (isDormant || tagType === 'blank') {
+                let baseInt = Math.floor(currentNum);
+                let nextSuffixes = terminalSuffixes.map(s => {
+                    let target = baseInt + s;
+                    return target <= currentNum ? baseInt + 1 + s : target;
+                }).sort((a, b) => a - b);
+                
+                html += `<div class="prediction-category">
+                            <h3 style="color:var(--state-dormant);">Nearest Grid Locks</h3>
+                            ${buildCard(nextSuffixes[0], 'golden', `Nearest Hardcoded Decimal Trap`, currentNum)}
+                            ${buildCard(nextSuffixes[1], 'golden', `Secondary Decimal Trap`, currentNum)}
                          </div>`;
             }
 
             html += `<div class="prediction-category">
                         <h3>Projected Historical Block Gaps</h3>`;
             
-            if(uniqueGaps.length === 0) {
-                 html += `<p style="font-size:0.85rem; color:var(--text-muted);">No contiguous historical data available for this tag.</p>`;
-            } else {
-                 uniqueGaps.slice(0, 5).forEach(u => {
-                     // Don't duplicate the 10-tick if it's already shown above
-                     if (!isDormant && u.gap === 10) return; 
-                     let projectedVal = currentNum + (u.gap * 0.01);
-                     html += buildCard(projectedVal, u.nextTag, `Verified Historical Drop Gap`, currentNum);
-                 });
+            let displayedCount = 0;
+            uniqueGaps.forEach(u => {
+                if (displayedCount >= 5) return;
+                let projectedVal = anchorNum + (u.gap * 0.01);
+                
+                // CRITICAL: Only show targets that are still IN THE FUTURE relative to the current Blank position
+                if (projectedVal > currentNum && (!isDormant ? u.gap !== 10 : true)) {
+                    html += buildCard(projectedVal, u.nextTag, `Verified Drop Gap (Anchored to ${anchorNum.toFixed(2)})`, currentNum);
+                    displayedCount++;
+                }
+            });
+
+            if(displayedCount === 0) {
+                 html += `<p style="font-size:0.85rem; color:var(--text-muted);">No remaining historical targets found for this zone.</p>`;
             }
             
             html += `</div>`;
