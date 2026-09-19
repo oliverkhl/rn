@@ -169,13 +169,13 @@
             background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(3px);
         }
         .modal-content {
-            background: #111; border: 1px solid #555; border-radius: 8px; padding: 20px; width: 90%; max-width: 400px;
+            background: #111; border: 1px solid #555; border-radius: 8px; padding: 20px; width: 90%; max-width: 420px;
             color: #fff; display: flex; flex-direction: column; gap: 12px;
         }
-        .modal-content h3 { margin-top: 0; margin-bottom: 10px; border-bottom: 1px dashed #555; padding-bottom: 10px; }
+        .modal-content h3 { margin-top: 0; margin-bottom: 6px; border-bottom: 1px dashed #555; padding-bottom: 10px; }
         .modal-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; border-radius: 4px; }
         .modal-row input[type="number"] { width: 120px; background: #000; color: #fff; border: 1px solid #555; padding: 8px; text-align: right; font-family: monospace; font-size: 1rem;}
-        .modal-row label { font-size: 0.9rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; }
+        .modal-row label { font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; }
         .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
         .btn-modal-submit { flex: 1; background: #fff; color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
         .btn-modal-cancel { flex: 1; background: #333; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
@@ -191,22 +191,35 @@
 </head>
 <body>
 
-    <!-- NET LEDGER MODAL -->
+    <!-- UNIFIED NET LEDGER MODAL (Auto-Fill Update) -->
     <div class="modal-overlay" id="hsModal">
         <div class="modal-content">
-            <h3>Ledger Entry (Net Math)</h3>
-            <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">Enter your final payout and your capital injected (buy-in) to calculate the machine's true Net Deficit or Surplus.</div>
-            <div class="modal-row">
+            <h3 id="modal-title">Ledger Entry (True Volume Math)</h3>
+            <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">The tool auto-detects your previous anchor to calculate exact volume. Just enter the final payout.</div>
+            
+            <div class="modal-row" style="border-left: 2px solid #fff;">
                 <label>Gross Payout / Cashout ($)</label>
-                <input type="number" id="hs-total" value="" placeholder="0.00" step="0.01">
+                <input type="number" id="hs-total" value="" placeholder="0.00" step="0.01" inputmode="decimal">
             </div>
+            
+            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid #555;">
+                <label style="color:#aaa;">Current Ticker (From Main Page)</label>
+                <input type="number" id="hs-current-ticker" value="" readonly style="color:#888;" inputmode="decimal">
+            </div>
+
             <div class="modal-row" style="border-left: 2px solid #00e5ff;">
-                <label style="color:#aaa;">Capital Injected / Buy-in ($)</label>
-                <input type="number" id="hs-buyin" value="2.50" step="0.50">
+                <label style="color:#fff;">Starting Ticker (Auto-Detected)</label>
+                <input type="number" id="hs-start-ticker" value="" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
             </div>
+
+            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid #ffcc00;">
+                <label style="color:#ffcc00;">Calculated Capital Injected ($)</label>
+                <input type="number" id="hs-buyin" value="0.00" readonly style="color:#ffcc00; font-weight:bold;" inputmode="decimal">
+            </div>
+
             <div class="modal-actions">
-                <button class="btn-modal-cancel" onclick="closeGoldenModal()">Cancel</button>
-                <button class="btn-modal-submit" onclick="submitGoldenModal()">Lock Ledger</button>
+                <button class="btn-modal-cancel" onclick="closeLedgerModal()">Cancel</button>
+                <button class="btn-modal-submit" onclick="submitLedgerModal()">Lock Ledger</button>
             </div>
         </div>
     </div>
@@ -227,10 +240,10 @@
             </div>
 
             <div class="tag-buttons-grid">
-                <button class="tag-btn btn-golden" onclick="openGoldenModal()">Golden <span id="count-golden">0</span></button>
-                <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">Parrots <span id="count-parrots">0</span></button>
-                <button class="tag-btn btn-big" onclick="addNumber('big')">Big <span id="count-big">0</span></button>
-                <button class="tag-btn btn-blank" onclick="addNumber('blank')">Blank <span id="count-blank">0</span></button>
+                <button class="tag-btn btn-golden" onclick="openLedgerModal('golden')">HOLD & SPIN / SESSION <span id="count-golden">0</span></button>
+                <button class="tag-btn btn-parrots" onclick="openLedgerModal('parrots')">PARROTS (Free Spins) <span id="count-parrots">0</span></button>
+                <button class="tag-btn btn-big" onclick="openLedgerModal('big')">BIG DROP <span id="count-big">0</span></button>
+                <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK (Climb) <span id="count-blank">0</span></button>
             </div>
             
             <div class="util-bar">
@@ -279,7 +292,7 @@
 
             <div class="manual-step">
                 <h4>Phase 5: Shatter the Dark Zone (Lock the Ledger)</h4>
-                <p>When a feature finishes, click <strong>Golden </strong>. Enter the <strong>Gross Payout</strong> shown on the screen, and the <strong>Capital Injected</strong> (how much you spent to hit it). Click Lock Ledger.</p>
+                <p>When a feature finishes, log it (Golden, Parrots, or Big). Enter the <strong>Gross Payout</strong> shown on the screen. The tool automatically pulls your previous anchor to calculate the exact volume injected. Click Lock Ledger.</p>
             </div>
 
             <div class="manual-step">
@@ -314,6 +327,7 @@
 
         const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.50, 0.70, 0.84];
         let isManualTracking = false;
+        let activeModalTag = '';
 
         document.getElementById('main-input').addEventListener('focus', function() {
             this.value = ''; isManualTracking = false;
@@ -375,37 +389,78 @@
                     </div>`;
         }
 
-        // --- MODAL LOGIC ---
-        function openGoldenModal() {
+        // --- UNIFIED MODAL LOGIC WITH AUTO-ANCHOR ---
+        function openLedgerModal(tagType) {
             const numInput = document.getElementById('main-input').value;
             if (!numInput) { alert("Please enter the current Progressive Ticker price first."); return; }
+            
+            activeModalTag = tagType;
+            let currentVal = parseFloat(numInput);
+            
+            const titles = {
+                'golden': 'Hold & Spin / Session Summary',
+                'parrots': 'Parrots Free Spins Summary',
+                'big': 'Big Drop Summary'
+            };
+            document.getElementById('modal-title').innerText = titles[tagType];
+            
             document.getElementById('hs-total').value = '';
-            document.getElementById('hs-buyin').value = '2.50';
+            document.getElementById('hs-current-ticker').value = currentVal.toFixed(2);
+            
+            // Auto-detect previous ticker price
+            let sortedDB = [...dataset].sort((a, b) => b.val - a.val);
+            let lastEntry = sortedDB.find(d => d.val < currentVal);
+            
+            if (lastEntry) {
+                document.getElementById('hs-start-ticker').value = lastEntry.val.toFixed(2);
+            } else {
+                document.getElementById('hs-start-ticker').value = currentVal.toFixed(2); // Fallback if no prior data
+            }
+            
+            // Auto-calculate immediately
+            calculateInjectedVolume();
+            
             document.getElementById('hsModal').style.display = 'flex';
+            // Automatically focus the payout box since start ticker is already filled
             document.getElementById('hs-total').focus();
         }
 
-        function closeGoldenModal() { document.getElementById('hsModal').style.display = 'none'; }
+        function closeLedgerModal() { document.getElementById('hsModal').style.display = 'none'; }
 
-        function submitGoldenModal() {
+        function calculateInjectedVolume() {
+            let current = parseFloat(document.getElementById('hs-current-ticker').value) || 0;
+            let start = parseFloat(document.getElementById('hs-start-ticker').value);
+            
+            if (isNaN(start)) {
+                document.getElementById('hs-buyin').value = '2.50'; 
+                return;
+            }
+            
+            let diff = current - start;
+            if (diff < 0) {
+                document.getElementById('hs-buyin').value = '0.00';
+                return;
+            }
+            
+            let ticks = Math.round(diff * 100);
+            let volume = ticks * 2.00;
+            
+            if (ticks === 0) volume = 2.50; 
+            
+            document.getElementById('hs-buyin').value = volume.toFixed(2);
+        }
+
+        function submitLedgerModal() {
             let grossPayout = parseFloat(document.getElementById('hs-total').value) || 0;
             let buyIn = parseFloat(document.getElementById('hs-buyin').value) || 0;
             let netDeficit = grossPayout - buyIn; 
-            closeGoldenModal(); 
-            processDataEntry('golden', netDeficit, grossPayout);
+            closeLedgerModal(); 
+            processDataEntry(activeModalTag, netDeficit, grossPayout);
         }
 
         // --- DATA ENTRY LOGIC ---
         function addNumber(tagType) {
-            if (tagType === 'big') {
-                let p = prompt(`Enter the total BIG Gross Payout amount ($):`, "150");
-                if (p === null) return; 
-                let gross = parseFloat(p) || 0;
-                let net = gross - 2.50; 
-                processDataEntry('big', net, gross);
-            } else if (tagType === 'parrots') {
-                processDataEntry('parrots', 2.50, 5.00);
-            } else if (tagType === 'blank') {
+            if (tagType === 'blank') {
                 processDataEntry('blank', 0, 0);
             }
         }
@@ -499,11 +554,12 @@
 
             let isDarkZone = (tagType === 'blank' && effectiveTag === 'blank'); 
             let isFreeSpin = (effectiveTag === 'parrots'); 
-            let isPayoutEvent = (effectiveTag === 'golden' || effectiveTag === 'big');
+            let isPayoutEvent = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'parrots');
             
             let ticksSinceAnchor = Math.round((currentNum - anchorNum) / 0.01);
             let isMicroClusterWindow = (!isDarkZone && tagType !== 'blank') || (tagType === 'blank' && ticksSinceAnchor <= 10 && ticksSinceAnchor > 0);
             let isSurplusMode = isPayoutEvent && netDeficit < 0;
+            let isParrotWipe = isFreeSpin && netDeficit > 0 && netDeficit <= 2.50; 
 
             if (isDarkZone) {
                 stateBadge.className = 'state-badge state-waypoint'; stateBadge.innerText = `DARK ZONE (NO ANCHOR)`;
@@ -517,7 +573,7 @@
                 stateBadge.className = 'state-badge state-cluster'; stateBadge.innerText = `🔥 MICRO-CLUSTER ACTIVE`;
                 modeDesc.innerText = `The engine is HOT. Highest probability of a back-to-back chained drop is within the next 3 to 10 visual ticks.`;
                 predPanel.style.borderColor = 'var(--alert-hot)';
-            } else if (isFreeSpin) {
+            } else if (isParrotWipe) {
                 stateBadge.className = 'state-badge state-freespin'; stateBadge.innerText = 'STATE: PARROT COMPRESSOR';
                 modeDesc.innerText = 'Price is locked. Instant liability clearance expected. Watch for an internal Golden chain.';
                 predPanel.style.borderColor = '#ffffff';
@@ -590,7 +646,7 @@
                          </div>`;
             }
 
-            if (isFreeSpin) {
+            if (isParrotWipe) {
                 html += `<div class="prediction-category">
                             <h3 style="color:#ffffff;">⚠️ Parrot Liability (Net Loss: $2.50)</h3>
                             <div class="tactical-card tactical-freespin">
