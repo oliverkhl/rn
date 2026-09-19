@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Synthetic Financial Engine Predictor (Ledger Edition)</title>
+    <title>Progressive Hold & Spin Predictor</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -28,16 +28,15 @@
             --state-freespin: #ffffff;
             --alert-red: #ff5555;
             --alert-red-muted: #aa3333;
+            --alert-hot: #ffcc00;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0; padding: 12px;
-            display: flex; flex-direction: column; align-items: center;
+            background-color: var(--bg-color); color: var(--text-main);
+            margin: 0; padding: 12px; display: flex; flex-direction: column; align-items: center;
         }
 
         .container {
@@ -51,45 +50,42 @@
         }
 
         .panel {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            background-color: var(--panel-bg); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
             width: 100%; transition: border-color 0.3s ease;
         }
 
         h2 {
-            margin-top: 0; color: #fff; font-size: 1.1rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px; margin-bottom: 16px;
-            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 0; color: #fff; font-size: 1.1rem; border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;
         }
+
+        .rule-bar {
+            background-color: #1a1a1a; border: 1px solid #444; border-radius: 6px;
+            padding: 10px; font-size: 0.8rem; color: #ccc; margin-bottom: 16px; text-align: center;
+        }
+        .rule-bar strong { color: #fff; }
 
         .state-badge {
             font-size: 0.75rem; padding: 4px 8px; border-radius: 12px;
             font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;
-            color: var(--text-muted); border: 1px solid var(--border-color);
-            background-color: #222222;
+            color: var(--text-muted); border: 1px solid var(--border-color); background-color: #222222;
         }
 
         .state-dormant { background-color: #1a1a1a; color: var(--state-dormant); border: 1px solid var(--state-dormant); }
         .state-active { background-color: #2a2a2a; color: var(--state-active); border: 1px solid var(--state-active); }
+        .state-cluster { background-color: #332200; color: var(--alert-hot); border: 1px solid var(--alert-hot); }
         .state-replay { background-color: #222222; color: var(--state-replay); border: 1px solid var(--state-replay); }
         .state-waypoint { background-color: #111111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
         .state-freespin { background-color: #ffffff; color: #000000; border: 1px solid #ffffff; }
-        .state-nuclear { background-color: #330000; color: var(--alert-red); border: 1px solid var(--alert-red); }
 
-        .main-input-group { 
-            display: flex; gap: 10px; margin-bottom: 16px; 
-        }
+        .main-input-group { display: flex; gap: 10px; margin-bottom: 16px; }
 
         #main-input {
             width: 100%; background-color: #000000; border: 2px solid #555555;
             color: #ffffff; padding: 14px; border-radius: 6px;
-            font-family: monospace; font-size: 1.3rem; text-align: center;
-            transition: border-color 0.2s ease;
+            font-family: monospace; font-size: 1.3rem; text-align: center; transition: border-color 0.2s ease;
         }
-        
         #main-input:focus { outline: none; border-color: #ffffff; }
 
         .btn-step {
@@ -97,198 +93,131 @@
             padding: 0 16px; border-radius: 6px; font-weight: bold; font-size: 0.9rem;
             cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
         }
-        
-        .btn-step:active {
-            background-color: #ffffff; color: #000000; border-color: #ffffff;
-        }
+        .btn-step:active { background-color: #ffffff; color: #000000; border-color: #ffffff; }
 
-        .tag-buttons-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;
-        }
-
+        .tag-buttons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .tag-btn {
-            border: none; padding: 12px; border-radius: 6px;
-            cursor: pointer; font-weight: bold; font-size: 0.95rem;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: opacity 0.2s;
-            touch-action: manipulation;
+            border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.95rem;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
+            transition: opacity 0.2s; touch-action: manipulation; text-align: center;
         }
-        
         .tag-btn span {
-            font-size: 0.8rem; background: rgba(128,128,128,0.3);
-            padding: 2px 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.7rem; background: rgba(128,128,128,0.3); padding: 2px 6px;
+            border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
         }
-
         .tag-btn:active { opacity: 0.6; }
         
-        /* B&W Buttons */
         .btn-golden { background-color: #ffffff; color: #000000; }
         .btn-parrots { background-color: #cccccc; color: #000000; }
         .btn-big { background-color: #333333; color: #ffffff; border: 1px solid #555555; }
         .btn-blank { background-color: #111111; color: #aaaaaa; border: 1px dashed #555555; }
 
-        /* B&W Text Colors */
         .color-golden { color: var(--accent-golden); }
         .color-parrots { color: var(--accent-parrots); }
         .color-big { color: var(--accent-big); }
         .color-blank { color: var(--accent-blank); }
 
         .pred-card {
-            background-color: var(--bg-color); padding: 10px 12px;
-            margin-bottom: 8px; border-radius: 4px; display: flex; flex-direction: column;
-            border-left: 4px solid; border-top: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-color); padding: 10px 12px; margin-bottom: 8px; border-radius: 4px;
+            display: flex; flex-direction: column; border-left: 4px solid;
+            border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
         }
-
-        .pred-card-header {
-            display: flex; justify-content: space-between; align-items: center;
-            width: 100%; margin-bottom: 4px;
-        }
+        .pred-card-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 4px; }
 
         .card-golden { border-left-color: var(--accent-golden); }
         .card-parrots { border-left-color: var(--accent-parrots); }
         .card-big { border-left-color: var(--accent-big); }
         .card-void { border-left-color: var(--alert-red); background-color: rgba(255, 0, 0, 0.05); }
+        .card-cluster { border-left-color: var(--alert-hot); border-color: var(--alert-hot); }
 
         .pred-val { font-family: monospace; font-size: 1.05rem; color: #fff; font-weight: bold; }
         .pred-price { font-size: 0.85rem; color: var(--accent-price); font-weight: normal; }
         .pred-logic { font-size: 0.8rem; color: var(--text-muted); }
 
         .tactical-card {
-            background-color: #1a1a1a;
-            border: 1px dashed var(--text-muted);
-            border-radius: 4px;
-            padding: 12px;
-            font-size: 0.85rem;
-            color: #cccccc;
-            margin-bottom: 12px;
-            line-height: 1.5;
+            background-color: #1a1a1a; border: 1px dashed var(--text-muted); border-radius: 4px; padding: 12px;
+            font-size: 0.85rem; color: #cccccc; margin-bottom: 12px; line-height: 1.5;
         }
-        
-        .tactical-card strong { 
-            color: var(--accent-golden); 
-            display: block; 
-            margin-bottom: 4px; 
-            font-size: 0.9rem;
-        }
-
-        .tactical-warning {
-            border-color: var(--alert-red-muted);
-            background-color: rgba(170, 51, 51, 0.1);
-        }
+        .tactical-card strong { color: var(--accent-golden); display: block; margin-bottom: 4px; font-size: 0.9rem; }
+        .tactical-warning { border-color: var(--alert-red-muted); background-color: rgba(170, 51, 51, 0.1); }
         .tactical-warning strong { color: var(--alert-red); }
-
-        .tactical-freespin {
-            border-color: #ffffff;
-            background-color: #222222;
-        }
+        .tactical-freespin { border-color: #ffffff; background-color: #222222; }
         .tactical-freespin strong { color: #ffffff; }
+        .tactical-hot { border-color: var(--alert-hot); background-color: rgba(255, 204, 0, 0.05); color: #fff;}
+        .tactical-hot strong { color: var(--alert-hot); }
 
-        .history-list {
-            list-style: none; padding: 0; margin: 0;
-            max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch;
-        }
-
-        .history-item {
-            padding: 8px 4px; border-bottom: 1px solid var(--border-color);
-            display: flex; justify-content: space-between; align-items: center;
-            font-family: monospace; font-size: 0.95rem;
-        }
-
+        .history-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .history-item { padding: 8px 4px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-family: monospace; font-size: 0.95rem; }
         .history-item:last-child { border-bottom: none; }
         
         .tag-group { display: flex; gap: 4px; }
-        .tag {
-            font-size: 0.65rem; padding: 3px 6px; border-radius: 4px;
-            background-color: var(--border-color); text-transform: uppercase;
-            font-weight: bold; color: #ffffff;
-        }
-
-        .sys-tag {
-            font-size: 0.65rem; color: #ffffff; background: #444444;
-            padding: 2px 5px; border-radius: 4px; margin-right: 8px;
-        }
-        
+        .tag { font-size: 0.65rem; padding: 3px 6px; border-radius: 4px; background-color: var(--border-color); text-transform: uppercase; font-weight: bold; color: #ffffff; }
+        .sys-tag { font-size: 0.65rem; color: #ffffff; background: #444444; padding: 2px 5px; border-radius: 4px; margin-right: 8px; }
         .sys-tag-live { background: #ffffff; color: #000000; }
 
-        .mode-description {
-            font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;
-            padding-bottom: 10px; border-bottom: 1px dashed var(--border-color);
-        }
-
+        .mode-description { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
         .util-bar { display: flex; margin-top: 10px; width: 100%; }
-        
-        .btn-clear {
-            background: none; border: 1px solid #555; color: #888;
-            padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer;
-            width: 100%; font-weight: bold; text-transform: uppercase;
-        }
+        .btn-clear { background: none; border: 1px solid #555; color: #888; padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; }
         .btn-clear:hover { background: #222; color: #fff; border-color: #fff; }
         
-        .section-divider {
-            margin-top: 24px; margin-bottom: 8px; font-size: 0.95rem;
-            color: #fff; border-bottom: 1px dashed var(--border-color);
-            padding-bottom: 4px;
-        }
-        
-        .empty-placeholder {
-            font-size: 0.85rem; color: var(--text-muted);
-            font-style: italic; padding: 8px 4px;
-        }
+        .section-divider { margin-top: 24px; margin-bottom: 8px; font-size: 0.95rem; color: #fff; border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; }
+        .empty-placeholder { font-size: 0.85rem; color: var(--text-muted); font-style: italic; padding: 8px 4px; }
 
-        /* MODAL STYLES */
+        /* Modal Styles */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1000; backdrop-filter: blur(3px);
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(3px);
         }
         .modal-content {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 20px;
-            width: 90%; max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            background: #111; border: 1px solid #555; border-radius: 8px; padding: 20px; width: 90%; max-width: 400px;
+            color: #fff; display: flex; flex-direction: column; gap: 12px;
         }
-        .modal-content h3 { margin-top: 0; color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .modal-input-group { margin-bottom: 15px; }
-        .modal-input-group label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 5px; }
-        .modal-input-group input[type="number"] {
-            width: 100%; background: #000; border: 1px solid #555;
-            color: #fff; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 1.1rem;
-        }
-        .checkbox-group {
-            display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;
-            background: #000; padding: 15px; border-radius: 4px; border: 1px solid #333;
-        }
-        .checkbox-group label {
-            display: flex; align-items: center; gap: 10px; font-weight: bold; cursor: pointer; color: #fff; font-size: 0.9rem;
-        }
-        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; accent-color: #fff; cursor: pointer; }
-        .grand-price-display { color: var(--accent-golden); font-family: monospace; }
-        .modal-actions { display: flex; gap: 10px; }
-        .btn-modal-submit { flex: 2; background-color: #fff; color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        .btn-modal-cancel { flex: 1; background-color: #222; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .modal-content h3 { margin-top: 0; margin-bottom: 10px; border-bottom: 1px dashed #555; padding-bottom: 10px; }
+        .modal-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; border-radius: 4px; }
+        .modal-row input[type="number"] { width: 120px; background: #000; color: #fff; border: 1px solid #555; padding: 8px; text-align: right; font-family: monospace; font-size: 1rem;}
+        .modal-row label { font-size: 0.9rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-modal-submit { flex: 1; background: #fff; color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .btn-modal-cancel { flex: 1; background: #333; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
+
+    <!-- FINAL SUMMARY MODAL -->
+    <div class="modal-overlay" id="hsModal">
+        <div class="modal-content">
+            <h3>Final Feature Summary</h3>
+            <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">Wait for the major event to finish. Enter the single summarized final payout displayed on the screen to calculate the algorithmic void.</div>
+            <div class="modal-row">
+                <label>Final Summary Payout ($)</label>
+                <input type="number" id="hs-total" value="" placeholder="0.00" step="0.01">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeGoldenModal()">Cancel</button>
+                <button class="btn-modal-submit" onclick="submitGoldenModal()">Lock Ledger</button>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <div class="panel">
             <h2>Data Entry Console</h2>
             
+            <div class="rule-bar">
+                <strong>Progressive Strategy Rule:</strong><br>
+                Avoid low jackpots (Deep Void). Hunt machines with bloated jackpots nearing their Must-Hit-By ceiling.
+            </div>
+
             <div class="main-input-group">
                 <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="0.00">
                 <button id="btn-step" class="btn-step" onclick="stepNumber()">TICK</button>
             </div>
 
-            <!-- Simplified to 4 main actions based on exact engine mechanics -->
             <div class="tag-buttons-grid">
-                <button class="tag-btn btn-golden" onclick="openGoldenModal()">GOLDEN <span id="count-golden">0</span></button>
-                <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK <span id="count-blank">0</span></button>
-                
-                <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">PARROTS <span id="count-parrots">0</span></button>
+                <button class="tag-btn btn-golden" onclick="openGoldenModal()">HOLD & SPIN (Golden) <span id="count-golden">0</span></button>
+                <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">PARROTS (Free Spins) <span id="count-parrots">0</span></button>
                 <button class="tag-btn btn-big" onclick="addNumber('big')">BIG DROP <span id="count-big">0</span></button>
+                <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK (Climb) <span id="count-blank">0</span></button>
             </div>
             
             <div class="util-bar">
@@ -299,7 +228,7 @@
         <div class="panel" id="predictionPanel">
             <h2>Result <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
             <div id="modeDescription" class="mode-description">
-                Input a number and select a tag. The system calculates engine recovery voids based on exact dollar payouts.
+                Input the progressive ticker price and select a tag to calculate underlying ledger liabilities.
             </div>
             <div id="predictionsArea"></div>
             
@@ -311,69 +240,19 @@
         </div>
     </div>
 
-    <!-- HOLD & SPIN CALCULATOR MODAL -->
-    <div id="golden-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content">
-            <h3>Hold & Spin Ledger</h3>
-            
-            <div class="modal-input-group">
-                <label>Standard Blocks Total ($)</label>
-                <input type="number" id="hs-standard" value="0" step="1" inputmode="numeric">
-            </div>
-            
-            <div class="checkbox-group">
-                <label><input type="checkbox" id="hs-mini"> MINI JACKPOT ($100)</label>
-                <label><input type="checkbox" id="hs-minor"> MINOR JACKPOT ($500)</label>
-                <label><input type="checkbox" id="hs-grand"> GRAND JACKPOT (<span class="grand-price-display" id="display-grand-val">$0.00</span>)</label>
-                <label style="color:var(--alert-red);"><input type="checkbox" id="hs-ultimate"> ULTIMATE ($23,000 Wipe)</label>
-            </div>
-            
-            <div class="modal-actions">
-                <button onclick="submitGolden()" class="btn-modal-submit">LOG FINAL PAYOUT</button>
-                <button onclick="closeGoldenModal()" class="btn-modal-cancel">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // BASELINE DATASET (Minor/Mini converted to Golden + Payouts for ledger accuracy)
+        // BASELINE DATASET (Micro-cluster optimized)
         const baselineDataset = [
-            {val: 785.43, tag: 'golden', sys: 'A', block: 1, payout: 30}, 
-            {val: 785.53, tag: 'golden', sys: 'A', block: 1, payout: 25}, 
-            {val: 787.72, tag: 'golden', sys: 'A', block: 1, payout: 100}, // Was Mini
-            {val: 789.80, tag: 'big', sys: 'A', block: 1, payout: 150}, 
-            {val: 790.29, tag: 'parrots', sys: 'A', block: 1}, 
-            {val: 790.57, tag: 'golden', sys: 'A', block: 1, payout: 40}, 
-            {val: 791.30, tag: 'golden', sys: 'A', block: 1, payout: 55}, 
-            {val: 791.39, tag: 'big', sys: 'A', block: 1, payout: 150}, 
-            {val: 791.84, tag: 'golden', sys: 'A', block: 1, payout: 100}, // Was Mini
-            {val: 812.95, tag: 'golden', sys: 'A', block: 2, payout: 35}, 
-            {val: 813.05, tag: 'parrots', sys: 'A', block: 2}, 
-            {val: 813.17, tag: 'parrots', sys: 'A', block: 2}, 
-            {val: 813.27, tag: 'golden', sys: 'A', block: 2, payout: 60},
-            {val: 829.88, tag: 'parrots', sys: 'A', block: 3}, 
-            {val: 829.97, tag: 'parrots', sys: 'A', block: 3}, 
-            {val: 830.52, tag: 'golden', sys: 'A', block: 3, payout: 500}, // Was Minor
-            {val: 830.66, tag: 'golden', sys: 'A', block: 3, payout: 20}, 
-            {val: 830.68, tag: 'golden', sys: 'A', block: 3, payout: 45},
-            {val: 846.46, tag: 'parrots', sys: 'A', block: 4}, 
-            {val: 846.67, tag: 'golden', sys: 'A', block: 4, payout: 500}, // Was Minor
-            {val: 846.70, tag: 'golden', sys: 'A', block: 4, payout: 75}, 
-            {val: 847.18, tag: 'big', sys: 'A', block: 4, payout: 180}, 
-            {val: 850.25, tag: 'golden', sys: 'A', block: 4, payout: 30}, 
-            {val: 850.52, tag: 'golden', sys: 'A', block: 4, payout: 25}, 
-            {val: 850.55, tag: 'parrots', sys: 'A', block: 4}, 
-            {val: 850.65, tag: 'parrots', sys: 'A', block: 4}, 
-            {val: 850.71, tag: 'parrots', sys: 'A', block: 4}, 
-            {val: 852.66, tag: 'golden', sys: 'A', block: 4, payout: 60}, 
-            {val: 852.70, tag: 'parrots', sys: 'A', block: 4}, 
-            {val: 852.70, tag: 'golden', sys: 'A', block: 4, payout: 100}, // Was Mini
-            {val: 861.78, tag: 'golden', sys: 'A', block: 5, payout: 45}, 
-            {val: 862.23, tag: 'golden', sys: 'A', block: 5, payout: 80},
-            {val: 1145.84, tag: 'golden', sys: 'D', block: 11, payout: 40}, 
-            {val: 1146.50, tag: 'golden', sys: 'D', block: 11, payout: 95},
-            {val: 1148.11, tag: 'parrots', sys: 'D', block: 11}, 
-            {val: 1148.43, tag: 'golden', sys: 'D', block: 11, payout: 50}
+            {val: 846.46, tag: 'parrots', sys: 'Live', block: 1}, 
+            {val: 846.70, tag: 'golden', sys: 'Live', block: 1, payout: 60}, 
+            {val: 847.18, tag: 'big', sys: 'Live', block: 1, payout: 150}, 
+            {val: 850.25, tag: 'golden', sys: 'Live', block: 2, payout: 40}, 
+            {val: 850.52, tag: 'golden', sys: 'Live', block: 2, payout: 80}, 
+            {val: 850.55, tag: 'parrots', sys: 'Live', block: 2}, 
+            {val: 850.65, tag: 'parrots', sys: 'Live', block: 2}, 
+            {val: 850.71, tag: 'parrots', sys: 'Live', block: 2}, 
+            {val: 852.66, tag: 'golden', sys: 'Live', block: 3, payout: 2250}, 
+            {val: 852.70, tag: 'parrots', sys: 'Live', block: 3}
         ];
 
         let dataset = [];
@@ -386,11 +265,9 @@
 
         const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.50, 0.70, 0.84];
         let isManualTracking = false;
-        let pendingGoldenNum = 0;
 
         document.getElementById('main-input').addEventListener('focus', function() {
-            this.value = '';
-            isManualTracking = false;
+            this.value = ''; isManualTracking = false;
         });
         
         function stepNumber() {
@@ -400,8 +277,8 @@
             if (!isNaN(currentNum)) {
                 let cents = Math.round(currentNum * 100);
                 let remainder = cents % 5;
-                if (remainder === 3) currentNum = (cents + 2) / 100;
-                else currentNum = (cents + 1) / 100;
+                if (remainder === 3) { currentNum = (cents + 2) / 100; } 
+                else { currentNum = (cents + 1) / 100; }
                 input.value = currentNum.toFixed(2);
                 isManualTracking = true; 
             }
@@ -410,17 +287,16 @@
         function saveData() { localStorage.setItem('rngTrackerData', JSON.stringify(dataset)); }
 
         function clearData() {
-            if(confirm("Are you sure you want to delete all manually entered numbers and reset to the original baseline?")) {
+            if(confirm("Are you sure you want to delete all manually entered numbers and reset?")) {
                 localStorage.removeItem('rngTrackerData');
                 dataset = [...baselineDataset];
                 document.getElementById('predictionsArea').innerHTML = '';
-                isManualTracking = false;
-                document.getElementById('main-input').value = '';
+                isManualTracking = false; document.getElementById('main-input').value = '';
                 renderData();
             }
         }
 
-        function getLatestBlock() { return Math.max(...dataset.map(d => d.block)); }
+        function getLatestBlock() { return dataset.length > 0 ? Math.max(...dataset.map(d => d.block)) : 1; }
 
         function formatDeltaPrice(targetNum, currentNum) {
             let diff = Math.abs(targetNum - currentNum);
@@ -428,18 +304,18 @@
             let blocksOfFive = Math.floor(totalTicks / 5);
             let remainderTicks = totalTicks % 5;
             let price = (blocksOfFive * 10.00) + (remainderTicks * 2.50);
-            let sign = targetNum >= currentNum ? "+$" : "-$";
-            return sign + price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            return (targetNum >= currentNum ? "+$" : "-$") + price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        function buildCard(val, tag, logicText, currentNum, prefix = "+", isVoid = false) {
+        function buildCard(val, tag, logicText, currentNum, prefix = "+", isVoid = false, isCluster = false) {
             let priceGap = formatDeltaPrice(val, currentNum);
             let diff = Math.abs(val - currentNum);
             let ticks = Math.round(diff / 0.01);
             
             let isGhostTick = (ticks % 5 === 4);
             let ghostWarning = isGhostTick ? ` <span style="color:#ff5555;font-size:0.7rem;">[Ghost Tick]</span>` : '';
-            let cardClass = isVoid ? `card-void` : `card-${tag}`;
+            
+            let cardClass = isVoid ? `card-void` : (isCluster ? `card-cluster` : `card-${tag}`);
             
             return `<div class="pred-card ${cardClass}">
                         <div class="pred-card-header">
@@ -450,22 +326,65 @@
                     </div>`;
         }
 
+        // --- MODAL LOGIC ---
+        function openGoldenModal() {
+            const numInput = document.getElementById('main-input').value;
+            if (!numInput) { alert("Please enter the current Progressive Ticker price first."); return; }
+            document.getElementById('hs-total').value = '';
+            document.getElementById('hsModal').style.display = 'flex';
+            document.getElementById('hs-total').focus();
+        }
+
+        function closeGoldenModal() { document.getElementById('hsModal').style.display = 'none'; }
+
+        function submitGoldenModal() {
+            let totalPayout = parseFloat(document.getElementById('hs-total').value) || 0;
+            closeGoldenModal(); processDataEntry('golden', totalPayout);
+        }
+
+        // --- DATA ENTRY LOGIC ---
+        function addNumber(tagType) {
+            let payoutAmt = 0;
+            if (tagType === 'big') {
+                let p = prompt(`Enter the total BIG payout amount ($):`, "150");
+                if (p === null) return; payoutAmt = parseFloat(p) || 0;
+            }
+            processDataEntry(tagType, payoutAmt);
+        }
+
+        function processDataEntry(tagType, payoutAmt = 0) {
+            const inputField = document.getElementById('main-input');
+            const numInput = inputField.value;
+            if (!numInput) return;
+            const num = parseFloat(numInput);
+            
+            let sortedDB = [...dataset].sort((a, b) => b.val - a.val);
+            let lastVal = sortedDB.length > 0 ? sortedDB[0].val : num;
+            let currentBlock = getLatestBlock();
+            
+            // Start a new block if the gap is massive, else group them
+            if(Math.abs(num - lastVal) > 5.00 && !dataset.find(d => d.val === num)) currentBlock++; 
+
+            if (!dataset.find(d => d.val === num && d.tag === tagType)) {
+                dataset.push({val: num, tag: tagType, sys: 'Live', block: currentBlock, payout: payoutAmt});
+                saveData(); renderData();
+            }
+            
+            generatePredictions(num, tagType);
+            inputField.blur();
+        }
+
         function renderData() {
             const counts = { golden: 0, parrots: 0, big: 0, blank: 0 };
             dataset.forEach(item => { if (counts[item.tag] !== undefined) counts[item.tag]++; });
-            
-            ['golden', 'parrots', 'big', 'blank'].forEach(t => {
-                document.getElementById(`count-${t}`).innerText = counts[t];
-            });
+            ['golden', 'parrots', 'big', 'blank'].forEach(t => { document.getElementById(`count-${t}`).innerText = counts[t]; });
 
             const listLive = document.getElementById('historyListLive');
             const listBaseline = document.getElementById('historyListBaseline');
-            listLive.innerHTML = '';
-            listBaseline.innerHTML = '';
+            listLive.innerHTML = ''; listBaseline.innerHTML = '';
             
             let hasLive = false;
             const grouped = {};
-            
             dataset.forEach(d => {
                 if(!grouped[d.val]) grouped[d.val] = { val: d.val, sys: d.sys, tags: [], payout: d.payout };
                 grouped[d.val].tags.push(d.tag);
@@ -475,106 +394,20 @@
             const sortedVals = Object.values(grouped).sort((a, b) => b.val - a.val);
 
             sortedVals.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'history-item';
+                const li = document.createElement('li'); li.className = 'history-item';
                 let tagsHtml = item.tags.map(t => `<span class="tag color-${t}" ${t === 'blank' ? 'style="background:#222;border:1px dashed #555;"' : ''}>${t}</span>`).join('');
                 let sysClass = item.sys === 'Live' ? 'sys-tag sys-tag-live' : 'sys-tag';
-                let payoutText = item.payout ? ` <span style="color:var(--accent-golden);font-size:0.75rem;">[$${item.payout.toLocaleString()}]</span>` : '';
+                let payoutText = item.payout ? ` <span style="color:var(--accent-golden);font-size:0.75rem;">[$${item.payout.toLocaleString(undefined, {minimumFractionDigits: 2})}]</span>` : '';
                 
                 li.innerHTML = `
-                    <div>
-                        <span class="${sysClass}">Sys ${item.sys}</span>
-                        <span>${item.val.toFixed(2)}${payoutText}</span>
-                    </div>
-                    <div class="tag-group">${tagsHtml}</div>
-                `;
+                    <div><span class="${sysClass}">Sys ${item.sys}</span><span>${item.val.toFixed(2)}${payoutText}</span></div>
+                    <div class="tag-group">${tagsHtml}</div>`;
                 
                 if (item.sys === 'Live') { listLive.appendChild(li); hasLive = true; } 
                 else { listBaseline.appendChild(li); }
             });
             
-            if (!hasLive) {
-                listLive.innerHTML = '<div class="empty-placeholder">No new data entries yet. Use the data entry console to add live numbers.</div>';
-            }
-        }
-
-        // --- MODAL LOGIC ---
-        function openGoldenModal() {
-            const inputField = document.getElementById('main-input');
-            const numInput = inputField.value;
-            if (!numInput) {
-                alert("Please enter a valid price before selecting Golden.");
-                return;
-            }
-            pendingGoldenNum = parseFloat(numInput);
-            
-            // Reset Modal Fields
-            document.getElementById('hs-standard').value = "0";
-            document.getElementById('hs-mini').checked = false;
-            document.getElementById('hs-minor').checked = false;
-            document.getElementById('hs-grand').checked = false;
-            document.getElementById('hs-ultimate').checked = false;
-            
-            // Display Current Ticker as Grand Value
-            document.getElementById('display-grand-val').innerText = "$" + pendingGoldenNum.toFixed(2);
-            
-            document.getElementById('golden-modal').style.display = 'flex';
-        }
-
-        function closeGoldenModal() {
-            document.getElementById('golden-modal').style.display = 'none';
-            pendingGoldenNum = 0;
-        }
-
-        function submitGolden() {
-            let standardBlocks = parseFloat(document.getElementById('hs-standard').value) || 0;
-            let hasMini = document.getElementById('hs-mini').checked;
-            let hasMinor = document.getElementById('hs-minor').checked;
-            let hasGrand = document.getElementById('hs-grand').checked;
-            let hasUltimate = document.getElementById('hs-ultimate').checked;
-            
-            let totalPayout = standardBlocks;
-            if (hasMini) totalPayout += 100;
-            if (hasMinor) totalPayout += 500;
-            if (hasGrand) totalPayout += pendingGoldenNum;
-            if (hasUltimate) totalPayout += 23000;
-            
-            processDataEntry(pendingGoldenNum, 'golden', totalPayout);
-            closeGoldenModal();
-        }
-
-        // --- MAIN ENTRY LOGIC ---
-        function addNumber(tagType) {
-            const inputField = document.getElementById('main-input');
-            const numInput = inputField.value;
-            if (!numInput) return;
-            const num = parseFloat(numInput);
-            
-            let payoutAmt = 0;
-            if (tagType === 'big') {
-                let p = prompt(`Enter the total BIG payout amount ($):`, "150");
-                if (p === null) return;
-                payoutAmt = parseFloat(p) || 0;
-            }
-            
-            processDataEntry(num, tagType, payoutAmt);
-            inputField.blur();
-        }
-        
-        function processDataEntry(num, tagType, payoutAmt) {
-            let sortedDB = [...dataset].sort((a, b) => b.val - a.val);
-            let lastVal = sortedDB.length > 0 ? sortedDB[0].val : num;
-            let currentBlock = getLatestBlock();
-            
-            if(Math.abs(num - lastVal) > 2.00 && !dataset.find(d => d.val === num)) currentBlock++; 
-
-            if (!dataset.find(d => d.val === num && d.tag === tagType)) {
-                dataset.push({val: num, tag: tagType, sys: 'Live', block: currentBlock, payout: payoutAmt});
-                saveData(); 
-                renderData();
-            }
-            
-            generatePredictions(num, tagType);
+            if (!hasLive) { listLive.innerHTML = '<div class="empty-placeholder">No new data entries yet. Use the data entry console to add live numbers.</div>'; }
         }
 
         function generatePredictions(currentNum, tagType) {
@@ -592,216 +425,114 @@
             let currentBlock = chronoData[historyIndex]?.block || getLatestBlock();
             let payoutValue = chronoData[historyIndex]?.payout || 0;
 
+            // If we logged a blank, anchor to the last real feature to measure distance
             if (tagType === 'blank') {
-                let lastReal = [...chronoData].reverse().find(d => d.tag !== 'blank' && d.val < currentNum && d.block === currentBlock);
+                let lastReal = [...chronoData].reverse().find(d => d.tag !== 'blank' && d.val < currentNum);
                 if (lastReal) { effectiveTag = lastReal.tag; anchorNum = lastReal.val; payoutValue = lastReal.payout || 0; }
             }
 
-            if (tagType !== 'blank' && historyIndex !== -1 && historyIndex < chronoData.length - 1) {
-                let nextTarget = chronoData[historyIndex+1];
-                if (chronoData[historyIndex].block === nextTarget.block && nextTarget.tag !== 'blank') {
-                    stateBadge.className = 'state-badge state-replay';
-                    stateBadge.innerText = 'STATE: SEQUENCE MATCH';
-                    modeDesc.innerText = `The price is anchored in the database. Projecting exact historical sequence.`;
-                    predPanel.style.borderColor = 'var(--state-replay)';
-
-                    let html = `<div class="prediction-category"><h3 style="color:var(--state-replay);">Exact Sequence Replay</h3>`;
-                    let max = Math.min(historyIndex + 5, chronoData.length);
-                    for(let i = historyIndex + 1; i < max; i++) {
-                        if(chronoData[i].block !== chronoData[historyIndex].block) break;
-                        if(chronoData[i].tag === 'blank') continue;
-                        html += buildCard(chronoData[i].val, chronoData[i].tag, `Contiguous Match (Target: ${chronoData[i].tag.toUpperCase()})`, currentNum);
-                    }
-                    html += `</div>`;
-                    area.innerHTML = html;
-                    return;
-                }
-            }
-
-            let isDormant = (effectiveTag === 'golden' || effectiveTag === 'big');
             let isDarkZone = (tagType === 'blank' && effectiveTag === 'blank'); 
             let isFreeSpin = (effectiveTag === 'parrots'); 
-            let isNuclear = (isDormant && payoutValue >= 23000);
-            let isGrand = (isDormant && payoutValue >= anchorNum && anchorNum > 200 && !isNuclear);
+            let isPayoutEvent = (effectiveTag === 'golden' || effectiveTag === 'big');
             
+            // Check if we are inside the 10-tick Micro-Cluster window
+            let ticksSinceAnchor = Math.round((currentNum - anchorNum) / 0.01);
+            let isMicroClusterWindow = (!isDarkZone && tagType !== 'blank') || (tagType === 'blank' && ticksSinceAnchor <= 10 && ticksSinceAnchor > 0);
+
             if (isDarkZone) {
-                stateBadge.className = 'state-badge state-waypoint';
-                stateBadge.innerText = `DARK ZONE (NO ANCHOR)`;
-                modeDesc.innerText = `You entered a blind waypoint. Use Liquidity Nodes or Overflow Probes to navigate.`;
+                stateBadge.className = 'state-badge state-waypoint'; stateBadge.innerText = `DARK ZONE (NO ANCHOR)`;
+                modeDesc.innerText = `You entered a blind waypoint. Use the Waypoint Ambush or probe the bucket.`;
                 predPanel.style.borderColor = 'var(--state-waypoint)';
-            } else if (tagType === 'blank') {
-                stateBadge.className = 'state-badge state-waypoint';
-                stateBadge.innerText = `TRACKING BLANK (ANCHORED TO ${effectiveTag.toUpperCase()})`;
-                modeDesc.innerText = `Adjusting remaining volume requirements anchored from ${anchorNum.toFixed(2)}.`;
-                predPanel.style.borderColor = 'var(--state-waypoint)';
+            } else if (isMicroClusterWindow) {
+                stateBadge.className = 'state-badge state-cluster'; stateBadge.innerText = `🔥 MICRO-CLUSTER ACTIVE`;
+                modeDesc.innerText = `The engine is HOT. Highest probability of a back-to-back chained drop is within the next 3 to 10 visual ticks.`;
+                predPanel.style.borderColor = 'var(--alert-hot)';
             } else if (isFreeSpin) {
-                stateBadge.className = 'state-badge state-freespin';
-                stateBadge.innerText = 'STATE: FREE SPIN WINDOW (PARROT LOCK)';
-                modeDesc.innerText = 'Price is frozen for 6 free spins. Hidden volume bucket is aggressively loading. Expect an internal GOLDEN drop right here.';
+                stateBadge.className = 'state-badge state-freespin'; stateBadge.innerText = 'STATE: PARROT COMPRESSOR';
+                modeDesc.innerText = 'Price is frozen. Unlisted volume is aggressively building. Watch for an internal Golden chain.';
                 predPanel.style.borderColor = '#ffffff';
-            } else if (isNuclear) {
-                stateBadge.className = 'state-badge state-nuclear';
-                stateBadge.innerText = 'STATE: NUCLEAR WINTER (SYSTEM WIPE)';
-                modeDesc.innerText = `Ultimate Jackpot ($23,000) hit. The system has suffered catastrophic ledger loss and entered total algorithmic lockdown.`;
+            } else if (isPayoutEvent && payoutValue > 0) {
+                stateBadge.className = 'state-badge state-dormant'; stateBadge.innerText = 'STATE: NUCLEAR WINTER (ALGORITHMIC VOID)';
+                modeDesc.innerText = `Micro-cluster window failed. System is locked down to recoup the $${payoutValue.toLocaleString()} deficit.`;
                 predPanel.style.borderColor = 'var(--alert-red)';
-            } else if (isGrand) {
-                stateBadge.className = 'state-badge state-nuclear';
-                stateBadge.innerText = 'STATE: GRAND RECOVERY';
-                modeDesc.innerText = `Grand Jackpot hit. The system is executing a massive algorithmic drain to recover liability.`;
-                predPanel.style.borderColor = 'var(--alert-red)';
-            } else if (isDormant) {
-                stateBadge.className = 'state-badge state-dormant';
-                stateBadge.innerText = 'STATE: DORMANT (ALGORITHMIC RECOVERY)';
-                modeDesc.innerText = `System paid out $${payoutValue.toLocaleString()}. Calculating exact volume required to recoup liquidity before next drop.`;
-                predPanel.style.borderColor = 'var(--state-dormant)';
             } else {
-                stateBadge.className = 'state-badge state-active';
-                stateBadge.innerText = 'STATE: ACTIVE (CLUSTER)';
-                modeDesc.innerText = 'System is HOT. Prioritizing the 8-Push ($20.00 Volume) Hard-Lock.';
-                predPanel.style.borderColor = 'var(--state-active)';
+                stateBadge.className = 'state-badge state-waypoint'; stateBadge.innerText = `STATE: SEARCHING (CLIMB)`;
+                modeDesc.innerText = `Hunting the next decimal grid trap.`;
+                predPanel.style.borderColor = 'var(--state-waypoint)';
             }
 
             let html = ``;
 
             if (isDarkZone) {
                 let baseInt = Math.floor(currentNum);
-                let nextSuffixes = terminalSuffixes.map(s => {
-                    let target = baseInt + s;
-                    return target <= currentNum ? baseInt + 1 + s : target;
-                }).sort((a, b) => a - b);
+                let nextSuffixes = terminalSuffixes.map(s => { let t = baseInt + s; return t <= currentNum ? baseInt + 1 + s : t; }).sort((a, b) => a - b);
 
                 html += `<div class="prediction-category">
-                            <h3 style="color:var(--state-waypoint);">Option 1: Liquidity Node Intercept (Aggressive)</h3>
+                            <h3 style="color:var(--state-waypoint);">Option 1: Waypoint Ambush (Safe)</h3>
                             <div class="tactical-card">
-                                <strong>Push toward nearest decimal grid traps:</strong>
-                                Fund the pool to hit these specific resistance lines and force a payout roll.
+                                <strong>Hold Position (Do Not Push)</strong> Wait for the public pool to push the price. Do not touch the machine until a tag drops and shatters the Dark Zone.
                             </div>
-                            ${buildCard(nextSuffixes[0], 'golden', `Primary Decimal Resistance`, currentNum, "+")}
-                            ${buildCard(nextSuffixes[1], 'golden', `Secondary Decimal Resistance`, currentNum, "+")}
+                         </div>
+                         <div class="prediction-category">
+                            <h3 style="color:var(--state-waypoint);">Option 2: Decimal Intercept (Aggressive)</h3>
+                            ${buildCard(nextSuffixes[0], 'golden', `Nearest Hardcoded Resistance Trap`, currentNum, "+")}
                          </div>`;
+                area.innerHTML = html; return;
+            }
 
+            // MICRO-CLUSTER TACTICS
+            if (isMicroClusterWindow) {
+                let target3 = anchorNum + 0.03;
+                let target10 = anchorNum + 0.10;
+                
                 html += `<div class="prediction-category">
-                            <h3 style="color:var(--state-waypoint);">Option 2: Overflow Probe (Test)</h3>
-                            <div class="tactical-card">
-                                <strong>Input exactly $2.50 (1 Push) and watch the ticker:</strong><br>
-                                &bull; If it ticks +0.01: The bucket is empty. Stagnant volume.<br>
-                                &bull; If it skips +0.02: The bucket is heavy (holds +$1.50). System is highly active.
+                            <h3 style="color:var(--alert-hot);">🔥 10-Tick Cluster Window</h3>
+                            <div class="tactical-card tactical-hot">
+                                <strong>Ride the Momentum</strong>
+                                The machine just dropped a feature. It is highly likely to chain another drop (Parrot, Golden, Big) immediately. Test exactly 10 pushes (+0.10 price distance). If it crosses the cutoff line without a drop, <strong>the cluster is dead. Cut inputs immediately.</strong>
                             </div>
+                            ${buildCard(target3, 'golden', `High-Probability Cluster Point (3 Ticks)`, currentNum, "+", false, true)}
+                            ${buildCard(target10, 'blank', `Absolute Cutoff Line (10 Ticks)`, currentNum, "+", false, true)}
                          </div>`;
-
-                html += `<div class="prediction-category">
-                            <h3 style="color:var(--state-waypoint);">Option 3: Waypoint Ambush (Safe)</h3>
-                            <div class="tactical-card">
-                                <strong>Hold position and let others fund the pool:</strong><br>
-                                Wait for any tag to drop before injecting capital.<br>
-                                &bull; If Jackpot drops: System resets to Algorithmic Recovery.<br>
-                                &bull; If Parrot drops: System enters Free Spin Window.
-                            </div>
-                         </div>`;
-                         
-                area.innerHTML = html;
-                return;
             }
 
             if (isFreeSpin) {
                 html += `<div class="prediction-category">
-                            <h3 style="color:#ffffff;">⚠️ 6-Spin Compressed Volume Window</h3>
+                            <h3 style="color:#ffffff;">⚠️ Volume Compressor Active</h3>
                             <div class="tactical-card tactical-freespin">
-                                <strong>Internal Golden Drop High Probability</strong>
-                                Price is locked during this Parrot sequence. Unlisted volume is aggressively filling the background overflow bucket without lifting the price tape. Watch closely for an internal <strong>Golden</strong> drop to materialize on this exact frozen price before the free spins release.
+                                <strong>Zero-Capital Window</strong>
+                                Price is locked. Any drop here creates a pure ledger deficit since no capital is injected. Very high probability of a chained Golden drop.
                             </div>
                          </div>`;
             }
 
-            // EXACT LEDGER CALCULATION (If Dormant & Payout logged)
-            if (isDormant && payoutValue > 0) {
-                // Every $2.00 of volume = 1 tick (0.01 price movement)
-                // Therefore, 100% of the payout value divided by 2 = required ticks.
-                // Distance = (Payout / 2) * 0.01 = Payout / 200
+            // DYNAMIC COOLDOWN CALCULATION (If outside cluster window and payout exists)
+            if (isPayoutEvent && payoutValue > 0 && !isMicroClusterWindow) {
                 let recoveryTicks = Math.ceil(payoutValue / 2);
-                let recoveryDistance = payoutValue / 200;
+                let recoveryDistance = recoveryTicks * 0.01;
                 let safeTarget = anchorNum + recoveryDistance;
                 
-                let titleText = isNuclear ? `⚠️ ULTIMATE RECOVERY LOCKDOWN ($${payoutValue.toLocaleString()} Deficit)` : 
-                               (isGrand ? `⚠️ GRAND RECOVERY ($${payoutValue.toLocaleString()} Deficit)` : 
-                               `⚠️ Exact Calculated Dead Zone ($${payoutValue.toLocaleString()} Recovery)`);
-
                 html += `<div class="prediction-category">
-                            <h3 style="color:var(--alert-red);">${titleText}</h3>
+                            <h3 style="color:var(--alert-red);">⚠️ Nuclear Winter ($${payoutValue.toLocaleString(undefined, {minimumFractionDigits: 2})} Deficit)</h3>
                             <div class="tactical-card tactical-warning">
-                                <strong>Ledger Deficit Enforcement</strong>
-                                The system just lost $${payoutValue.toLocaleString()}. Because every 1 visual tick generates $2.00 in public volume, the algorithm is forced to harvest exactly <strong>${recoveryTicks.toLocaleString()} visual ticks</strong> ($${recoveryDistance.toFixed(2)} in total price climb) just to repair the damage. <strong>DO NOT PUSH</strong> until the price crosses the safe zone line below.
+                                <strong>Algorithmic Lockdown</strong>
+                                The system just took a $${payoutValue.toLocaleString()} deficit. The 10-tick cluster window failed, meaning the machine is now in a strict mathematically enforced dead zone. It must absorb <strong>${recoveryTicks.toLocaleString()} ticks</strong> of public volume to recover. Do not inject capital until the price crosses the safe zone line.
                             </div>
                             ${buildCard(safeTarget, 'golden', `Calculated Recovery Line (End of Dead Zone)`, currentNum, "Min ", true)}
                          </div>`;
-            } else if (isDormant) {
+            } else if (isPayoutEvent && payoutValue === 0 && !isMicroClusterWindow) {
                 let baseInt = Math.floor(currentNum);
-                let nextSuffixes = terminalSuffixes.map(s => {
-                    let target = baseInt + s;
-                    return target <= currentNum ? baseInt + 1 + s : target;
-                }).sort((a, b) => a - b);
-                
+                let nextSuffixes = terminalSuffixes.map(s => { let t = baseInt + s; return t <= currentNum ? baseInt + 1 + s : t; }).sort((a, b) => a - b);
                 html += `<div class="prediction-category">
-                            <h3 style="color:var(--alert-red);">⚠️ Unknown Payout Dead Zone</h3>
+                            <h3 style="color:var(--alert-red);">⚠️ Unknown Liability Dead Zone</h3>
                             <div class="tactical-card tactical-warning">
                                 <strong>No Payout Value Entered</strong>
-                                Because the payout value is unknown, the recovery void length cannot be calculated. Enforce a strict stop-loss. Only test up to the next hardcoded resistance node. If it fails, cut inputs immediately.
+                                Cluster window failed and payout size is unknown. Enforce a strict stop-loss at the next hardcoded resistance node.
                             </div>
                             ${buildCard(nextSuffixes[0], 'golden', `Primary Decimal Resistance (Stop-Loss)`, currentNum, "+")}
                          </div>`;
             }
 
-            let tenTickTarget = anchorNum + 0.10;
-            if (!isDormant && !isFreeSpin && effectiveTag !== 'blank' && tenTickTarget > currentNum) {
-                html += `<div class="prediction-category">
-                            <h3 style="color:var(--state-active);">Primary Active Traps</h3>
-                            ${buildCard(tenTickTarget, 'golden', `Absolute $20 Volume Lock (from${anchorNum.toFixed(2)})`, currentNum, "+")}
-                         </div>`;
-            }
-
-            let historicalNexts = [];
-            for(let i = 0; i < chronoData.length - 1; i++) {
-                if(chronoData[i].tag === effectiveTag) {
-                    let nextReal = null;
-                    for(let j = i + 1; j < chronoData.length; j++) {
-                        if(chronoData[j].block !== chronoData[i].block) break;
-                        if(chronoData[j].tag !== 'blank') { nextReal = chronoData[j]; break; }
-                    }
-                    if(nextReal) {
-                        let gap = Math.round((nextReal.val - chronoData[i].val) / 0.01);
-                        historicalNexts.push({ gap: gap, nextTag: nextReal.tag });
-                    }
-                }
-            }
-
-            let uniqueGaps = [];
-            let seenGaps = new Set();
-            for(let h of historicalNexts) {
-                if(!seenGaps.has(h.gap)) { seenGaps.add(h.gap); uniqueGaps.push(h); }
-            }
-            uniqueGaps.sort((a, b) => a.gap - b.gap);
-            
-            html += `<div class="prediction-category"><h3>Projected Historical Drop Gaps</h3>`;
-            
-            let displayedCount = 0;
-            uniqueGaps.forEach(u => {
-                if (displayedCount >= 5) return;
-                let projectedVal = anchorNum + (u.gap * 0.01);
-                
-                // Do not suggest targets inside a mathematically calculated dead zone
-                let isInsideDeadZone = (isDormant && payoutValue > 0 && projectedVal < (anchorNum + (payoutValue/200)));
-                
-                if (projectedVal > currentNum && (!isDormant ? u.gap !== 10 : true) && !isInsideDeadZone) {
-                    html += buildCard(projectedVal, u.nextTag, `Verified Dollar Gap (Anchored to ${anchorNum.toFixed(2)})`, currentNum, "+");
-                    displayedCount++;
-                }
-            });
-
-            if(displayedCount === 0) {
-                 html += `<p style="font-size:0.85rem; color:var(--text-muted);">No valid historical targets found outside the dead zone.</p>`;
-            }
-            
-            html += `</div>`;
             area.innerHTML = html;
         }
 
