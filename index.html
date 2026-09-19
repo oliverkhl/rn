@@ -63,12 +63,6 @@
             padding-bottom: 10px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;
         }
 
-        .rule-bar {
-            background-color: #1a1a1a; border: 1px solid #444; border-radius: 6px;
-            padding: 10px; font-size: 0.8rem; color: #ccc; margin-bottom: 16px; text-align: center;
-        }
-        .rule-bar strong { color: #fff; }
-
         .state-badge {
             font-size: 0.75rem; padding: 4px 8px; border-radius: 12px;
             font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;
@@ -97,9 +91,9 @@
         }
         .btn-step:active { background-color: #ffffff; color: #000000; border-color: #ffffff; }
 
-        .tag-buttons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .tag-buttons-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 20px; }
         .tag-btn {
-            border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.95rem;
+            border: none; padding: 10px 4px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;
             display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
             transition: opacity 0.2s; touch-action: manipulation; text-align: center;
         }
@@ -191,10 +185,10 @@
 </head>
 <body>
 
-    <!-- UNIFIED NET LEDGER MODAL (Auto-Fill Update) -->
+    <!-- UNIFIED NET LEDGER MODAL -->
     <div class="modal-overlay" id="hsModal">
         <div class="modal-content">
-            <h3 id="modal-title">Ledger Entry (True Volume Math)</h3>
+            <h3 id="modal-title">Ledger Entry</h3>
             <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">The tool auto-detects your previous anchor to calculate exact volume. Just enter the final payout.</div>
             
             <div class="modal-row" style="border-left: 2px solid #fff;">
@@ -228,16 +222,17 @@
         <!-- DATA ENTRY PANEL -->
         <div class="panel">
             <h2>Note</h2>
+
             <div class="main-input-group">
                 <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="0.00">
                 <button id="btn-step" class="btn-step" onclick="stepNumber()">TICK</button>
             </div>
 
             <div class="tag-buttons-grid">
-                <button class="tag-btn btn-golden" onclick="openLedgerModal('golden')">Golden <span id="count-golden">0</span></button>
-                <button class="tag-btn btn-parrots" onclick="openLedgerModal('parrots')">Parrot <span id="count-parrots">0</span></button>
-                <button class="tag-btn btn-big" onclick="openLedgerModal('big')">BIG DROP <span id="count-big">0</span></button>
-                <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK <span id="count-blank">0</span></button>
+                <button class="tag-btn btn-golden" onclick="openLedgerModal('golden')">GOLDEN <span id="count-golden">0</span></button>
+                <button class="tag-btn btn-parrots" onclick="openLedgerModal('parrots')">PARROT <span id="count-parrots">0</span></button>
+                <button class="tag-btn btn-big" onclick="openLedgerModal('big')">BIG <span id="count-big">0</span></button>
+                <button class="tag-btn btn-blank" onclick="addNumber('blank')">START <span id="count-blank">0</span></button>
             </div>
             
             <div class="util-bar">
@@ -271,7 +266,7 @@
 
             <div class="manual-step">
                 <h4>Phase 2: Anchor the Dark Zone</h4>
-                <p>Do not push the spin button when you sit down. Look at the live progressive ticker, type that exact price into the tool, and click <strong>BLANK (Climb)</strong>. This anchors your position and reveals the closest fractional execution traps (.23, .30, .50, .70, .84).</p>
+                <p>Do not push the spin button when you sit down. Look at the live progressive ticker, type that exact price into the tool, and click <strong>START</strong>. This anchors your position and reveals the closest fractional execution traps (.23, .30, .50, .70, .84).</p>
             </div>
 
             <div class="manual-step">
@@ -281,12 +276,12 @@
 
             <div class="manual-step">
                 <h4>Phase 4: The 10-Tick Snipe</h4>
-                <p>When the ticker crosses a decimal node (e.g., hits .50 or .70), inject your capital for exactly <strong>10 ticks</strong> (a $20 volume test). If nothing hits, stop immediately and wait for the next node. If a feature hits, let it play out completely.</p>
+                <p>When the ticker crosses a decimal node (e.g., hits .23, .24, .25, .30, .32, .42, .43, .50, .70, .84), inject your capital for exactly <strong>10 ticks</strong> (a $20 volume test). If nothing hits, stop immediately and wait for the next node. If a feature hits, let it play out completely.</p>
             </div>
 
             <div class="manual-step">
                 <h4>Phase 5: Shatter the Dark Zone (Lock the Ledger)</h4>
-                <p>When a feature finishes, log it (Golden, Parrots, or Big). Enter the <strong>Gross Payout</strong> shown on the screen. The tool automatically pulls your previous anchor to calculate the exact volume injected. Click Lock Ledger.</p>
+                <p>When a feature finishes, log it (Golden, Parrot, or Big). Enter the <strong>Gross Payout</strong> shown on the screen. The tool automatically pulls your previous anchor to calculate the exact volume injected. Click Lock Ledger.</p>
             </div>
 
             <div class="manual-step">
@@ -301,14 +296,156 @@
     </div>
 
     <script>
-        // BASELINE DATASET
+        // MASSIVE CONFIRMED BASELINE DATASET
         const baselineDataset = [
-            {val: 852.66, tag: 'golden', sys: 'M1', block: 1, gross: 2250, net: 2150.00}, 
-            {val: 852.70, tag: 'parrots', sys: 'M1', block: 1, gross: 5, net: 2.50},
-            {val: 1145.84, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: 0},
-            {val: 1146.50, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: 0},
-            {val: 1148.11, tag: 'parrots', sys: 'M2', block: 2, gross: 5, net: 2.50},
-            {val: 1148.43, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: -250.00} 
+            // SYSTEM A (Block 1-7)
+            {val: 785.43, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
+            {val: 785.53, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
+            {val: 787.72, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
+            {val: 789.80, tag: 'big', sys: 'A', block: 1, gross: 0, net: 0},
+            {val: 790.29, tag: 'parrots', sys: 'A', block: 1, gross: 5, net: 2.50},
+            {val: 790.57, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
+            {val: 791.30, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
+            {val: 791.39, tag: 'big', sys: 'A', block: 1, gross: 0, net: 0},
+            {val: 791.84, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
+            
+            {val: 812.95, tag: 'golden', sys: 'A', block: 2, gross: 0, net: 0},
+            {val: 813.05, tag: 'parrots', sys: 'A', block: 2, gross: 5, net: 2.50},
+            {val: 813.17, tag: 'parrots', sys: 'A', block: 2, gross: 5, net: 2.50},
+            {val: 813.27, tag: 'golden', sys: 'A', block: 2, gross: 0, net: 0},
+            
+            {val: 829.88, tag: 'parrots', sys: 'A', block: 3, gross: 5, net: 2.50},
+            {val: 829.97, tag: 'parrots', sys: 'A', block: 3, gross: 5, net: 2.50},
+            {val: 830.52, tag: 'golden', sys: 'A', block: 3, gross: 0, net: 0},
+            {val: 830.66, tag: 'golden', sys: 'A', block: 3, gross: 0, net: 0},
+            {val: 830.68, tag: 'golden', sys: 'A', block: 3, gross: 0, net: 0},
+            
+            {val: 846.46, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
+            {val: 846.67, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
+            {val: 846.70, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
+            {val: 847.18, tag: 'big', sys: 'A', block: 4, gross: 0, net: 0},
+            {val: 850.25, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
+            {val: 850.52, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
+            {val: 850.55, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
+            {val: 850.65, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
+            {val: 850.71, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
+            {val: 852.66, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
+            {val: 852.70, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
+            
+            {val: 861.78, tag: 'golden', sys: 'A', block: 5, gross: 0, net: 0},
+            {val: 862.23, tag: 'golden', sys: 'A', block: 5, gross: 0, net: 0},
+            
+            {val: 873.87, tag: 'golden', sys: 'A', block: 6, gross: 0, net: 0},
+            {val: 874.30, tag: 'parrots', sys: 'A', block: 6, gross: 5, net: 2.50},
+            {val: 874.43, tag: 'golden', sys: 'A', block: 6, gross: 0, net: 0},
+            {val: 874.70, tag: 'golden', sys: 'A', block: 6, gross: 0, net: 0},
+            {val: 875.24, tag: 'golden', sys: 'A', block: 6, gross: 0, net: 0},
+            
+            {val: 941.89, tag: 'golden', sys: 'A', block: 7, gross: 0, net: 0},
+
+            // SYSTEM B (Block 8-9)
+            {val: 827.34, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
+            {val: 827.91, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
+            {val: 828.21, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
+            {val: 828.96, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
+            {val: 829.35, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
+            {val: 829.54, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
+            {val: 830.08, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
+            {val: 830.30, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
+            {val: 831.02, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
+            {val: 831.13, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
+            {val: 832.22, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
+            {val: 832.32, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
+            
+            {val: 880.93, tag: 'big', sys: 'B', block: 9, gross: 94.50, net: 92.00},
+            {val: 881.88, tag: 'golden', sys: 'B', block: 9, gross: 62.50, net: 60.00},
+            {val: 881.94, tag: 'golden', sys: 'B', block: 9, gross: 277.50, net: 275.00},
+            {val: 883.66, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
+            {val: 884.14, tag: 'golden', sys: 'B', block: 9, gross: 44.50, net: 42.00},
+            {val: 884.18, tag: 'golden', sys: 'B', block: 9, gross: 45.50, net: 43.00},
+            {val: 884.41, tag: 'golden', sys: 'B', block: 9, gross: 50.00, net: 47.50},
+            {val: 884.41, tag: 'parrots', sys: 'B', block: 9, gross: 5, net: 2.50},
+            {val: 884.76, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
+            {val: 884.77, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
+            {val: 884.81, tag: 'golden', sys: 'B', block: 9, gross: 17.50, net: 15.00},
+            {val: 885.21, tag: 'golden', sys: 'B', block: 9, gross: 207.50, net: 205.00},
+            {val: 886.17, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
+            {val: 887.33, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
+            {val: 888.15, tag: 'parrots', sys: 'B', block: 9, gross: 5, net: 2.50},
+            {val: 888.80, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
+            {val: 889.51, tag: 'golden', sys: 'B', block: 9, gross: 25.00, net: 22.50},
+            {val: 890.32, tag: 'golden', sys: 'B', block: 9, gross: 42.50, net: 40.00},
+            {val: 890.56, tag: 'golden', sys: 'B', block: 9, gross: 242.50, net: 240.00},
+            {val: 890.76, tag: 'golden', sys: 'B', block: 9, gross: 270.00, net: 267.50},
+            {val: 750.01, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
+            {val: 750.15, tag: 'parrots', sys: 'B', block: 9, gross: 5, net: 2.50},
+
+            // SYSTEM C (Block 10)
+            {val: 829.81, tag: 'golden', sys: 'C', block: 10, gross: 82.50, net: 80.00},
+            {val: 829.82, tag: 'blank', sys: 'C', block: 10, gross: 0, net: 0},
+            {val: 829.83, tag: 'blank', sys: 'C', block: 10, gross: 0, net: 0},
+            {val: 830.01, tag: 'parrots', sys: 'C', block: 10, gross: 5, net: 2.50},
+            {val: 830.23, tag: 'golden', sys: 'C', block: 10, gross: 42.50, net: 40.00},
+            {val: 830.35, tag: 'parrots', sys: 'C', block: 10, gross: 5, net: 2.50},
+            {val: 831.65, tag: 'parrots', sys: 'C', block: 10, gross: 5, net: 2.50},
+
+            // SYSTEM D (Block 11)
+            {val: 808.92, tag: 'blank', sys: 'D', block: 11, gross: 0, net: 0},
+            {val: 809.13, tag: 'parrots', sys: 'D', block: 11, gross: 121.80, net: 119.30},
+            {val: 809.78, tag: 'golden', sys: 'D', block: 11, gross: 85.00, net: 82.50},
+            {val: 810.78, tag: 'golden', sys: 'D', block: 11, gross: 0, net: 0},
+
+            // SYSTEM E (Block 12-13)
+            {val: 757.68, tag: 'parrots', sys: 'E', block: 12, gross: 5, net: 2.50},
+            {val: 757.81, tag: 'blank', sys: 'E', block: 12, gross: 0, net: 0},
+            
+            {val: 758.99, tag: 'golden', sys: 'E', block: 13, gross: 97.50, net: 95.00},
+            {val: 759.22, tag: 'golden', sys: 'E', block: 13, gross: 0, net: 0},
+            {val: 759.28, tag: 'parrots', sys: 'E', block: 13, gross: 5, net: 2.50},
+            {val: 759.36, tag: 'parrots', sys: 'E', block: 13, gross: 5, net: 2.50},
+            {val: 759.42, tag: 'parrots', sys: 'E', block: 13, gross: 5, net: 2.50},
+
+            // SYSTEM F (Block 14-15)
+            {val: 1078.14, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
+            {val: 1078.48, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
+            {val: 1079.46, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
+            {val: 1079.84, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
+            {val: 1080.30, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
+            {val: 1081.60, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
+            {val: 1084.03, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
+            {val: 1085.21, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
+            {val: 1085.78, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
+            {val: 1086.62, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
+            {val: 1086.78, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
+            {val: 1086.93, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
+            {val: 1086.97, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
+            {val: 1087.39, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
+            {val: 1087.99, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
+            {val: 1088.06, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
+            
+            {val: 1135.14, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
+            {val: 1135.47, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
+            {val: 1136.51, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
+            {val: 1137.25, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
+            {val: 1137.80, tag: 'blank', sys: 'F', block: 15, gross: 0, net: 0},
+            {val: 1138.01, tag: 'golden', sys: 'F', block: 15, gross: 27.00, net: 24.50},
+            {val: 1138.07, tag: 'parrots', sys: 'F', block: 15, gross: 83.40, net: 80.90},
+            {val: 1138.25, tag: 'blank', sys: 'F', block: 15, gross: 0, net: 0},
+            {val: 1138.49, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
+            {val: 1138.90, tag: 'blank', sys: 'F', block: 15, gross: 0, net: 0},
+            {val: 1138.96, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
+            {val: 1139.01, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
+
+            // SYSTEM G (Block 16)
+            {val: 995.42, tag: 'golden', sys: 'G', block: 16, gross: 0, net: 0},
+            {val: 995.45, tag: 'parrots', sys: 'G', block: 16, gross: 5, net: 2.50},
+            {val: 995.50, tag: 'golden', sys: 'G', block: 16, gross: 0, net: 0},
+
+            // SYSTEM H (Block 17)
+            {val: 1145.84, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0},
+            {val: 1146.50, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0},
+            {val: 1148.11, tag: 'parrots', sys: 'H', block: 17, gross: 5, net: 2.50},
+            {val: 1148.43, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0}
         ];
 
         let dataset = [];
@@ -401,21 +538,18 @@
             document.getElementById('hs-total').value = '';
             document.getElementById('hs-current-ticker').value = currentVal.toFixed(2);
             
-            // Auto-detect previous ticker price
             let sortedDB = [...dataset].sort((a, b) => b.val - a.val);
             let lastEntry = sortedDB.find(d => d.val < currentVal);
             
             if (lastEntry) {
                 document.getElementById('hs-start-ticker').value = lastEntry.val.toFixed(2);
             } else {
-                document.getElementById('hs-start-ticker').value = currentVal.toFixed(2); // Fallback if no prior data
+                document.getElementById('hs-start-ticker').value = currentVal.toFixed(2);
             }
             
-            // Auto-calculate immediately
             calculateInjectedVolume();
             
             document.getElementById('hsModal').style.display = 'flex';
-            // Automatically focus the payout box since start ticker is already filled
             document.getElementById('hs-total').focus();
         }
 
