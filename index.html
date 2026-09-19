@@ -202,7 +202,7 @@
             </div>
 
             <div class="modal-row" style="border-left: 2px solid #00e5ff;">
-                <label style="color:#fff;">Starting Ticker (Auto-Detected)</label>
+                <label style="color:#fff;">Starting Ticker (Live Data Only)</label>
                 <input type="number" id="hs-start-ticker" value="" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
             </div>
 
@@ -276,7 +276,7 @@
 
             <div class="manual-step">
                 <h4>Phase 4: The 10-Tick Snipe</h4>
-                <p>When the ticker crosses a decimal node (e.g., hits .23, .24, .25, .30, .32, .42, .43, .50, .70, .84), inject your capital for exactly <strong>10 ticks</strong> (a $20 volume test). If nothing hits, stop immediately and wait for the next node. If a feature hits, let it play out completely.</p>
+                <p>When the ticker crosses a decimal node (e.g., hits .50 or .70), inject your capital for exactly <strong>10 ticks</strong> (a $20 volume test). If nothing hits, stop immediately and wait for the next node. If a feature hits, let it play out completely.</p>
             </div>
 
             <div class="manual-step">
@@ -520,7 +520,7 @@
                     </div>`;
         }
 
-        // --- UNIFIED MODAL LOGIC WITH AUTO-ANCHOR ---
+        // --- UNIFIED MODAL LOGIC WITH LIVE-ONLY AUTO-ANCHOR ---
         function openLedgerModal(tagType) {
             const numInput = document.getElementById('main-input').value;
             if (!numInput) { alert("Please enter the current Progressive Ticker price first."); return; }
@@ -529,17 +529,19 @@
             let currentVal = parseFloat(numInput);
             
             const titles = {
-                'golden': 'Hold & Spin / Session Summary',
-                'parrots': 'Parrots Free Spins Summary',
-                'big': 'Big Drop Summary'
+                'golden': 'Ledger Entry',
+                'parrots': 'Ledger Entry',
+                'big': 'Ledger Entry'
             };
             document.getElementById('modal-title').innerText = titles[tagType];
             
             document.getElementById('hs-total').value = '';
             document.getElementById('hs-current-ticker').value = currentVal.toFixed(2);
             
-            let sortedDB = [...dataset].sort((a, b) => b.val - a.val);
-            let lastEntry = sortedDB.find(d => d.val < currentVal);
+            // Auto-detect previous ticker price FROM LIVE ENTRIES ONLY
+            let liveEntries = dataset.filter(d => d.sys === 'Live');
+            let sortedLive = [...liveEntries].sort((a, b) => b.val - a.val);
+            let lastEntry = sortedLive.find(d => d.val < currentVal);
             
             if (lastEntry) {
                 document.getElementById('hs-start-ticker').value = lastEntry.val.toFixed(2);
