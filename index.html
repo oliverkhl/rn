@@ -266,7 +266,7 @@
 
             <div class="manual-step">
                 <h4>Phase 2: Anchor the Dark Zone</h4>
-                <p>Do not push the spin button when you sit down. Look at the live progressive ticker, type that exact price into the tool, and click <strong>START</strong>. This anchors your position and reveals the closest fractional execution traps (.23, .30, .50, .70, .84).</p>
+                <p>Do not push the spin button when you sit down. Look at the live progressive ticker, type that exact price into the tool, and click <strong>START</strong>. This anchors your position and reveals the closest fractional execution traps <strong>(.23, .24, .25, .30, .32, .42, .43, .50, .70, .84)</strong>.</p>
             </div>
 
             <div class="manual-step">
@@ -276,7 +276,7 @@
 
             <div class="manual-step">
                 <h4>Phase 4: The 10-Tick Snipe</h4>
-                <p>When the ticker crosses a decimal node (e.g., hits .50 or .70), inject your capital for exactly <strong>10 ticks</strong> (a $20 volume test). If nothing hits, stop immediately and wait for the next node. If a feature hits, let it play out completely.</p>
+                <p>When the ticker crosses one of the 10 hardcoded decimal nodes <strong>(.23, .24, .25, .30, .32, .42, .43, .50, .70, .84)</strong>, inject your capital for exactly <strong>10 ticks</strong> (a $20 volume test). If nothing hits, stop immediately and wait for the next node. If a feature hits, let it play out completely.</p>
             </div>
 
             <div class="manual-step">
@@ -445,7 +445,43 @@
             {val: 1145.84, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0},
             {val: 1146.50, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0},
             {val: 1148.11, tag: 'parrots', sys: 'H', block: 17, gross: 5, net: 2.50},
-            {val: 1148.43, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0}
+            {val: 1148.43, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0},
+
+            // SYSTEM I (Block 18-19) - The Post-Grand Surplus Chain
+            {val: 766.54, tag: 'golden', sys: 'I', block: 18, gross: 0, net: 175.00},
+            {val: 766.64, tag: 'big', sys: 'I', block: 18, gross: 0, net: 22.50},
+            {val: 767.02, tag: 'big', sys: 'I', block: 18, gross: 0, net: -57.50},
+            {val: 767.24, tag: 'big', sys: 'I', block: 18, gross: 0, net: -25.50},
+            {val: 767.70, tag: 'big', sys: 'I', block: 18, gross: 0, net: -78.00},
+            {val: 768.19, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -65.90},
+            {val: 768.47, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -22.00},
+            {val: 768.66, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 32.50},
+            {val: 768.97, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -29.50},
+            {val: 769.29, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -34.00},
+            {val: 769.43, tag: 'big', sys: 'I', block: 18, gross: 0, net: 11.00},
+            {val: 769.50, tag: 'golden', sys: 'I', block: 18, gross: 0, net: 31.60},
+            {val: 769.74, tag: 'big', sys: 'I', block: 18, gross: 0, net: -7.00},
+            {val: 770.15, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 76.00},
+            {val: 770.30, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 216.50},
+            {val: 770.71, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -65.80},
+            {val: 771.12, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -17.00},
+            {val: 771.30, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -33.20},
+            {val: 772.36, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -144.50},
+            {val: 773.82, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -117.00},
+            {val: 774.23, tag: 'blank', sys: 'I', block: 18, gross: 0, net: 0},
+            {val: 777.67, tag: 'big', sys: 'I', block: 18, gross: 0, net: -61.00},
+            {val: 778.28, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -4.50},
+            {val: 778.45, tag: 'golden', sys: 'I', block: 18, gross: 0, net: 68.50},
+            {val: 778.65, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -28.90},
+            {val: 778.81, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 62.00},
+            {val: 778.82, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 45.00},
+            {val: 779.60, tag: 'big', sys: 'I', block: 18, gross: 0, net: -98.00},
+            {val: 779.69, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -9.00},
+            {val: 780.17, tag: 'golden', sys: 'I', block: 18, gross: 0, net: 18.50},
+            {val: 780.27, tag: 'blank', sys: 'I', block: 18, gross: 0, net: 0},
+            
+            {val: 845.67, tag: 'big', sys: 'I', block: 19, gross: 0, net: 31.50},
+            {val: 846.49, tag: 'golden', sys: 'I', block: 19, gross: 0, net: 31.00}
         ];
 
         let dataset = [];
@@ -708,6 +744,10 @@
                 modeDesc.innerText = 'Price is locked. Instant liability clearance expected. Watch for an internal Golden chain.';
                 predPanel.style.borderColor = '#ffffff';
             } else if (isPayoutEvent && netDeficit > 0) {
+                let recoveryTicks = Math.ceil(netDeficit / 2);
+                let recoveryDistance = recoveryTicks * 0.01;
+                let safeTarget = anchorNum + recoveryDistance;
+                
                 stateBadge.className = 'state-badge state-dormant'; stateBadge.innerText = 'STATE: NUCLEAR WINTER (ALGORITHMIC VOID)';
                 modeDesc.innerText = `Micro-cluster window failed. System is locked down to recoup the $${netDeficit.toLocaleString()} net deficit.`;
                 predPanel.style.borderColor = 'var(--alert-red)';
@@ -791,14 +831,9 @@
                 let recoveryDistance = recoveryTicks * 0.01;
                 let safeTarget = anchorNum + recoveryDistance;
                 
-                html += `<div class="prediction-category">
-                            <h3 style="color:var(--alert-red);">⚠️ Nuclear Winter (-$${netDeficit.toLocaleString(undefined, {minimumFractionDigits: 2})} Net Deficit)</h3>
-                            <div class="tactical-card tactical-warning">
-                                <strong>Algorithmic Lockdown</strong>
-                                The machine just took a net loss of $${netDeficit.toLocaleString(undefined, {minimumFractionDigits: 2})}. The 10-tick cluster window failed, meaning the machine is now in a strict mathematically enforced dead zone. It must absorb <strong>${recoveryTicks.toLocaleString()} ticks</strong> of public volume to recover. Do not inject capital until the price crosses the safe zone line.
-                            </div>
-                            ${buildCard(safeTarget, 'golden', `Calculated Net Recovery Line (End of Dead Zone)`, currentNum, "Min ", true)}
-                         </div>`;
+                stateBadge.className = 'state-badge state-dormant'; stateBadge.innerText = 'STATE: NUCLEAR WINTER (ALGORITHMIC VOID)';
+                modeDesc.innerText = `Micro-cluster window failed. System is locked down to recoup the $${netDeficit.toLocaleString()} net deficit.`;
+                predPanel.style.borderColor = 'var(--alert-red)';
             } else if (isPayoutEvent && netDeficit === 0 && !isMicroClusterWindow) {
                 html += `<div class="prediction-category">
                             <h3 style="color:var(--alert-red);">⚠️ Unknown Liability Dead Zone</h3>
