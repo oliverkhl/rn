@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Progressive Engine Predictor (Surplus & Deficit Model)</title>
+    <title>Progressive Engine Predictor</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -28,7 +28,7 @@
             --alert-red: #ff5555;
             --alert-red-muted: #aa3333;
             --alert-hot: #ffcc00;
-            --alert-surplus: #00e5ff; /* Cyan for Sniper Mode */
+            --alert-surplus: #00e5ff; 
             --alert-surplus-muted: #005566;
         }
 
@@ -42,8 +42,10 @@
 
         .container {
             display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-            max-width: 1200px; width: 100%;
+            max-width: 1200px; width: 100%; margin-bottom: 24px;
         }
+
+        .full-width { grid-column: 1 / -1; }
 
         @media (max-width: 768px) {
             .container { grid-template-columns: 1fr; gap: 16px; }
@@ -177,6 +179,14 @@
         .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
         .btn-modal-submit { flex: 1; background: #fff; color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
         .btn-modal-cancel { flex: 1; background: #333; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+
+        /* User Manual Styles */
+        .manual-step { background: #1a1a1a; padding: 14px; border-radius: 6px; border: 1px solid #333; margin-bottom: 12px; }
+        .manual-step h4 { margin-top: 0; color: #fff; margin-bottom: 8px; border-bottom: 1px dashed #444; padding-bottom: 6px; font-size: 1rem; }
+        .manual-step p { margin: 0; color: #ccc; font-size: 0.9rem; line-height: 1.5; }
+        .manual-step ul { margin: 8px 0 0; padding-left: 20px; color: #ccc; font-size: 0.9rem; line-height: 1.5; }
+        .manual-step li { margin-bottom: 6px; }
+        .manual-step strong { color: var(--accent-golden); }
     </style>
 </head>
 <body>
@@ -202,8 +212,15 @@
     </div>
 
     <div class="container">
+        <!-- DATA ENTRY PANEL -->
         <div class="panel">
             <h2>Note</h2>
+            
+            <div class="rule-bar">
+                <strong>Algorithmic Law:</strong><br>
+                Calculate recovery strictly off the <strong>Net Deficit</strong> (Payout minus Input).
+            </div>
+
             <div class="main-input-group">
                 <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="0.00">
                 <button id="btn-step" class="btn-step" onclick="stepNumber()">TICK</button>
@@ -211,9 +228,9 @@
 
             <div class="tag-buttons-grid">
                 <button class="tag-btn btn-golden" onclick="openGoldenModal()">Golden <span id="count-golden">0</span></button>
-                <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">PARROTS <span id="count-parrots">0</span></button>
-                <button class="tag-btn btn-big" onclick="addNumber('big')">BIG DROP <span id="count-big">0</span></button>
-                <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK <span id="count-blank">0</span></button>
+                <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">Parrots <span id="count-parrots">0</span></button>
+                <button class="tag-btn btn-big" onclick="addNumber('big')">Big <span id="count-big">0</span></button>
+                <button class="tag-btn btn-blank" onclick="addNumber('blank')">Blank <span id="count-blank">0</span></button>
             </div>
             
             <div class="util-bar">
@@ -221,6 +238,7 @@
             </div>
         </div>
 
+        <!-- PREDICTION PANEL -->
         <div class="panel" id="predictionPanel">
             <h2>Result <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
             <div id="modeDescription" class="mode-description">
@@ -234,18 +252,56 @@
             <div class="section-divider">Baseline Database</div>
             <ul class="history-list" id="historyListBaseline"></ul>
         </div>
+        
+        <!-- USER MANUAL PANEL -->
+        <div class="panel full-width">
+            <h2>User Manual: Field Execution Protocol</h2>
+            
+            <div class="manual-step">
+                <h4>Phase 1: Target Selection</h4>
+                <p>Never sit at a machine with a low Grand or Ultimate jackpot (it is in a deep recovery void). Walk the floor and hunt for machines with <strong>bloated, high jackpots</strong> approaching their Must-Hit-By ceiling.</p>
+            </div>
+
+            <div class="manual-step">
+                <h4>Phase 2: Anchor the Dark Zone</h4>
+                <p>Do not push the spin button when you sit down. Look at the live progressive ticker, type that exact price into the tool, and click <strong>BLANK (Climb)</strong>. This anchors your position and reveals the closest fractional execution traps (.23, .30, .50, .70, .84).</p>
+            </div>
+
+            <div class="manual-step">
+                <h4>Phase 3: The Waypoint Ambush</h4>
+                <p>Do not push through the "dead space" between decimals. Holster your inputs and let the public pool (other players or natural networked volume) push the ticker toward the nearest execution node.</p>
+            </div>
+
+            <div class="manual-step">
+                <h4>Phase 4: The 10-Tick Snipe</h4>
+                <p>When the ticker crosses a decimal node (e.g., hits .50 or .70), inject your capital for exactly <strong>10 ticks</strong> (a $20 volume test). If nothing hits, stop immediately and wait for the next node. If a feature hits, let it play out completely.</p>
+            </div>
+
+            <div class="manual-step">
+                <h4>Phase 5: Shatter the Dark Zone (Lock the Ledger)</h4>
+                <p>When a feature finishes, click <strong>Golden </strong>. Enter the <strong>Gross Payout</strong> shown on the screen, and the <strong>Capital Injected</strong> (how much you spent to hit it). Click Lock Ledger.</p>
+            </div>
+
+            <div class="manual-step">
+                <h4>Phase 6: Obey the Verdict</h4>
+                <ul>
+                    <li>🔥 <strong style="color:var(--alert-hot);">Micro-Cluster (Yellow):</strong> Machine is HOT. Push exactly 10 more ticks to catch a chained drop.</li>
+                    <li>🔴 <strong style="color:var(--alert-red);">Nuclear Winter (Red):</strong> Machine took a massive net loss. Walk away immediately and only return when the ticker crosses the generated safe zone line.</li>
+                    <li>🎯 <strong style="color:var(--alert-surplus);">Sniper Mode (Cyan):</strong> Machine holds a surplus. It is fully funded. Stop playing dead space and snipe the decimal nodes only.</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <script>
-        // BASELINE DATASET (Net Math applied, including the $1145 Controlled Bleed)
+        // BASELINE DATASET
         const baselineDataset = [
             {val: 852.66, tag: 'golden', sys: 'M1', block: 1, gross: 2250, net: 2150.00}, 
             {val: 852.70, tag: 'parrots', sys: 'M1', block: 1, gross: 5, net: 2.50},
-            
             {val: 1145.84, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: 0},
             {val: 1146.50, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: 0},
             {val: 1148.11, tag: 'parrots', sys: 'M2', block: 2, gross: 5, net: 2.50},
-            {val: 1148.43, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: -250.00} // The $250 Loss Surplus
+            {val: 1148.43, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: -250.00} 
         ];
 
         let dataset = [];
@@ -334,7 +390,6 @@
         function submitGoldenModal() {
             let grossPayout = parseFloat(document.getElementById('hs-total').value) || 0;
             let buyIn = parseFloat(document.getElementById('hs-buyin').value) || 0;
-            // Negative Net Deficit = Machine Surplus
             let netDeficit = grossPayout - buyIn; 
             closeGoldenModal(); 
             processDataEntry('golden', netDeficit, grossPayout);
@@ -346,10 +401,9 @@
                 let p = prompt(`Enter the total BIG Gross Payout amount ($):`, "150");
                 if (p === null) return; 
                 let gross = parseFloat(p) || 0;
-                let net = gross - 2.50; // Typically BIG drop is a single spin cost
+                let net = gross - 2.50; 
                 processDataEntry('big', net, gross);
             } else if (tagType === 'parrots') {
-                // Automatically logs Dead Parrot: $5 gross, $2.50 net deficit
                 processDataEntry('parrots', 2.50, 5.00);
             } else if (tagType === 'blank') {
                 processDataEntry('blank', 0, 0);
@@ -366,7 +420,6 @@
             let lastVal = sortedDB.length > 0 ? sortedDB[0].val : num;
             let currentBlock = getLatestBlock();
             
-            // Start a new block if the gap is massive, else group them
             if(Math.abs(num - lastVal) > 5.00 && !dataset.find(d => d.val === num)) currentBlock++; 
 
             if (!dataset.find(d => d.val === num && d.tag === tagType)) {
@@ -422,7 +475,7 @@
                 else { listBaseline.appendChild(li); }
             });
             
-            if (!hasLive) { listLive.innerHTML = '<div class="empty-placeholder">No new data entries yet. Use the data entry console to add live numbers.</div>'; }
+            if (!hasLive) { listLive.innerHTML = '<div class="empty-placeholder">No new data entries yet.</div>'; }
         }
 
         function generatePredictions(currentNum, tagType) {
@@ -439,7 +492,6 @@
             let anchorNum = currentNum;
             let netDeficit = chronoData[historyIndex]?.net || 0;
 
-            // If we logged a blank, anchor to the last real feature to measure distance
             if (tagType === 'blank') {
                 let lastReal = [...chronoData].reverse().find(d => d.tag !== 'blank' && d.val < currentNum);
                 if (lastReal) { effectiveTag = lastReal.tag; anchorNum = lastReal.val; netDeficit = lastReal.net || 0; }
@@ -449,11 +501,8 @@
             let isFreeSpin = (effectiveTag === 'parrots'); 
             let isPayoutEvent = (effectiveTag === 'golden' || effectiveTag === 'big');
             
-            // Check if we are inside the 10-tick Micro-Cluster window
             let ticksSinceAnchor = Math.round((currentNum - anchorNum) / 0.01);
             let isMicroClusterWindow = (!isDarkZone && tagType !== 'blank') || (tagType === 'blank' && ticksSinceAnchor <= 10 && ticksSinceAnchor > 0);
-            
-            // If Net Deficit is negative, the machine made profit (Algorithmic Surplus)
             let isSurplusMode = isPayoutEvent && netDeficit < 0;
 
             if (isDarkZone) {
@@ -500,7 +549,6 @@
                 area.innerHTML = html; return;
             }
 
-            // SURPLUS / SNIPER MODE TACTICS
             if (isSurplusMode) {
                 html += `<div class="prediction-category">
                             <h3 style="color:var(--alert-surplus);">🎯 Snipe Zones (Grand Jackpot Hoarding)</h3>
@@ -512,7 +560,6 @@
                             ${buildCard(nextSuffixes[1], 'golden', `Secondary Execution Node`, currentNum, "+", false, false, true)}
                          </div>`;
                          
-                // Calculate next round number barrier
                 let nextBarrierInt = Math.ceil(currentNum / 50) * 50;
                 if (nextBarrierInt - currentNum < 10) {
                      let barrierNode1 = nextBarrierInt - 1 + 0.70;
@@ -528,7 +575,6 @@
                 area.innerHTML = html; return;
             }
 
-            // MICRO-CLUSTER TACTICS
             if (isMicroClusterWindow && !isSurplusMode) {
                 let target3 = anchorNum + 0.03;
                 let target10 = anchorNum + 0.10;
@@ -554,7 +600,6 @@
                          </div>`;
             }
 
-            // DYNAMIC COOLDOWN CALCULATION (If outside cluster window and payout exists)
             if (isPayoutEvent && netDeficit > 0 && !isMicroClusterWindow) {
                 let recoveryTicks = Math.ceil(netDeficit / 2);
                 let recoveryDistance = recoveryTicks * 0.01;
