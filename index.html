@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Progressive Hold & Spin Predictor</title>
+    <title>Progressive Engine Predictor (Surplus & Deficit Model)</title>
     <style>
         :root {
             /* Black & White Grayscale Palette */
@@ -19,16 +19,17 @@
             --accent-blank: #444444; 
             --accent-price: #dddddd;
             
-            /* UI Elements */
+            /* UI Elements & Alert Colors */
             --border-color: #333333;
             --state-dormant: #777777;
             --state-active: #ffffff;
-            --state-replay: #bbbbbb;
             --state-waypoint: #999999;
             --state-freespin: #ffffff;
             --alert-red: #ff5555;
             --alert-red-muted: #aa3333;
             --alert-hot: #ffcc00;
+            --alert-surplus: #00e5ff; /* Cyan for Sniper Mode */
+            --alert-surplus-muted: #005566;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -73,9 +74,8 @@
         }
 
         .state-dormant { background-color: #1a1a1a; color: var(--state-dormant); border: 1px solid var(--state-dormant); }
-        .state-active { background-color: #2a2a2a; color: var(--state-active); border: 1px solid var(--state-active); }
         .state-cluster { background-color: #332200; color: var(--alert-hot); border: 1px solid var(--alert-hot); }
-        .state-replay { background-color: #222222; color: var(--state-replay); border: 1px solid var(--state-replay); }
+        .state-surplus { background-color: #001a22; color: var(--alert-surplus); border: 1px solid var(--alert-surplus); }
         .state-waypoint { background-color: #111111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
         .state-freespin { background-color: #ffffff; color: #000000; border: 1px solid #ffffff; }
 
@@ -112,11 +112,6 @@
         .btn-big { background-color: #333333; color: #ffffff; border: 1px solid #555555; }
         .btn-blank { background-color: #111111; color: #aaaaaa; border: 1px dashed #555555; }
 
-        .color-golden { color: var(--accent-golden); }
-        .color-parrots { color: var(--accent-parrots); }
-        .color-big { color: var(--accent-big); }
-        .color-blank { color: var(--accent-blank); }
-
         .pred-card {
             background-color: var(--bg-color); padding: 10px 12px; margin-bottom: 8px; border-radius: 4px;
             display: flex; flex-direction: column; border-left: 4px solid;
@@ -129,6 +124,7 @@
         .card-big { border-left-color: var(--accent-big); }
         .card-void { border-left-color: var(--alert-red); background-color: rgba(255, 0, 0, 0.05); }
         .card-cluster { border-left-color: var(--alert-hot); border-color: var(--alert-hot); }
+        .card-surplus { border-left-color: var(--alert-surplus); border-color: var(--alert-surplus-muted); background-color: rgba(0, 229, 255, 0.05); }
 
         .pred-val { font-family: monospace; font-size: 1.05rem; color: #fff; font-weight: bold; }
         .pred-price { font-size: 0.85rem; color: var(--accent-price); font-weight: normal; }
@@ -145,6 +141,8 @@
         .tactical-freespin strong { color: #ffffff; }
         .tactical-hot { border-color: var(--alert-hot); background-color: rgba(255, 204, 0, 0.05); color: #fff;}
         .tactical-hot strong { color: var(--alert-hot); }
+        .tactical-surplus { border-color: var(--alert-surplus); background-color: rgba(0, 229, 255, 0.05); color: #fff;}
+        .tactical-surplus strong { color: var(--alert-surplus); }
 
         .history-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .history-item { padding: 8px 4px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-family: monospace; font-size: 0.95rem; }
@@ -183,14 +181,18 @@
 </head>
 <body>
 
-    <!-- FINAL SUMMARY MODAL -->
+    <!-- NET LEDGER MODAL -->
     <div class="modal-overlay" id="hsModal">
         <div class="modal-content">
-            <h3>Final Feature Summary</h3>
-            <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">Wait for the major event to finish. Enter the single summarized final payout displayed on the screen to calculate the algorithmic void.</div>
+            <h3>Ledger Entry (Net Math)</h3>
+            <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">Enter your final payout and your capital injected (buy-in) to calculate the machine's true Net Deficit or Surplus.</div>
             <div class="modal-row">
-                <label>Final Summary Payout ($)</label>
+                <label>Gross Payout / Cashout ($)</label>
                 <input type="number" id="hs-total" value="" placeholder="0.00" step="0.01">
+            </div>
+            <div class="modal-row" style="border-left: 2px solid #00e5ff;">
+                <label style="color:#aaa;">Capital Injected / Buy-in ($)</label>
+                <input type="number" id="hs-buyin" value="2.50" step="0.50">
             </div>
             <div class="modal-actions">
                 <button class="btn-modal-cancel" onclick="closeGoldenModal()">Cancel</button>
@@ -201,23 +203,17 @@
 
     <div class="container">
         <div class="panel">
-            <h2>Data Entry Console</h2>
-            
-            <div class="rule-bar">
-                <strong>Progressive Strategy Rule:</strong><br>
-                Avoid low jackpots (Deep Void). Hunt machines with bloated jackpots nearing their Must-Hit-By ceiling.
-            </div>
-
+            <h2>Note</h2>
             <div class="main-input-group">
                 <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="0.00">
                 <button id="btn-step" class="btn-step" onclick="stepNumber()">TICK</button>
             </div>
 
             <div class="tag-buttons-grid">
-                <button class="tag-btn btn-golden" onclick="openGoldenModal()">HOLD & SPIN (Golden) <span id="count-golden">0</span></button>
-                <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">PARROTS (Free Spins) <span id="count-parrots">0</span></button>
+                <button class="tag-btn btn-golden" onclick="openGoldenModal()">Golden <span id="count-golden">0</span></button>
+                <button class="tag-btn btn-parrots" onclick="addNumber('parrots')">PARROTS <span id="count-parrots">0</span></button>
                 <button class="tag-btn btn-big" onclick="addNumber('big')">BIG DROP <span id="count-big">0</span></button>
-                <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK (Climb) <span id="count-blank">0</span></button>
+                <button class="tag-btn btn-blank" onclick="addNumber('blank')">BLANK <span id="count-blank">0</span></button>
             </div>
             
             <div class="util-bar">
@@ -228,7 +224,7 @@
         <div class="panel" id="predictionPanel">
             <h2>Result <span id="stateBadge" class="state-badge">AWAITING INPUT</span></h2>
             <div id="modeDescription" class="mode-description">
-                Input the progressive ticker price and select a tag to calculate underlying ledger liabilities.
+                Input the progressive ticker price and select a tag to calculate underlying net ledger liabilities.
             </div>
             <div id="predictionsArea"></div>
             
@@ -241,18 +237,15 @@
     </div>
 
     <script>
-        // BASELINE DATASET (Micro-cluster optimized)
+        // BASELINE DATASET (Net Math applied, including the $1145 Controlled Bleed)
         const baselineDataset = [
-            {val: 846.46, tag: 'parrots', sys: 'Live', block: 1}, 
-            {val: 846.70, tag: 'golden', sys: 'Live', block: 1, payout: 60}, 
-            {val: 847.18, tag: 'big', sys: 'Live', block: 1, payout: 150}, 
-            {val: 850.25, tag: 'golden', sys: 'Live', block: 2, payout: 40}, 
-            {val: 850.52, tag: 'golden', sys: 'Live', block: 2, payout: 80}, 
-            {val: 850.55, tag: 'parrots', sys: 'Live', block: 2}, 
-            {val: 850.65, tag: 'parrots', sys: 'Live', block: 2}, 
-            {val: 850.71, tag: 'parrots', sys: 'Live', block: 2}, 
-            {val: 852.66, tag: 'golden', sys: 'Live', block: 3, payout: 2250}, 
-            {val: 852.70, tag: 'parrots', sys: 'Live', block: 3}
+            {val: 852.66, tag: 'golden', sys: 'M1', block: 1, gross: 2250, net: 2150.00}, 
+            {val: 852.70, tag: 'parrots', sys: 'M1', block: 1, gross: 5, net: 2.50},
+            
+            {val: 1145.84, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: 0},
+            {val: 1146.50, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: 0},
+            {val: 1148.11, tag: 'parrots', sys: 'M2', block: 2, gross: 5, net: 2.50},
+            {val: 1148.43, tag: 'golden', sys: 'M2', block: 2, gross: 0, net: -250.00} // The $250 Loss Surplus
         ];
 
         let dataset = [];
@@ -307,7 +300,7 @@
             return (targetNum >= currentNum ? "+$" : "-$") + price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        function buildCard(val, tag, logicText, currentNum, prefix = "+", isVoid = false, isCluster = false) {
+        function buildCard(val, tag, logicText, currentNum, prefix = "+", isVoid = false, isCluster = false, isSurplus = false) {
             let priceGap = formatDeltaPrice(val, currentNum);
             let diff = Math.abs(val - currentNum);
             let ticks = Math.round(diff / 0.01);
@@ -315,7 +308,7 @@
             let isGhostTick = (ticks % 5 === 4);
             let ghostWarning = isGhostTick ? ` <span style="color:#ff5555;font-size:0.7rem;">[Ghost Tick]</span>` : '';
             
-            let cardClass = isVoid ? `card-void` : (isCluster ? `card-cluster` : `card-${tag}`);
+            let cardClass = isVoid ? `card-void` : (isSurplus ? `card-surplus` : (isCluster ? `card-cluster` : `card-${tag}`));
             
             return `<div class="pred-card ${cardClass}">
                         <div class="pred-card-header">
@@ -331,6 +324,7 @@
             const numInput = document.getElementById('main-input').value;
             if (!numInput) { alert("Please enter the current Progressive Ticker price first."); return; }
             document.getElementById('hs-total').value = '';
+            document.getElementById('hs-buyin').value = '2.50';
             document.getElementById('hsModal').style.display = 'flex';
             document.getElementById('hs-total').focus();
         }
@@ -338,21 +332,31 @@
         function closeGoldenModal() { document.getElementById('hsModal').style.display = 'none'; }
 
         function submitGoldenModal() {
-            let totalPayout = parseFloat(document.getElementById('hs-total').value) || 0;
-            closeGoldenModal(); processDataEntry('golden', totalPayout);
+            let grossPayout = parseFloat(document.getElementById('hs-total').value) || 0;
+            let buyIn = parseFloat(document.getElementById('hs-buyin').value) || 0;
+            // Negative Net Deficit = Machine Surplus
+            let netDeficit = grossPayout - buyIn; 
+            closeGoldenModal(); 
+            processDataEntry('golden', netDeficit, grossPayout);
         }
 
         // --- DATA ENTRY LOGIC ---
         function addNumber(tagType) {
-            let payoutAmt = 0;
             if (tagType === 'big') {
-                let p = prompt(`Enter the total BIG payout amount ($):`, "150");
-                if (p === null) return; payoutAmt = parseFloat(p) || 0;
+                let p = prompt(`Enter the total BIG Gross Payout amount ($):`, "150");
+                if (p === null) return; 
+                let gross = parseFloat(p) || 0;
+                let net = gross - 2.50; // Typically BIG drop is a single spin cost
+                processDataEntry('big', net, gross);
+            } else if (tagType === 'parrots') {
+                // Automatically logs Dead Parrot: $5 gross, $2.50 net deficit
+                processDataEntry('parrots', 2.50, 5.00);
+            } else if (tagType === 'blank') {
+                processDataEntry('blank', 0, 0);
             }
-            processDataEntry(tagType, payoutAmt);
         }
 
-        function processDataEntry(tagType, payoutAmt = 0) {
+        function processDataEntry(tagType, netAmt = 0, grossAmt = 0) {
             const inputField = document.getElementById('main-input');
             const numInput = inputField.value;
             if (!numInput) return;
@@ -366,7 +370,7 @@
             if(Math.abs(num - lastVal) > 5.00 && !dataset.find(d => d.val === num)) currentBlock++; 
 
             if (!dataset.find(d => d.val === num && d.tag === tagType)) {
-                dataset.push({val: num, tag: tagType, sys: 'Live', block: currentBlock, payout: payoutAmt});
+                dataset.push({val: num, tag: tagType, sys: 'Live', block: currentBlock, net: netAmt, gross: grossAmt});
                 saveData(); renderData();
             }
             
@@ -386,9 +390,12 @@
             let hasLive = false;
             const grouped = {};
             dataset.forEach(d => {
-                if(!grouped[d.val]) grouped[d.val] = { val: d.val, sys: d.sys, tags: [], payout: d.payout };
+                if(!grouped[d.val]) grouped[d.val] = { val: d.val, sys: d.sys, tags: [], net: d.net, gross: d.gross };
                 grouped[d.val].tags.push(d.tag);
-                if(d.payout && d.payout > (grouped[d.val].payout || 0)) grouped[d.val].payout = d.payout;
+                if(d.net !== undefined && (grouped[d.val].net === undefined || Math.abs(d.net) > Math.abs(grouped[d.val].net))) {
+                    grouped[d.val].net = d.net;
+                    grouped[d.val].gross = d.gross;
+                }
             });
             
             const sortedVals = Object.values(grouped).sort((a, b) => b.val - a.val);
@@ -397,7 +404,15 @@
                 const li = document.createElement('li'); li.className = 'history-item';
                 let tagsHtml = item.tags.map(t => `<span class="tag color-${t}" ${t === 'blank' ? 'style="background:#222;border:1px dashed #555;"' : ''}>${t}</span>`).join('');
                 let sysClass = item.sys === 'Live' ? 'sys-tag sys-tag-live' : 'sys-tag';
-                let payoutText = item.payout ? ` <span style="color:var(--accent-golden);font-size:0.75rem;">[$${item.payout.toLocaleString(undefined, {minimumFractionDigits: 2})}]</span>` : '';
+                
+                let payoutText = '';
+                if (item.net !== undefined && item.net !== 0) {
+                    if (item.net > 0) {
+                        payoutText = ` <span style="color:var(--accent-golden);font-size:0.75rem;">[Deficit: -$${item.net.toLocaleString(undefined, {minimumFractionDigits: 2})}]</span>`;
+                    } else {
+                        payoutText = ` <span style="color:var(--alert-surplus);font-size:0.75rem;">[Surplus: +$${Math.abs(item.net).toLocaleString(undefined, {minimumFractionDigits: 2})}]</span>`;
+                    }
+                }
                 
                 li.innerHTML = `
                     <div><span class="${sysClass}">Sys ${item.sys}</span><span>${item.val.toFixed(2)}${payoutText}</span></div>
@@ -422,13 +437,12 @@
 
             let effectiveTag = tagType;
             let anchorNum = currentNum;
-            let currentBlock = chronoData[historyIndex]?.block || getLatestBlock();
-            let payoutValue = chronoData[historyIndex]?.payout || 0;
+            let netDeficit = chronoData[historyIndex]?.net || 0;
 
             // If we logged a blank, anchor to the last real feature to measure distance
             if (tagType === 'blank') {
                 let lastReal = [...chronoData].reverse().find(d => d.tag !== 'blank' && d.val < currentNum);
-                if (lastReal) { effectiveTag = lastReal.tag; anchorNum = lastReal.val; payoutValue = lastReal.payout || 0; }
+                if (lastReal) { effectiveTag = lastReal.tag; anchorNum = lastReal.val; netDeficit = lastReal.net || 0; }
             }
 
             let isDarkZone = (tagType === 'blank' && effectiveTag === 'blank'); 
@@ -438,22 +452,29 @@
             // Check if we are inside the 10-tick Micro-Cluster window
             let ticksSinceAnchor = Math.round((currentNum - anchorNum) / 0.01);
             let isMicroClusterWindow = (!isDarkZone && tagType !== 'blank') || (tagType === 'blank' && ticksSinceAnchor <= 10 && ticksSinceAnchor > 0);
+            
+            // If Net Deficit is negative, the machine made profit (Algorithmic Surplus)
+            let isSurplusMode = isPayoutEvent && netDeficit < 0;
 
             if (isDarkZone) {
                 stateBadge.className = 'state-badge state-waypoint'; stateBadge.innerText = `DARK ZONE (NO ANCHOR)`;
                 modeDesc.innerText = `You entered a blind waypoint. Use the Waypoint Ambush or probe the bucket.`;
                 predPanel.style.borderColor = 'var(--state-waypoint)';
+            } else if (isSurplusMode) {
+                stateBadge.className = 'state-badge state-surplus'; stateBadge.innerText = `🎯 STATE: FULLY FUNDED (SNIPER MODE)`;
+                modeDesc.innerText = `Machine holds a $${Math.abs(netDeficit).toLocaleString()} pure surplus. Starvation phase ending. Execute 10-tick snipes ONLY at hardcoded decimal nodes.`;
+                predPanel.style.borderColor = 'var(--alert-surplus)';
             } else if (isMicroClusterWindow) {
                 stateBadge.className = 'state-badge state-cluster'; stateBadge.innerText = `🔥 MICRO-CLUSTER ACTIVE`;
                 modeDesc.innerText = `The engine is HOT. Highest probability of a back-to-back chained drop is within the next 3 to 10 visual ticks.`;
                 predPanel.style.borderColor = 'var(--alert-hot)';
             } else if (isFreeSpin) {
                 stateBadge.className = 'state-badge state-freespin'; stateBadge.innerText = 'STATE: PARROT COMPRESSOR';
-                modeDesc.innerText = 'Price is frozen. Unlisted volume is aggressively building. Watch for an internal Golden chain.';
+                modeDesc.innerText = 'Price is locked. Instant liability clearance expected. Watch for an internal Golden chain.';
                 predPanel.style.borderColor = '#ffffff';
-            } else if (isPayoutEvent && payoutValue > 0) {
+            } else if (isPayoutEvent && netDeficit > 0) {
                 stateBadge.className = 'state-badge state-dormant'; stateBadge.innerText = 'STATE: NUCLEAR WINTER (ALGORITHMIC VOID)';
-                modeDesc.innerText = `Micro-cluster window failed. System is locked down to recoup the $${payoutValue.toLocaleString()} deficit.`;
+                modeDesc.innerText = `Micro-cluster window failed. System is locked down to recoup the $${netDeficit.toLocaleString()} net deficit.`;
                 predPanel.style.borderColor = 'var(--alert-red)';
             } else {
                 stateBadge.className = 'state-badge state-waypoint'; stateBadge.innerText = `STATE: SEARCHING (CLIMB)`;
@@ -462,11 +483,10 @@
             }
 
             let html = ``;
+            let baseInt = Math.floor(currentNum);
+            let nextSuffixes = terminalSuffixes.map(s => { let t = baseInt + s; return t <= currentNum ? baseInt + 1 + s : t; }).sort((a, b) => a - b);
 
             if (isDarkZone) {
-                let baseInt = Math.floor(currentNum);
-                let nextSuffixes = terminalSuffixes.map(s => { let t = baseInt + s; return t <= currentNum ? baseInt + 1 + s : t; }).sort((a, b) => a - b);
-
                 html += `<div class="prediction-category">
                             <h3 style="color:var(--state-waypoint);">Option 1: Waypoint Ambush (Safe)</h3>
                             <div class="tactical-card">
@@ -480,8 +500,36 @@
                 area.innerHTML = html; return;
             }
 
+            // SURPLUS / SNIPER MODE TACTICS
+            if (isSurplusMode) {
+                html += `<div class="prediction-category">
+                            <h3 style="color:var(--alert-surplus);">🎯 Snipe Zones (Grand Jackpot Hoarding)</h3>
+                            <div class="tactical-card tactical-surplus">
+                                <strong>Zero Cooldown Active</strong>
+                                Because the machine profited from you, there is no Nuclear Winter. The ledger is flush and ready to execute the Grand drop. <strong>Do not push dead space.</strong> Wait for the public to push the price near these execution nodes, then step in for exactly 10 pushes to break the barrier.
+                            </div>
+                            ${buildCard(nextSuffixes[0], 'golden', `Primary Execution Node`, currentNum, "+", false, false, true)}
+                            ${buildCard(nextSuffixes[1], 'golden', `Secondary Execution Node`, currentNum, "+", false, false, true)}
+                         </div>`;
+                         
+                // Calculate next round number barrier
+                let nextBarrierInt = Math.ceil(currentNum / 50) * 50;
+                if (nextBarrierInt - currentNum < 10) {
+                     let barrierNode1 = nextBarrierInt - 1 + 0.70;
+                     let barrierNode2 = nextBarrierInt - 1 + 0.84;
+                     if (barrierNode1 > currentNum) {
+                         html += `<div class="prediction-category">
+                                    <h3 style="color:var(--alert-surplus);">🚧 Round-Number Barrier ($${nextBarrierInt}.00)</h3>
+                                    ${buildCard(barrierNode1, 'golden', `Pre-Barrier Execution Trap (.70)`, currentNum, "+", false, false, true)}
+                                    ${buildCard(barrierNode2, 'golden', `Terminal Execution Trap (.84)`, currentNum, "+", false, false, true)}
+                                 </div>`;
+                     }
+                }
+                area.innerHTML = html; return;
+            }
+
             // MICRO-CLUSTER TACTICS
-            if (isMicroClusterWindow) {
+            if (isMicroClusterWindow && !isSurplusMode) {
                 let target3 = anchorNum + 0.03;
                 let target10 = anchorNum + 0.10;
                 
@@ -489,7 +537,7 @@
                             <h3 style="color:var(--alert-hot);">🔥 10-Tick Cluster Window</h3>
                             <div class="tactical-card tactical-hot">
                                 <strong>Ride the Momentum</strong>
-                                The machine just dropped a feature. It is highly likely to chain another drop (Parrot, Golden, Big) immediately. Test exactly 10 pushes (+0.10 price distance). If it crosses the cutoff line without a drop, <strong>the cluster is dead. Cut inputs immediately.</strong>
+                                The machine just dropped a feature. It is highly likely to chain another drop immediately. Test exactly 10 pushes (+0.10). If it crosses the cutoff line without a drop, <strong>the cluster is dead. Cut inputs immediately.</strong>
                             </div>
                             ${buildCard(target3, 'golden', `High-Probability Cluster Point (3 Ticks)`, currentNum, "+", false, true)}
                             ${buildCard(target10, 'blank', `Absolute Cutoff Line (10 Ticks)`, currentNum, "+", false, true)}
@@ -498,31 +546,29 @@
 
             if (isFreeSpin) {
                 html += `<div class="prediction-category">
-                            <h3 style="color:#ffffff;">⚠️ Volume Compressor Active</h3>
+                            <h3 style="color:#ffffff;">⚠️ Parrot Liability (Net Loss: $2.50)</h3>
                             <div class="tactical-card tactical-freespin">
-                                <strong>Zero-Capital Window</strong>
-                                Price is locked. Any drop here creates a pure ledger deficit since no capital is injected. Very high probability of a chained Golden drop.
+                                <strong>Instant Clear Recovery</strong>
+                                This dead Parrot only cost the machine $2.50 net (1.25 ticks). Because the recovery void is so small, it is instantly cleared while you test the 3-to-10 tick cluster window. Expect high probability of rapid chaining.
                             </div>
                          </div>`;
             }
 
             // DYNAMIC COOLDOWN CALCULATION (If outside cluster window and payout exists)
-            if (isPayoutEvent && payoutValue > 0 && !isMicroClusterWindow) {
-                let recoveryTicks = Math.ceil(payoutValue / 2);
+            if (isPayoutEvent && netDeficit > 0 && !isMicroClusterWindow) {
+                let recoveryTicks = Math.ceil(netDeficit / 2);
                 let recoveryDistance = recoveryTicks * 0.01;
                 let safeTarget = anchorNum + recoveryDistance;
                 
                 html += `<div class="prediction-category">
-                            <h3 style="color:var(--alert-red);">⚠️ Nuclear Winter ($${payoutValue.toLocaleString(undefined, {minimumFractionDigits: 2})} Deficit)</h3>
+                            <h3 style="color:var(--alert-red);">⚠️ Nuclear Winter (-$${netDeficit.toLocaleString(undefined, {minimumFractionDigits: 2})} Net Deficit)</h3>
                             <div class="tactical-card tactical-warning">
                                 <strong>Algorithmic Lockdown</strong>
-                                The system just took a $${payoutValue.toLocaleString()} deficit. The 10-tick cluster window failed, meaning the machine is now in a strict mathematically enforced dead zone. It must absorb <strong>${recoveryTicks.toLocaleString()} ticks</strong> of public volume to recover. Do not inject capital until the price crosses the safe zone line.
+                                The machine just took a net loss of $${netDeficit.toLocaleString(undefined, {minimumFractionDigits: 2})}. The 10-tick cluster window failed, meaning the machine is now in a strict mathematically enforced dead zone. It must absorb <strong>${recoveryTicks.toLocaleString()} ticks</strong> of public volume to recover. Do not inject capital until the price crosses the safe zone line.
                             </div>
-                            ${buildCard(safeTarget, 'golden', `Calculated Recovery Line (End of Dead Zone)`, currentNum, "Min ", true)}
+                            ${buildCard(safeTarget, 'golden', `Calculated Net Recovery Line (End of Dead Zone)`, currentNum, "Min ", true)}
                          </div>`;
-            } else if (isPayoutEvent && payoutValue === 0 && !isMicroClusterWindow) {
-                let baseInt = Math.floor(currentNum);
-                let nextSuffixes = terminalSuffixes.map(s => { let t = baseInt + s; return t <= currentNum ? baseInt + 1 + s : t; }).sort((a, b) => a - b);
+            } else if (isPayoutEvent && netDeficit === 0 && !isMicroClusterWindow) {
                 html += `<div class="prediction-category">
                             <h3 style="color:var(--alert-red);">⚠️ Unknown Liability Dead Zone</h3>
                             <div class="tactical-card tactical-warning">
