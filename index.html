@@ -130,7 +130,7 @@
             background-color: #1a1a1a; border: 1px dashed var(--text-muted); border-radius: 4px; padding: 12px;
             font-size: 0.85rem; color: #cccccc; margin-bottom: 12px; line-height: 1.5;
         }
-        .tactical-card strong { color: var(--accent-golden); display: block; margin-bottom: 4px; font-size: 0.9rem; }
+        .tactical-card strong { color: var(--accent-golden); display: inline-block; font-size: 0.9rem; margin-bottom: 4px; }
         .tactical-warning { border-color: var(--alert-red-muted); background-color: rgba(170, 51, 51, 0.1); }
         .tactical-warning strong { color: var(--alert-red); }
         .tactical-freespin { border-color: #ffffff; background-color: #222222; }
@@ -257,40 +257,46 @@
         
         <!-- USER MANUAL PANEL -->
         <div class="panel full-width">
-            <h2>User Manual: Field Execution Protocol</h2>
+            <h2>User Manual: The 4-Tier Target System</h2>
             
             <div class="manual-step">
-                <h4>Phase 1: Target Selection</h4>
-                <p>Never sit at a machine with a low Grand or Ultimate jackpot (it is in a deep recovery void). Walk the floor and hunt for machines with <strong>bloated, high jackpots</strong> approaching their Must-Hit-By ceiling.</p>
-            </div>
-
-            <div class="manual-step">
-                <h4>Phase 2: Anchor the Dark Zone</h4>
-                <p>Do not push the spin button when you sit down. Look at the live progressive ticker, type that exact price into the tool, and click <strong>START</strong>. This anchors your position and reveals the closest fractional execution traps <strong>(.23, .24, .25, .30, .32, .42, .43, .50, .70, .84)</strong>.</p>
-            </div>
-
-            <div class="manual-step">
-                <h4>Phase 3: The Waypoint Ambush</h4>
-                <p>Do not push through the "dead space" between decimals. Holster your inputs and let the public pool (other players or natural networked volume) push the ticker toward the nearest execution node.</p>
-            </div>
-
-            <div class="manual-step">
-                <h4>Phase 4: The 10-Tick Snipe</h4>
-                <p>When the ticker crosses one of the 10 hardcoded decimal nodes <strong>(.23, .24, .25, .30, .32, .42, .43, .50, .70, .84)</strong>, inject your capital for exactly <strong>10 ticks</strong> (a $20 volume test). If nothing hits, stop immediately and wait for the next node. If a feature hits, let it play out completely.</p>
-            </div>
-
-            <div class="manual-step">
-                <h4>Phase 5: Shatter the Dark Zone (Lock the Ledger)</h4>
-                <p>When a feature finishes, log it (Golden, Parrot, or Big). Enter the <strong>Gross Payout</strong> shown on the screen. The tool automatically pulls your previous anchor to calculate the exact volume injected. Click Lock Ledger.</p>
-            </div>
-
-            <div class="manual-step">
-                <h4>Phase 6: Obey the Verdict</h4>
+                <h4>Tier 1: Century Phase (Tens Digit Filter)</h4>
+                <p>Before sitting down, look at the <strong>Tens Digit</strong> (e.g., the 8 in $880.XX). This dictates the machine's macro-algorithmic phase.</p>
                 <ul>
-                    <li>🔥 <strong style="color:var(--alert-hot);">Micro-Cluster (Yellow):</strong> Machine is HOT. Push exactly 10 more ticks to catch a chained drop.</li>
-                    <li>🔴 <strong style="color:var(--alert-red);">Nuclear Winter (Red):</strong> Machine took a massive net loss. Walk away immediately and only return when the ticker crosses the generated safe zone line.</li>
-                    <li>🎯 <strong style="color:var(--alert-surplus);">Sniper Mode (Cyan):</strong> Machine holds a surplus. It is fully funded. Stop playing dead space and snipe the decimal nodes only.</li>
+                    <li>🔴 <strong>Century Void (00s / 10s):</strong> Walk away. The machine just crossed a $100 barrier and is accumulating dead volume.</li>
+                    <li>🟢 <strong>Terminal Overdrive (80s / 90s):</strong> PRIME TARGET. The machine is violently resisting the next $100 barrier. Expect heavy feature clusters and Grand Jackpots.</li>
+                    <li>🟡 <strong>Cycle Peaks (20s/30s & 70s):</strong> Standard mid-century $50 pulse walls. Solid hunting grounds.</li>
                 </ul>
+            </div>
+
+            <div class="manual-step">
+                <h4>Tier 2: The Local Wall (Ones Digit Filter)</h4>
+                <p>Next, look at the <strong>Ones Digit</strong> (the single dollar). The machine groups feature drops together before letting the price move up a dollar.</p>
+                <ul>
+                    <li>🔴 <strong>Drought Zones (Ends in 1, 2, or 3):</strong> Extreme caution. Very few features drop here.</li>
+                    <li>🟡 <strong>Mid-Bracket Walls (Ends in 4, 5, or 6):</strong> Secondary stall points.</li>
+                    <li>🟢 <strong>Roll-Over Traps (Ends in 8, 9, or 0):</strong> The dam breaks here. Authorize maximum aggression.</li>
+                </ul>
+            </div>
+
+            <div class="manual-step">
+                <h4>Tier 3: The Waypoint Ambush (Decimal Nodes)</h4>
+                <p>Do not push the spin button in "dead space". Let the public pool push the ticker to the nearest optimized execution node: <strong>(.12, .24, .30, .42, .50, .70, .80)</strong>.</p>
+            </div>
+
+            <div class="manual-step">
+                <h4>Tier 4: Adaptive Capital Injection</h4>
+                <p>Ensure your bet matches a flawless <strong>1:1 injection ratio</strong> ($2.00 bet = +$0.01 tick). Match your volume to the trap depth:</p>
+                <ul>
+                    <li>🎯 <strong>Shallow Probes (3-5 Ticks / $6-$10 max):</strong> Use on early and mid-level nodes <strong>(.12, .24, .30, .42, .50)</strong> or cold integers. If nothing drops inside these tight windows, stop instantly.</li>
+                    <li>🚀 <strong>The Grand Trap (10 Ticks / $20 max):</strong> When the ticker crosses the <strong>.70 or .80</strong> nodes, authorize the full 10 ticks. The algorithm hides massive liabilities deep in these zones.</li>
+                    <li>🔥 <strong>State Overrides:</strong> If the machine just dropped *any* feature OR the integer ends in 8, 9, or 0, always use a full 10-tick ($20) sweep on the major nodes to catch micro-clusters.</li>
+                </ul>
+            </div>
+
+            <div class="manual-step">
+                <h4>Execution: Lock the Ledger</h4>
+                <p>When a feature finishes, enter the <strong>Gross Payout</strong> into the tool. It will auto-calculate your exact volume injected. Obey the Cyan/Yellow/Red alerts generated by the tool to either ride the cluster or walk away from the Nuclear Winter.</p>
             </div>
         </div>
     </div>
@@ -298,190 +304,78 @@
     <script>
         // MASSIVE CONFIRMED BASELINE DATASET
         const baselineDataset = [
-            // SYSTEM A (Block 1-7)
-            {val: 785.43, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
-            {val: 785.53, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
-            {val: 787.72, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
-            {val: 789.80, tag: 'big', sys: 'A', block: 1, gross: 0, net: 0},
-            {val: 790.29, tag: 'parrots', sys: 'A', block: 1, gross: 5, net: 2.50},
-            {val: 790.57, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
-            {val: 791.30, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
-            {val: 791.39, tag: 'big', sys: 'A', block: 1, gross: 0, net: 0},
-            {val: 791.84, tag: 'golden', sys: 'A', block: 1, gross: 0, net: 0},
-            
-            {val: 812.95, tag: 'golden', sys: 'A', block: 2, gross: 0, net: 0},
-            {val: 813.05, tag: 'parrots', sys: 'A', block: 2, gross: 5, net: 2.50},
-            {val: 813.17, tag: 'parrots', sys: 'A', block: 2, gross: 5, net: 2.50},
-            {val: 813.27, tag: 'golden', sys: 'A', block: 2, gross: 0, net: 0},
-            
-            {val: 829.88, tag: 'parrots', sys: 'A', block: 3, gross: 5, net: 2.50},
-            {val: 829.97, tag: 'parrots', sys: 'A', block: 3, gross: 5, net: 2.50},
-            {val: 830.52, tag: 'golden', sys: 'A', block: 3, gross: 0, net: 0},
-            {val: 830.66, tag: 'golden', sys: 'A', block: 3, gross: 0, net: 0},
-            {val: 830.68, tag: 'golden', sys: 'A', block: 3, gross: 0, net: 0},
-            
-            {val: 846.46, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
-            {val: 846.67, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
-            {val: 846.70, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
-            {val: 847.18, tag: 'big', sys: 'A', block: 4, gross: 0, net: 0},
-            {val: 850.25, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
-            {val: 850.52, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
-            {val: 850.55, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
-            {val: 850.65, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
-            {val: 850.71, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
-            {val: 852.66, tag: 'golden', sys: 'A', block: 4, gross: 0, net: 0},
-            {val: 852.70, tag: 'parrots', sys: 'A', block: 4, gross: 5, net: 2.50},
-            
-            {val: 861.78, tag: 'golden', sys: 'A', block: 5, gross: 0, net: 0},
-            {val: 862.23, tag: 'golden', sys: 'A', block: 5, gross: 0, net: 0},
-            
-            {val: 873.87, tag: 'golden', sys: 'A', block: 6, gross: 0, net: 0},
-            {val: 874.30, tag: 'parrots', sys: 'A', block: 6, gross: 5, net: 2.50},
-            {val: 874.43, tag: 'golden', sys: 'A', block: 6, gross: 0, net: 0},
-            {val: 874.70, tag: 'golden', sys: 'A', block: 6, gross: 0, net: 0},
-            {val: 875.24, tag: 'golden', sys: 'A', block: 6, gross: 0, net: 0},
-            
-            {val: 941.89, tag: 'golden', sys: 'A', block: 7, gross: 0, net: 0},
+            // Block 1
+            {val: 827.34, tag: 'golden', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 827.91, tag: 'golden', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 828.21, tag: 'parrots', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 828.96, tag: 'golden', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 829.35, tag: 'parrots', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 829.54, tag: 'parrots', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 830.08, tag: 'parrots', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 830.30, tag: 'golden', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 831.02, tag: 'mini', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 831.13, tag: 'golden', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 832.22, tag: 'parrots', sys: 'B', block: 1, gross: 0, net: 0},
+            {val: 832.32, tag: 'golden', sys: 'B', block: 1, gross: 0, net: 0},
 
-            // SYSTEM B (Block 8-9)
-            {val: 827.34, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
-            {val: 827.91, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
-            {val: 828.21, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
-            {val: 828.96, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
-            {val: 829.35, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
-            {val: 829.54, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
-            {val: 830.08, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
-            {val: 830.30, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
-            {val: 831.02, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
-            {val: 831.13, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
-            {val: 832.22, tag: 'parrots', sys: 'B', block: 8, gross: 5, net: 2.50},
-            {val: 832.32, tag: 'golden', sys: 'B', block: 8, gross: 0, net: 0},
-            
-            {val: 880.93, tag: 'big', sys: 'B', block: 9, gross: 94.50, net: 92.00},
-            {val: 881.88, tag: 'golden', sys: 'B', block: 9, gross: 62.50, net: 60.00},
-            {val: 881.94, tag: 'golden', sys: 'B', block: 9, gross: 277.50, net: 275.00},
-            {val: 883.66, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
-            {val: 884.14, tag: 'golden', sys: 'B', block: 9, gross: 44.50, net: 42.00},
-            {val: 884.18, tag: 'golden', sys: 'B', block: 9, gross: 45.50, net: 43.00},
-            {val: 884.41, tag: 'golden', sys: 'B', block: 9, gross: 50.00, net: 47.50},
-            {val: 884.41, tag: 'parrots', sys: 'B', block: 9, gross: 5, net: 2.50},
-            {val: 884.76, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
-            {val: 884.77, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
-            {val: 884.81, tag: 'golden', sys: 'B', block: 9, gross: 17.50, net: 15.00},
-            {val: 885.21, tag: 'golden', sys: 'B', block: 9, gross: 207.50, net: 205.00},
-            {val: 886.17, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
-            {val: 887.33, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
-            {val: 888.15, tag: 'parrots', sys: 'B', block: 9, gross: 5, net: 2.50},
-            {val: 888.80, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
-            {val: 889.51, tag: 'golden', sys: 'B', block: 9, gross: 25.00, net: 22.50},
-            {val: 890.32, tag: 'golden', sys: 'B', block: 9, gross: 42.50, net: 40.00},
-            {val: 890.56, tag: 'golden', sys: 'B', block: 9, gross: 242.50, net: 240.00},
-            {val: 890.76, tag: 'golden', sys: 'B', block: 9, gross: 270.00, net: 267.50},
-            {val: 750.01, tag: 'blank', sys: 'B', block: 9, gross: 0, net: 0},
-            {val: 750.15, tag: 'parrots', sys: 'B', block: 9, gross: 5, net: 2.50},
+            // Block 2
+            {val: 880.93, tag: 'big', sys: 'B', block: 2, gross: 94.50, net: 0},
+            {val: 881.88, tag: 'golden', sys: 'B', block: 2, gross: 62.50, net: 0},
+            {val: 881.94, tag: 'golden', sys: 'B', block: 2, gross: 277.50, net: 0},
+            {val: 883.66, tag: 'blank', sys: 'B', block: 2, gross: 0, net: 0},
+            {val: 884.14, tag: 'golden', sys: 'B', block: 2, gross: 44.50, net: 0},
+            {val: 884.18, tag: 'golden', sys: 'B', block: 2, gross: 45.50, net: 0},
+            {val: 884.41, tag: 'parrots', sys: 'B', block: 2, gross: 0, net: 0},
+            {val: 884.76, tag: 'blank', sys: 'B', block: 2, gross: 0, net: 0},
+            {val: 884.77, tag: 'blank', sys: 'B', block: 2, gross: 0, net: 0},
+            {val: 884.81, tag: 'golden', sys: 'B', block: 2, gross: 17.50, net: 0},
+            {val: 885.21, tag: 'golden', sys: 'B', block: 2, gross: 207.50, net: 0},
+            {val: 884.41, tag: 'golden', sys: 'B', block: 2, gross: 50.00, net: 0},
+            {val: 886.17, tag: 'blank', sys: 'B', block: 2, gross: 0, net: 0},
+            {val: 887.33, tag: 'blank', sys: 'B', block: 2, gross: 0, net: 0},
+            {val: 888.15, tag: 'parrots', sys: 'B', block: 2, gross: 0, net: 0},
+            {val: 888.80, tag: 'blank', sys: 'B', block: 2, gross: 0, net: 0},
+            {val: 889.51, tag: 'golden', sys: 'B', block: 2, gross: 25.00, net: 0},
+            {val: 890.32, tag: 'golden', sys: 'B', block: 2, gross: 42.50, net: 0},
+            {val: 890.56, tag: 'golden', sys: 'B', block: 2, gross: 242.50, net: 0},
+            {val: 890.76, tag: 'golden', sys: 'B', block: 2, gross: 1160.76, net: 0},
 
-            // SYSTEM C (Block 10)
-            {val: 829.81, tag: 'golden', sys: 'C', block: 10, gross: 82.50, net: 80.00},
-            {val: 829.82, tag: 'blank', sys: 'C', block: 10, gross: 0, net: 0},
-            {val: 829.83, tag: 'blank', sys: 'C', block: 10, gross: 0, net: 0},
-            {val: 830.01, tag: 'parrots', sys: 'C', block: 10, gross: 5, net: 2.50},
-            {val: 830.23, tag: 'golden', sys: 'C', block: 10, gross: 42.50, net: 40.00},
-            {val: 830.35, tag: 'parrots', sys: 'C', block: 10, gross: 5, net: 2.50},
-            {val: 831.65, tag: 'parrots', sys: 'C', block: 10, gross: 5, net: 2.50},
+            // Block 3
+            {val: 750.01, tag: 'blank', sys: 'B', block: 3, gross: 0, net: 0},
+            {val: 750.15, tag: 'parrots', sys: 'B', block: 3, gross: 0, net: 0},
 
-            // SYSTEM D (Block 11)
-            {val: 808.92, tag: 'blank', sys: 'D', block: 11, gross: 0, net: 0},
-            {val: 809.13, tag: 'parrots', sys: 'D', block: 11, gross: 121.80, net: 119.30},
-            {val: 809.78, tag: 'golden', sys: 'D', block: 11, gross: 85.00, net: 82.50},
-            {val: 810.78, tag: 'golden', sys: 'D', block: 11, gross: 0, net: 0},
-
-            // SYSTEM E (Block 12-13)
-            {val: 757.68, tag: 'parrots', sys: 'E', block: 12, gross: 5, net: 2.50},
-            {val: 757.81, tag: 'blank', sys: 'E', block: 12, gross: 0, net: 0},
-            
-            {val: 758.99, tag: 'golden', sys: 'E', block: 13, gross: 97.50, net: 95.00},
-            {val: 759.22, tag: 'golden', sys: 'E', block: 13, gross: 0, net: 0},
-            {val: 759.28, tag: 'parrots', sys: 'E', block: 13, gross: 5, net: 2.50},
-            {val: 759.36, tag: 'parrots', sys: 'E', block: 13, gross: 5, net: 2.50},
-            {val: 759.42, tag: 'parrots', sys: 'E', block: 13, gross: 5, net: 2.50},
-
-            // SYSTEM F (Block 14-15)
-            {val: 1078.14, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
-            {val: 1078.48, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
-            {val: 1079.46, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
-            {val: 1079.84, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
-            {val: 1080.30, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
-            {val: 1081.60, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
-            {val: 1084.03, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
-            {val: 1085.21, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
-            {val: 1085.78, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
-            {val: 1086.62, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
-            {val: 1086.78, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
-            {val: 1086.93, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
-            {val: 1086.97, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
-            {val: 1087.39, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
-            {val: 1087.99, tag: 'golden', sys: 'F', block: 14, gross: 0, net: 0},
-            {val: 1088.06, tag: 'parrots', sys: 'F', block: 14, gross: 5, net: 2.50},
-            
-            {val: 1135.14, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
-            {val: 1135.47, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
-            {val: 1136.51, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
-            {val: 1137.25, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
-            {val: 1137.80, tag: 'blank', sys: 'F', block: 15, gross: 0, net: 0},
-            {val: 1138.01, tag: 'golden', sys: 'F', block: 15, gross: 27.00, net: 24.50},
-            {val: 1138.07, tag: 'parrots', sys: 'F', block: 15, gross: 83.40, net: 80.90},
-            {val: 1138.25, tag: 'blank', sys: 'F', block: 15, gross: 0, net: 0},
-            {val: 1138.49, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
-            {val: 1138.90, tag: 'blank', sys: 'F', block: 15, gross: 0, net: 0},
-            {val: 1138.96, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
-            {val: 1139.01, tag: 'golden', sys: 'F', block: 15, gross: 0, net: 0},
-
-            // SYSTEM G (Block 16)
-            {val: 995.42, tag: 'golden', sys: 'G', block: 16, gross: 0, net: 0},
-            {val: 995.45, tag: 'parrots', sys: 'G', block: 16, gross: 5, net: 2.50},
-            {val: 995.50, tag: 'golden', sys: 'G', block: 16, gross: 0, net: 0},
-
-            // SYSTEM H (Block 17)
-            {val: 1145.84, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0},
-            {val: 1146.50, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0},
-            {val: 1148.11, tag: 'parrots', sys: 'H', block: 17, gross: 5, net: 2.50},
-            {val: 1148.43, tag: 'golden', sys: 'H', block: 17, gross: 0, net: 0},
-
-            // SYSTEM I (Block 18-19) - The Post-Grand Surplus Chain
-            {val: 766.54, tag: 'golden', sys: 'I', block: 18, gross: 0, net: 175.00},
-            {val: 766.64, tag: 'big', sys: 'I', block: 18, gross: 0, net: 22.50},
-            {val: 767.02, tag: 'big', sys: 'I', block: 18, gross: 0, net: -57.50},
-            {val: 767.24, tag: 'big', sys: 'I', block: 18, gross: 0, net: -25.50},
-            {val: 767.70, tag: 'big', sys: 'I', block: 18, gross: 0, net: -78.00},
-            {val: 768.19, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -65.90},
-            {val: 768.47, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -22.00},
-            {val: 768.66, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 32.50},
-            {val: 768.97, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -29.50},
-            {val: 769.29, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -34.00},
-            {val: 769.43, tag: 'big', sys: 'I', block: 18, gross: 0, net: 11.00},
-            {val: 769.50, tag: 'golden', sys: 'I', block: 18, gross: 0, net: 31.60},
-            {val: 769.74, tag: 'big', sys: 'I', block: 18, gross: 0, net: -7.00},
-            {val: 770.15, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 76.00},
-            {val: 770.30, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 216.50},
-            {val: 770.71, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -65.80},
-            {val: 771.12, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -17.00},
-            {val: 771.30, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -33.20},
-            {val: 772.36, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -144.50},
-            {val: 773.82, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -117.00},
-            {val: 774.23, tag: 'blank', sys: 'I', block: 18, gross: 0, net: 0},
-            {val: 777.67, tag: 'big', sys: 'I', block: 18, gross: 0, net: -61.00},
-            {val: 778.28, tag: 'golden', sys: 'I', block: 18, gross: 0, net: -4.50},
-            {val: 778.45, tag: 'golden', sys: 'I', block: 18, gross: 0, net: 68.50},
-            {val: 778.65, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -28.90},
-            {val: 778.81, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 62.00},
-            {val: 778.82, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: 45.00},
-            {val: 779.60, tag: 'big', sys: 'I', block: 18, gross: 0, net: -98.00},
-            {val: 779.69, tag: 'parrots', sys: 'I', block: 18, gross: 0, net: -9.00},
-            {val: 780.17, tag: 'golden', sys: 'I', block: 18, gross: 0, net: 18.50},
-            {val: 780.27, tag: 'blank', sys: 'I', block: 18, gross: 0, net: 0},
-            
-            {val: 845.67, tag: 'big', sys: 'I', block: 19, gross: 0, net: 31.50},
-            {val: 846.49, tag: 'golden', sys: 'I', block: 19, gross: 0, net: 31.00}
+            // Block 4
+            {val: 766.54, tag: 'golden', sys: 'B', block: 4, gross: 175.00, net: 0},
+            {val: 766.64, tag: 'big', sys: 'B', block: 4, gross: 22.50, net: 0},
+            {val: 767.02, tag: 'big', sys: 'B', block: 4, gross: 57.50, net: 0},
+            {val: 767.24, tag: 'big', sys: 'B', block: 4, gross: 25.50, net: 0},
+            {val: 767.70, tag: 'big', sys: 'B', block: 4, gross: 78.00, net: 0},
+            {val: 768.19, tag: 'parrots', sys: 'B', block: 4, gross: 65.90, net: 0},
+            {val: 768.47, tag: 'parrots', sys: 'B', block: 4, gross: 22.00, net: 0},
+            {val: 768.66, tag: 'parrots', sys: 'B', block: 4, gross: 32.50, net: 0},
+            {val: 768.97, tag: 'golden', sys: 'B', block: 4, gross: 29.50, net: 0},
+            {val: 769.29, tag: 'golden', sys: 'B', block: 4, gross: 34.00, net: 0},
+            {val: 769.43, tag: 'big', sys: 'B', block: 4, gross: 11.00, net: 0},
+            {val: 769.50, tag: 'golden', sys: 'B', block: 4, gross: 31.60, net: 0},
+            {val: 769.74, tag: 'big', sys: 'B', block: 4, gross: 7.00, net: 0},
+            {val: 770.15, tag: 'parrots', sys: 'B', block: 4, gross: 76.00, net: 0},
+            {val: 770.30, tag: 'parrots', sys: 'B', block: 4, gross: 216.50, net: 0},
+            {val: 770.71, tag: 'parrots', sys: 'B', block: 4, gross: 65.80, net: 0},
+            {val: 771.12, tag: 'golden', sys: 'B', block: 4, gross: 17.00, net: 0},
+            {val: 771.30, tag: 'golden', sys: 'B', block: 4, gross: 33.20, net: 0},
+            {val: 772.36, tag: 'golden', sys: 'B', block: 4, gross: 144.50, net: 0},
+            {val: 773.82, tag: 'golden', sys: 'B', block: 4, gross: 117.00, net: 0},
+            {val: 774.23, tag: 'blank', sys: 'B', block: 4, gross: 0, net: 0},
+            {val: 777.67, tag: 'big', sys: 'B', block: 4, gross: 619.00, net: 0},
+            {val: 778.28, tag: 'golden', sys: 'B', block: 4, gross: 4.50, net: 0},
+            {val: 778.45, tag: 'golden', sys: 'B', block: 4, gross: 68.50, net: 0},
+            {val: 778.65, tag: 'parrots', sys: 'B', block: 4, gross: 28.90, net: 0},
+            {val: 778.81, tag: 'parrots', sys: 'B', block: 4, gross: 62.00, net: 0},
+            {val: 778.82, tag: 'parrots', sys: 'B', block: 4, gross: 45.00, net: 0},
+            {val: 779.60, tag: 'big', sys: 'B', block: 4, gross: 98.00, net: 0},
+            {val: 779.69, tag: 'parrots', sys: 'B', block: 4, gross: 9.00, net: 0},
+            {val: 780.17, tag: 'golden', sys: 'B', block: 4, gross: 18.50, net: 0},
+            {val: 780.27, tag: 'blank', sys: 'B', block: 4, gross: 0, net: 0}
         ];
 
         let dataset = [];
@@ -496,8 +390,19 @@
         let isManualTracking = false;
         let activeModalTag = '';
 
+        // --- LIVE 3-TIER FILTER LISTENER ---
+        document.getElementById('main-input').addEventListener('input', function() {
+            let val = parseFloat(this.value);
+            if (!isNaN(val)) {
+                updateLiveIntegerFilter(val);
+            } else {
+                document.getElementById('predictionsArea').innerHTML = '';
+            }
+        });
+
         document.getElementById('main-input').addEventListener('focus', function() {
             this.value = ''; isManualTracking = false;
+            document.getElementById('predictionsArea').innerHTML = '';
         });
         
         function stepNumber() {
@@ -511,7 +416,110 @@
                 else { currentNum = (cents + 1) / 100; }
                 input.value = currentNum.toFixed(2);
                 isManualTracking = true; 
+                updateLiveIntegerFilter(currentNum); 
             }
+        }
+
+        // --- ADAPTIVE 3-TIER FILTER BROADCASTER (HEAT SCORE LOGIC) ---
+        function updateLiveIntegerFilter(currentNum) {
+            const area = document.getElementById('predictionsArea');
+            let baseInt = Math.floor(currentNum);
+            let onesDigit = baseInt % 10;
+            let tensDigit = Math.floor((baseInt % 100) / 10);
+            let cents = Math.round((currentNum % 1) * 100);
+            
+            // 1. Calculate Heat Score based on Macro & Micro
+            let macroScore = [8, 9].includes(tensDigit) ? 2 : ([0, 1].includes(tensDigit) ? 0 : 1);
+            let microScore = [8, 9, 0].includes(onesDigit) ? 2 : ([4, 5, 6].includes(onesDigit) ? 1 : 0);
+            let totalScore = macroScore + microScore; // 0 to 4 Scale
+            
+            let macroHtml = "";
+            let microHtml = "";
+            let nanoHtml = "";
+
+            // TIER 1: TENS DIGIT (MACRO PHASE)
+            if (macroScore === 2) {
+                macroHtml = `<strong style="color:#00e5ff;">[MACRO: TERMINAL OVERDRIVE (80s/90s)]</strong><br>Machine is violently resisting the $100 rollover. Prime hunting ground.`;
+            } else if (macroScore === 0) {
+                macroHtml = `<strong style="color:#ff5555;">[MACRO: CENTURY VOID (00s/10s)]</strong><br>Post-rollover accumulation phase. Extreme caution advised.`;
+            } else {
+                macroHtml = `<strong style="color:#ffcc00;">[MACRO: MID-CYCLE PHASE]</strong><br>Standard distribution wave active.`;
+            }
+
+            // TIER 2: ONES DIGIT (LOCAL WALL)
+            if (microScore === 2) {
+                microHtml = `<strong style="color:#00e5ff;">[MICRO: ROLL-OVER TRAP (Ends in ${onesDigit})]</strong><br>Local dam ready to break. Authorize full 10-Tick snipes.`;
+            } else if (microScore === 1) {
+                microHtml = `<strong style="color:#ffcc00;">[MICRO: MID-BRACKET WALL (Ends in ${onesDigit})]</strong><br>Secondary stall. Use tight 3-to-5 Tick probes.`;
+            } else {
+                microHtml = `<strong style="color:#ff5555;">[MICRO: DROUGHT ZONE (Ends in ${onesDigit})]</strong><br>Avoid 10-tick snipes. Limit to minimum depth if playing.`;
+            }
+
+            // TIER 3: NANO ADAPTIVE LOGIC (CENTS)
+            if (cents <= 17) {
+                if (cents === 17) {
+                    nanoHtml = `<strong style="color:#ffcc00;">[NANO: .17 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
+                } else if (totalScore >= 3) {
+                    nanoHtml = `<strong style="color:#00e5ff;">[NANO: .12-.17 MUST EXECUTE]</strong><br>Conditions optimal. Sweep full trap to .17.`;
+                } else if (totalScore <= 1) {
+                    nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .12 to .17 walk away.`;
+                } else {
+                    nanoHtml = `<strong style="color:#ffffff;">[NANO: .12-.17 ENTRY ZONE]</strong><br>Sweep full trap to .17.`;
+                }
+            } else if (cents <= 35) {
+                if (cents === 35) {
+                    nanoHtml = `<strong style="color:#ffcc00;">[NANO: .35 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
+                } else if (totalScore >= 3) {
+                    nanoHtml = `<strong style="color:#00e5ff;">[NANO: .30-.35 MUST EXECUTE]</strong><br>Conditions optimal. Sweep to .35.`;
+                } else if (totalScore <= 1) {
+                    nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .30 to .35 walk away.`;
+                } else {
+                    nanoHtml = `<strong style="color:#ffffff;">[NANO: .30-.35 ENTRY ZONE]</strong><br>Sweep full trap to .35.`;
+                }
+            } else if (cents <= 60) {
+                if (cents === 60) {
+                    nanoHtml = `<strong style="color:#ffcc00;">[NANO: .60 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
+                } else if (totalScore >= 3) {
+                    nanoHtml = `<strong style="color:#00e5ff;">[NANO: .50-.60 MUST EXECUTE]</strong><br>Conditions optimal. Sweep to .60.`;
+                } else if (totalScore <= 1) {
+                    nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .50 to .60 walk away.`;
+                } else {
+                    nanoHtml = `<strong style="color:#ffffff;">[NANO: .50-.60 ENTRY ZONE]</strong><br>Sweep full trap to .60.`;
+                }
+            } else if (cents < 80) { 
+                if (totalScore >= 3) {
+                    nanoHtml = `<strong style="color:#00e5ff;">[NANO: .70-.80 GRAND TRAP - MUST EXECUTE]</strong><br>Critical payload zone aligned with Macro/Micro. Fire full sweep to .80.`;
+                } else if (totalScore <= 1) {
+                    nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .70 to .80 walk away.`;
+                } else {
+                    nanoHtml = `<strong style="color:#ffffff;">[NANO: .70-.80 GRAND TRAP]</strong><br>Sweep to .80.`;
+                }
+            } else if (cents <= 83) { 
+                if (cents === 83) {
+                    nanoHtml = `<strong style="color:#ffcc00;">[NANO: .83 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
+                } else if (totalScore >= 3) {
+                    nanoHtml = `<strong style="color:#00e5ff;">[NANO: .80-.83 MUST EXECUTE]</strong><br>Sweep remaining ticks to .83.`;
+                } else if (totalScore <= 1) {
+                    nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .80 to .83 walk away.`;
+                } else {
+                    nanoHtml = `<strong style="color:#ffffff;">[NANO: .80-.83 ENTRY ZONE]</strong><br>Sweep to .83.`;
+                }
+            } else {
+                nanoHtml = `<strong style="color:#888888;">[NANO: DEAD SPACE / AMBUSH]</strong><br>No active trap. Let public push ticker to the next dollar rollover.`;
+            }
+
+            let html = `<div class="tactical-card" style="margin-top: 10px; border-color: #555;">
+                            <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #444;">${macroHtml}</div>
+                            <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #444;">${microHtml}</div>
+                            <div>${nanoHtml}</div>
+                        </div>`;
+
+            // Only show this if we are in AWAITING INPUT mode
+            const stateBadge = document.getElementById('stateBadge');
+            if (stateBadge.innerText === "AWAITING INPUT" || stateBadge.innerText.includes("SEARCHING")) {
+                area.innerHTML = html;
+            }
+            return html; 
         }
 
         function saveData() { localStorage.setItem('rngTrackerData', JSON.stringify(dataset)); }
@@ -706,6 +714,10 @@
             const predPanel = document.getElementById('predictionPanel');
             
             area.innerHTML = '';
+            
+            // Generate the current 3-Tier Integer Filter status to embed in the output
+            let integerBannerHTML = updateLiveIntegerFilter(currentNum);
+
             let chronoData = [...dataset].sort((a, b) => a.val - b.val);
             let historyIndex = chronoData.findIndex(d => d.val === currentNum && d.tag === tagType);
 
@@ -751,13 +763,16 @@
                 stateBadge.className = 'state-badge state-dormant'; stateBadge.innerText = 'STATE: NUCLEAR WINTER (ALGORITHMIC VOID)';
                 modeDesc.innerText = `Micro-cluster window failed. System is locked down to recoup the $${netDeficit.toLocaleString()} net deficit.`;
                 predPanel.style.borderColor = 'var(--alert-red)';
+            } else if (isPayoutEvent && netDeficit === 0 && !isMicroClusterWindow) {
+                // Handled below
             } else {
                 stateBadge.className = 'state-badge state-waypoint'; stateBadge.innerText = `STATE: SEARCHING (CLIMB)`;
                 modeDesc.innerText = `Hunting the next decimal grid trap.`;
                 predPanel.style.borderColor = 'var(--state-waypoint)';
             }
 
-            let html = ``;
+            let html = integerBannerHTML; // Start the output with the 3-Tier Filter Banner
+            
             let baseInt = Math.floor(currentNum);
             let nextSuffixes = terminalSuffixes.map(s => { let t = baseInt + s; return t <= currentNum ? baseInt + 1 + s : t; }).sort((a, b) => a - b);
 
