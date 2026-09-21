@@ -153,6 +153,7 @@
         .tag { font-size: 0.65rem; padding: 3px 6px; border-radius: 4px; background-color: var(--border-color); text-transform: uppercase; font-weight: bold; color: #ffffff; }
         .sys-tag { font-size: 0.65rem; color: #ffffff; background: #444444; padding: 2px 5px; border-radius: 4px; margin-right: 8px; }
         .sys-tag-live { background: #ffffff; color: #000000; }
+        .sys-tag-ult { background: var(--alert-ultimate); color: #000000; }
 
         .mode-description { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
         .util-bar { display: flex; gap: 10px; margin-top: 10px; width: 100%; flex-wrap: wrap; }
@@ -175,12 +176,12 @@
         }
         .modal-content h3 { margin-top: 0; margin-bottom: 6px; border-bottom: 1px dashed #555; padding-bottom: 10px; }
         .modal-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; border-radius: 4px; }
-        .modal-row input[type="number"] { width: 120px; background: #000; color: #fff; border: 1px solid #555; padding: 8px; text-align: right; font-family: monospace; font-size: 1rem;}
-        .modal-row select { width: 120px; background: #000; color: #fff; border: 1px solid #555; padding: 8px; font-family: monospace; font-size: 0.9rem; border-radius: 4px;}
+        .modal-row input[type="number"] { width: 110px; background: #000; color: #fff; border: 1px solid #555; padding: 8px; text-align: right; font-family: monospace; font-size: 1rem;}
+        .modal-row select { width: 110px; background: #000; color: #fff; border: 1px solid #555; padding: 8px; font-family: monospace; font-size: 0.9rem; border-radius: 4px;}
         .modal-row label { font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; }
         .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
         .btn-modal-submit { flex: 1; background: #fff; color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        .btn-modal-cancel { flex: 1; background: #333; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: cursor; }
+        .btn-modal-cancel { flex: 1; background: #333; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
 
         /* User Manual Styles */
         .manual-step { background: #1a1a1a; padding: 14px; border-radius: 6px; border: 1px solid #333; margin-bottom: 12px; }
@@ -193,11 +194,11 @@
 </head>
 <body>
 
-    <!-- UNIFIED NET LEDGER MODAL -->
+    <!-- UNIFIED NET LEDGER MODAL WITH DUAL-NODE TRACKING -->
     <div class="modal-overlay" id="hsModal">
         <div class="modal-content">
             <h3 id="modal-title">Ledger Entry</h3>
-            <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">The tool auto-detects your previous anchor to calculate exact volume based on your selected bet size.</div>
+            <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">Enter both tickers simultaneously to map dual-node network cross-strikes.</div>
             
             <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid var(--alert-mode);">
                 <label style="color:#fff;">Active Bet Size</label>
@@ -214,13 +215,18 @@
                 <input type="number" id="hs-total" value="" placeholder="0.00" step="0.01" inputmode="decimal">
             </div>
             
-            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid #555;">
-                <label style="color:#aaa;">Current Ticker</label>
-                <input type="number" id="hs-current-ticker" value="" readonly style="color:#888;" inputmode="decimal">
+            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid #888;">
+                <label style="color:#ccc;">Local Ticker</label>
+                <input type="number" id="hs-local-ticker" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
+            </div>
+            
+            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid var(--alert-ultimate);">
+                <label style="color:var(--alert-ultimate);">Ultimate Ticker</label>
+                <input type="number" id="hs-ult-ticker" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
             </div>
 
-            <div class="modal-row" style="border-left: 2px solid #00e5ff;">
-                <label style="color:#fff;">Starting Ticker</label>
+            <div class="modal-row" style="border-left: 2px solid #00e5ff; margin-top: 10px;">
+                <label style="color:#fff;">Calculated Since Ticker:</label>
                 <input type="number" id="hs-start-ticker" value="" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
             </div>
 
@@ -308,8 +314,15 @@
             </div>
 
             <div class="manual-step">
-                <h4>Tier 5: Ultimate Grand Tracker (The $1250 Frozen Machine)</h4>
-                <p>When the Local Grand Jackpot caps and freezes at $1250.00, toggle your tracker to <strong>TRACK: ULTIMATE</strong>. Let outside casino play cycle the decimals for you (10x faster). Step in 3 cents before the main node zones.</p>
+                <h4>Tier 5: Ultimate Grand Tracker (The Latency Windows)</h4>
+                <p>When the Local Grand Jackpot caps and freezes at $1250.00, toggle your tracker to <strong>TRACK: ULTIMATE</strong>. You are now targeting outside network volume. The nodes are widened to absorb latency.</p>
+                <ul>
+                    <li>🎯 <strong>The Early Trap:</strong> .10 to .16</li>
+                    <li>🎯 <strong>The Quarter Trap:</strong> .25 to .37</li>
+                    <li>🎯 <strong>The Mid-Wall:</strong> .39 to .47</li>
+                    <li>🚀 <strong>Terminal Payload Block:</strong> .70 to .87 (Massive un-broken hit zone).</li>
+                    <li>🛑 <strong>Dead Zones:</strong> DO NOT push between .48 and .69. Let the floor pay for the volume.</li>
+                </ul>
             </div>
 
             <div class="manual-step">
@@ -317,7 +330,7 @@
                 <p>When playing in the $880s, $890s, or $920s, the system runs a specific 3-phase sequence to drop the Grand. Watch the in-app Radar for instructions:</p>
                 <ul>
                     <li>⚠️ <strong>The Warning Cascade:</strong> The machine will drop 2 to 3 Goldens rapidly to signal pressure.</li>
-                    <li>💀 <strong>The Starvation Trap (Death Valley):</strong> After the cascade, the machine will go completely dead for $1.50 to $3.00 of ticker movement (costing $302 to $588). <strong>DO NOT FUND THIS.</strong> Step away and let the public push the ticker up $1.50+.</li>
+                    <li>💀 <strong>The Starvation Trap (Death Valley):</strong> After a massive hit ($300+ payout) or the cascade, the machine will go completely dead for $1.50 to $3.00 of ticker movement (costing $302 to $588). <strong>DO NOT FUND THIS.</strong> Step away and let the public push the ticker up $1.50+.</li>
                     <li>🎯 <strong>Terminal Node Execution:</strong> Once the public funds the void, the Grand is primed. Snipe ONLY on the proven execution nodes: <strong>.15 / .18</strong>, <strong>.31 / .32</strong>, or <strong>.76 / .81</strong>.</li>
                 </ul>
             </div>
@@ -469,6 +482,11 @@
             {val: 1138.90, tag: 'blank', sys: 'D', block: 7, gross: 0, net: 0},
             {val: 1138.96, tag: 'golden', sys: 'D', block: 7, gross: 0, net: 0},
             {val: 1139.01, tag: 'golden', sys: 'D', block: 7, gross: 0, net: 0},
+            // CROSS-NODE LOCAL: DOLPHIN DOUBLE-MINI HIT
+            {val: 848.34, tag: 'golden', sys: 'D', block: 3, gross: 600.00, net: 0},
+
+            // --- SYSTEM T: SANDOWN TIGER (NEW - POST RECOVERY) ---
+            {val: 850.62, tag: 'blank', sys: 'T', block: 1, gross: 0, net: 0},
 
             // --- SYSTEM S: SANDOWN HOTEL SOLDIER ---
             {val: 808.92, tag: 'blank', sys: 'S', block: 1, gross: 0, net: 0},
@@ -534,7 +552,73 @@
             {val: 751.66, tag: 'golden', sys: 'G', block: 2, gross: 2.50, net: 0},
             {val: 752.06, tag: 'golden', sys: 'G', block: 2, gross: 35.00, net: 0},
             {val: 752.31, tag: 'golden', sys: 'G', block: 2, gross: 5.00, net: 0},
-            {val: 753.77, tag: 'parrots', sys: 'G', block: 2, gross: 226.00, net: 0}
+            {val: 753.77, tag: 'parrots', sys: 'G', block: 2, gross: 226.00, net: 0},
+
+            // --- SYSTEM U: SANDOWN HOTEL ULTIMATE (LOCKED AT $1250) ---
+            {val: 23886.65, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23886.76, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23886.82, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23887.09, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23887.10, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23887.11, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23887.14, tag: 'parrots', sys: 'U', block: 1, gross: 45.00, net: 0},
+            {val: 23887.19, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23887.27, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23887.35, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23887.47, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23887.49, tag: 'golden', sys: 'U', block: 1, gross: 137.50, net: 0},
+            {val: 23887.81, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            {val: 23888.42, tag: 'golden', sys: 'U', block: 1, gross: 119.20, net: 0},
+            {val: 23888.54, tag: 'parrots', sys: 'U', block: 1, gross: 34.00, net: 0},
+            {val: 23888.99, tag: 'parrots', sys: 'U', block: 1, gross: 41.00, net: 0},
+            {val: 23889.76, tag: 'golden', sys: 'U', block: 1, gross: 77.50, net: 0},
+            {val: 23889.83, tag: 'golden', sys: 'U', block: 1, gross: 162.50, net: 0},
+            {val: 23890.12, tag: 'parrots', sys: 'U', block: 1, gross: 43.70, net: 0},
+            {val: 23890.20, tag: 'parrots', sys: 'U', block: 1, gross: 0.50, net: 0},
+            {val: 23890.90, tag: 'golden', sys: 'U', block: 1, gross: 10.00, net: 0},
+            {val: 23891.84, tag: 'parrots', sys: 'U', block: 1, gross: 71.00, net: 0},
+            {val: 23891.93, tag: 'big', sys: 'U', block: 1, gross: 33.50, net: 0},
+            {val: 23891.96, tag: 'golden', sys: 'U', block: 1, gross: 32.50, net: 0},
+            {val: 23892.12, tag: 'parrots', sys: 'U', block: 1, gross: 24.50, net: 0},
+            {val: 23892.33, tag: 'parrots', sys: 'U', block: 1, gross: 73.10, net: 0},
+            {val: 23892.44, tag: 'golden', sys: 'U', block: 1, gross: 202.50, net: 0},
+            {val: 23892.72, tag: 'golden', sys: 'U', block: 1, gross: 42.50, net: 0},
+            {val: 23893.46, tag: 'golden', sys: 'U', block: 1, gross: 57.50, net: 0},
+            {val: 23893.72, tag: 'golden', sys: 'U', block: 1, gross: 400.00, net: 0},
+            {val: 23895.03, tag: 'golden', sys: 'U', block: 1, gross: 172.50, net: 0},
+            {val: 23895.36, tag: 'golden', sys: 'U', block: 1, gross: 30.00, net: 0},
+            {val: 23896.06, tag: 'parrots', sys: 'U', block: 1, gross: 127.10, net: 0},
+            {val: 23896.10, tag: 'golden', sys: 'U', block: 1, gross: 15.00, net: 0},
+            {val: 23896.14, tag: 'golden', sys: 'U', block: 1, gross: 257.50, net: 0},
+            {val: 23896.77, tag: 'parrots', sys: 'U', block: 1, gross: 45.00, net: 0},
+            {val: 23896.78, tag: 'golden', sys: 'U', block: 1, gross: 52.50, net: 0},
+            {val: 23897.19, tag: 'parrots', sys: 'U', block: 1, gross: 59.50, net: 0},
+            {val: 23897.40, tag: 'golden', sys: 'U', block: 1, gross: 2.50, net: 0},
+            {val: 23897.42, tag: 'golden', sys: 'U', block: 1, gross: 40.00, net: 0},
+            {val: 23897.60, tag: 'golden', sys: 'U', block: 1, gross: 15.00, net: 0},
+            {val: 23897.65, tag: 'parrots', sys: 'U', block: 1, gross: 19.00, net: 0},
+            {val: 23897.89, tag: 'golden', sys: 'U', block: 1, gross: 220.00, net: 0},
+            {val: 23897.94, tag: 'golden', sys: 'U', block: 1, gross: 177.50, net: 0},
+            {val: 23898.15, tag: 'golden', sys: 'U', block: 1, gross: 22.50, net: 0},
+            {val: 23898.27, tag: 'golden', sys: 'U', block: 1, gross: 62.50, net: 0},
+            {val: 23898.75, tag: 'golden', sys: 'U', block: 1, gross: 55.00, net: 0},
+            {val: 23898.86, tag: 'parrots', sys: 'U', block: 1, gross: 5.80, net: 0},
+            {val: 23899.05, tag: 'golden', sys: 'U', block: 1, gross: 35.00, net: 0},
+            {val: 23899.14, tag: 'golden', sys: 'U', block: 1, gross: 575.00, net: 0},
+            {val: 23899.43, tag: 'big', sys: 'U', block: 1, gross: 23.50, net: 0},
+            {val: 23899.69, tag: 'big', sys: 'U', block: 1, gross: 25.50, net: 0},
+            {val: 23899.86, tag: 'parrots', sys: 'U', block: 1, gross: 257.70, net: 0},
+            {val: 23900.19, tag: 'parrots', sys: 'U', block: 1, gross: 13.40, net: 0},
+            {val: 23901.27, tag: 'golden', sys: 'U', block: 1, gross: 7.50, net: 0},
+            {val: 23901.83, tag: 'golden', sys: 'U', block: 1, gross: 65.00, net: 0},
+            {val: 23902.13, tag: 'golden', sys: 'U', block: 1, gross: 5.00, net: 0},
+            {val: 23902.81, tag: 'parrots', sys: 'U', block: 1, gross: 257.00, net: 0},
+            {val: 23903.53, tag: 'golden', sys: 'U', block: 1, gross: 97.50, net: 0},
+            {val: 23903.57, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
+            
+            // CROSS-NODE ULTIMATE: DOLPHIN DOUBLE-MINI HIT & TIGER RECOVERY
+            {val: 23906.25, tag: 'golden', sys: 'U', block: 2, gross: 600.00, net: 0},
+            {val: 23907.81, tag: 'blank', sys: 'U', block: 2, gross: 0, net: 0}
         ];
 
         let dataset = [];
@@ -611,24 +695,34 @@
             }
         }
 
-        // --- ULTIMATE PREDICTION LOGIC ---
+        // --- ULTIMATE PREDICTION LOGIC (RECALIBRATED +0.02 NETWORK LATENCY) ---
         function generateUltimatePredictions(currentNum) {
             let cents = Math.round((currentNum % 1) * 100);
             let html = `<div class="tactical-card tactical-surplus">
-                <strong>Ultimate Network Tracker Active</strong>
-                Do not push dead space. Let outside network volume move the ticker. Look at the cent values (.XX) to time your entry.
+                <strong>Ultimate Network Tracker Active (Latency Adjusted)</strong>
+                Local Grand is capped. You are targeting networked pool volume. The prediction windows are expanded by +/- 0.02 to absorb network ricochet.
             </div>`;
 
             let status = "";
-            if (cents < 9) status = `<strong style="color:var(--text-muted);">Wait for .09</strong><br>Network is pushing through dead space. Hold position.`;
-            else if (cents <= 17) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .09 - .17 ZONE</strong><br>Execute 3 to 5 pushes ($${globalBetSize.toFixed(2)}). Cut if no drop by .17.`;
-            else if (cents < 27) status = `<strong style="color:var(--text-muted);">Wait for .27</strong><br>Network is pushing through dead space. Hold position.`;
-            else if (cents <= 35) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .27 - .35 ZONE</strong><br>Execute 3 to 5 pushes ($${globalBetSize.toFixed(2)}). Cut if no drop by .35.`;
-            else if (cents < 47) status = `<strong style="color:var(--text-muted);">Wait for .47</strong><br>Network is pushing through dead space. Hold position.`;
-            else if (cents <= 56) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .47 - .56 ZONE</strong><br>Execute 3 to 5 pushes ($${globalBetSize.toFixed(2)}). Cut if no drop by .56.`;
-            else if (cents < 72) status = `<strong style="color:var(--text-muted);">Wait for .72</strong><br>Network is pushing through dead space. Hold position.`;
-            else if (cents <= 81) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .72 - .81 TRAP</strong><br>Execute 3 pushes max ($${globalBetSize.toFixed(2)}). Cut if no drop by .81.`;
-            else status = `<strong style="color:var(--text-muted);">Wait for Next Rollover (.09)</strong><br>Network is pushing to the next dollar. Hold position.`;
+            if (cents < 10) {
+                status = `<strong style="color:var(--text-muted);">Wait for .10</strong><br>Network is pushing through dead space. Hold position.`;
+            } else if (cents <= 16) {
+                status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .10 - .16 (EARLY TRAP)</strong><br>Massive node cluster detected at .14. Execute sweeps. Cut if no drop by .17.`;
+            } else if (cents < 25) {
+                status = `<strong style="color:var(--text-muted);">Wait for .25</strong><br>Network is pushing through dead space. Hold position.`;
+            } else if (cents <= 37) {
+                status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .25 - .37 (QUARTER TRAP)</strong><br>Execute pushes to absorb the .27 and .33 network nodes. Cut if no drop by .38.`;
+            } else if (cents < 39) {
+                status = `<strong style="color:var(--text-muted);">Wait for .39</strong><br>Hold position.`;
+            } else if (cents <= 47) {
+                status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .39 - .47 (THE MID-WALL)</strong><br>Highly lethal execution zone centered on .42/.44. Execute sweeps.`;
+            } else if (cents < 70) {
+                status = `<strong style="color:var(--text-muted);">Wait for .70</strong><br>Massive dead zone. DO NOT PUSH. Let the public fund the terminal block.`;
+            } else if (cents <= 87) {
+                status = `<strong style="color:var(--alert-surplus);">🚨 TERMINAL PAYLOAD BLOCK: .70 - .87</strong><br>Continuous high-density drop zone. Authorize maximum aggression through this entire 17-cent window.`;
+            } else {
+                status = `<strong style="color:var(--alert-grand);">⚠️ ROLLOVER PRE-EMPT: .88 - .99</strong><br>Network is authorizing drops before the dollar rollover. Fire short snipes up to the .00 mark.`;
+            }
 
             html += `<div class="tactical-card" style="border-color:#00e5ff; background:rgba(0,229,255,0.05);">
                 ${status}
@@ -730,7 +824,7 @@
                     </div>`;
         }
 
-        // --- MODAL ---
+        // --- MODAL & DATA CAPTURE ---
         function openLedgerModal(tagType) {
             const numInput = document.getElementById('main-input').value;
             if (!numInput) { alert("Please enter the current Progressive Ticker price first."); return; }
@@ -740,13 +834,21 @@
             
             const titles = { 'golden': 'Ledger Entry', 'parrots': 'Ledger Entry', 'big': 'Ledger Entry' };
             document.getElementById('modal-title').innerText = titles[tagType];
-            
             document.getElementById('hs-total').value = '';
-            document.getElementById('hs-current-ticker').value = currentVal.toFixed(2);
             
-            let liveEntries = dataset.filter(d => d.sys === 'Live');
-            let sortedLive = [...liveEntries].sort((a, b) => b.val - a.val);
-            let lastEntry = sortedLive.find(d => d.val < currentVal);
+            // Distribute active value to the correct field based on current mode
+            if (isUltimateMode) {
+                document.getElementById('hs-ult-ticker').value = currentVal.toFixed(2);
+                document.getElementById('hs-local-ticker').value = '';
+            } else {
+                document.getElementById('hs-local-ticker').value = currentVal.toFixed(2);
+                document.getElementById('hs-ult-ticker').value = '';
+            }
+            
+            // Auto-fill starting ticker based on active mode history
+            let targetSys = isUltimateMode ? 'U' : 'Live';
+            let sortedHist = [...dataset].filter(d => (isUltimateMode ? d.sys === 'U' : d.sys !== 'U')).sort((a, b) => b.val - a.val);
+            let lastEntry = sortedHist.find(d => d.val < currentVal);
             
             if (lastEntry) { document.getElementById('hs-start-ticker').value = lastEntry.val.toFixed(2); } 
             else { document.getElementById('hs-start-ticker').value = currentVal.toFixed(2); }
@@ -759,7 +861,12 @@
         function closeLedgerModal() { document.getElementById('hsModal').style.display = 'none'; }
 
         function calculateInjectedVolume() {
-            let current = parseFloat(document.getElementById('hs-current-ticker').value) || 0;
+            let current = 0;
+            if (isUltimateMode) {
+                current = parseFloat(document.getElementById('hs-ult-ticker').value) || 0;
+            } else {
+                current = parseFloat(document.getElementById('hs-local-ticker').value) || 0;
+            }
             let start = parseFloat(document.getElementById('hs-start-ticker').value);
             let betSize = parseFloat(document.getElementById('hs-bet-size').value) || 2.00;
             
@@ -787,33 +894,58 @@
             let grossPayout = parseFloat(document.getElementById('hs-total').value) || 0;
             let buyIn = parseFloat(document.getElementById('hs-buyin').value) || 0;
             let netDeficit = grossPayout - buyIn; 
+            
+            let localValStr = document.getElementById('hs-local-ticker').value;
+            let ultValStr = document.getElementById('hs-ult-ticker').value;
+            
             closeLedgerModal(); 
-            processDataEntry(activeModalTag, netDeficit, grossPayout);
+            
+            // Allows dual-node logging if both fields are populated
+            if (localValStr && !isNaN(parseFloat(localValStr))) {
+                processDataEntry(activeModalTag, netDeficit, grossPayout, parseFloat(localValStr), false);
+            }
+            if (ultValStr && !isNaN(parseFloat(ultValStr))) {
+                processDataEntry(activeModalTag, netDeficit, grossPayout, parseFloat(ultValStr), true);
+            }
+            document.getElementById('main-input').blur();
         }
 
         function addNumber(tagType) {
-            if (tagType === 'blank') { processDataEntry('blank', 0, 0); }
+            if (tagType === 'blank') {
+                const num = parseFloat(document.getElementById('main-input').value);
+                if(isNaN(num)) return;
+                processDataEntry('blank', 0, 0, num, isUltimateMode);
+                document.getElementById('main-input').blur();
+            }
         }
 
-        function processDataEntry(tagType, netAmt = 0, grossAmt = 0) {
+        function processDataEntry(tagType, netAmt = 0, grossAmt = 0, specificNum = null, isUlt = false) {
             const inputField = document.getElementById('main-input');
-            const numInput = inputField.value;
-            if (!numInput) return;
-            const num = parseFloat(numInput);
+            const num = specificNum !== null ? specificNum : parseFloat(inputField.value);
+            if (isNaN(num)) return;
             
-            let sortedDB = [...dataset].sort((a, b) => b.val - a.val);
+            let sysLabel = isUlt ? 'U' : 'Live';
+            let filteredDB = dataset.filter(d => d.sys === sysLabel);
+            let sortedDB = [...filteredDB].sort((a, b) => b.val - a.val);
             let lastVal = sortedDB.length > 0 ? sortedDB[0].val : num;
-            let currentBlock = getLatestBlock();
             
-            if(Math.abs(num - lastVal) > 5.00 && !dataset.find(d => d.val === num)) currentBlock++; 
+            let currentBlock = 1;
+            if (sortedDB.length > 0) {
+                currentBlock = Math.max(...filteredDB.map(d => d.block));
+                if(Math.abs(num - lastVal) > 5.00 && !filteredDB.find(d => d.val === num)) {
+                    currentBlock++; 
+                }
+            }
 
-            if (!dataset.find(d => d.val === num && d.tag === tagType)) {
-                dataset.push({val: num, tag: tagType, sys: 'Live', block: currentBlock, net: netAmt, gross: grossAmt});
+            if (!dataset.find(d => d.val === num && d.tag === tagType && d.sys === sysLabel)) {
+                dataset.push({val: num, tag: tagType, sys: sysLabel, block: currentBlock, net: netAmt, gross: grossAmt});
                 saveData(); renderData();
             }
             
-            generatePredictions(num, tagType);
-            inputField.blur();
+            // Only update predictions if the inserted number matches the active main view
+            if (num === parseFloat(inputField.value)) {
+                generatePredictions(num, tagType);
+            }
         }
 
         function renderData() {
@@ -828,11 +960,12 @@
             let hasLive = false;
             const grouped = {};
             dataset.forEach(d => {
-                if(!grouped[d.val]) grouped[d.val] = { val: d.val, sys: d.sys, tags: [], net: d.net, gross: d.gross };
-                grouped[d.val].tags.push(d.tag);
-                if(d.net !== undefined && (grouped[d.val].net === undefined || Math.abs(d.net) > Math.abs(grouped[d.val].net))) {
-                    grouped[d.val].net = d.net;
-                    grouped[d.val].gross = d.gross;
+                let uid = `${d.val}-${d.sys}`; // Differentiate local and ultimate same-values
+                if(!grouped[uid]) grouped[uid] = { val: d.val, sys: d.sys, tags: [], net: d.net, gross: d.gross };
+                grouped[uid].tags.push(d.tag);
+                if(d.net !== undefined && (grouped[uid].net === undefined || Math.abs(d.net) > Math.abs(grouped[uid].net))) {
+                    grouped[uid].net = d.net;
+                    grouped[uid].gross = d.gross;
                 }
             });
             
@@ -841,7 +974,9 @@
             sortedVals.forEach(item => {
                 const li = document.createElement('li'); li.className = 'history-item';
                 let tagsHtml = item.tags.map(t => `<span class="tag color-${t}" ${t === 'blank' ? 'style="background:#222;border:1px dashed #555;"' : ''}>${t}</span>`).join('');
-                let sysClass = item.sys === 'Live' ? 'sys-tag sys-tag-live' : 'sys-tag';
+                let sysClass = 'sys-tag';
+                if (item.sys === 'Live') sysClass = 'sys-tag sys-tag-live';
+                else if (item.sys === 'U') sysClass = 'sys-tag sys-tag-ult';
                 
                 let payoutText = '';
                 if (item.net !== undefined && item.net !== 0) {
@@ -856,7 +991,9 @@
                     <div><span class="${sysClass}">Sys ${item.sys}</span><span>${item.val.toFixed(2)}${payoutText}</span></div>
                     <div class="tag-group">${tagsHtml}</div>`;
                 
-                if (item.sys === 'Live') { listLive.appendChild(li); hasLive = true; } 
+                if (item.sys === 'Live' || (item.sys === 'U' && item.block > 1 && item.val < 23800)) { // Simple heuristic for newly added user data
+                    listLive.appendChild(li); hasLive = true; 
+                } 
                 else { listBaseline.appendChild(li); }
             });
             
@@ -874,8 +1011,8 @@
             let finalHtml = '';
 
             // --- GRAND JACKPOT RADAR LOGIC ---
-            if ((currentNum >= 880 && currentNum < 891) || (currentNum >= 920 && currentNum < 930)) {
-                let lastFeature = [...dataset].filter(d => d.tag !== 'blank' && d.val < currentNum).sort((a,b) => b.val - a.val)[0];
+            if (!isUltimateMode && ((currentNum >= 880 && currentNum < 891) || (currentNum >= 920 && currentNum < 930))) {
+                let lastFeature = [...dataset].filter(d => d.tag !== 'blank' && d.val < currentNum && d.sys !== 'U').sort((a,b) => b.val - a.val)[0];
                 let distance = lastFeature ? (currentNum - lastFeature.val) : 999;
                 
                 if (distance > 0 && distance <= 1.50) {
@@ -910,7 +1047,7 @@
             // 2. STANDARD LOCAL LOGIC
             finalHtml += updateLiveIntegerFilter(currentNum);
             
-            let chronoData = [...dataset].sort((a, b) => a.val - b.val);
+            let chronoData = [...dataset].filter(d => d.sys !== 'U').sort((a, b) => a.val - b.val);
             let historyIndex = chronoData.findIndex(d => d.val === currentNum && d.tag === tagType);
 
             let effectiveTag = tagType;
