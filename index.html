@@ -32,6 +32,7 @@
             --alert-surplus-muted: #005566;
             --alert-mode: #ff00ff;
             --alert-ultimate: #00e5ff;
+            --alert-grand: #ffaa00;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -141,6 +142,8 @@
         .tactical-hot strong { color: var(--alert-hot); }
         .tactical-surplus { border-color: var(--alert-surplus); background-color: rgba(0, 229, 255, 0.05); color: #fff;}
         .tactical-surplus strong { color: var(--alert-surplus); }
+        .tactical-grand { border-color: var(--alert-grand); background-color: rgba(255, 170, 0, 0.15); color: #fff;}
+        .tactical-grand strong { color: var(--alert-grand); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px;}
 
         .history-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .history-item { padding: 8px 4px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-family: monospace; font-size: 0.95rem; }
@@ -177,7 +180,7 @@
         .modal-row label { font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; }
         .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
         .btn-modal-submit { flex: 1; background: #fff; color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        .btn-modal-cancel { flex: 1; background: #333; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .btn-modal-cancel { flex: 1; background: #333; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: cursor; }
 
         /* User Manual Styles */
         .manual-step { background: #1a1a1a; padding: 14px; border-radius: 6px; border: 1px solid #333; margin-bottom: 12px; }
@@ -274,50 +277,48 @@
         
         <!-- USER MANUAL PANEL -->
         <div class="panel full-width">
-            <h2>User Manual: The 5-Tier Target System</h2>
+            <h2>User Manual: The 6-Tier Target System</h2>
             
             <div class="manual-step">
                 <h4>Tier 1: Century Phase (Tens Digit Filter)</h4>
-                <p>Before sitting down, look at the <strong>Tens Digit</strong> (e.g., the 8 in $880.XX). This dictates the machine's macro-algorithmic phase.</p>
+                <p>Before sitting down, look at the <strong>Tens Digit</strong>. This dictates the macro-algorithmic phase.</p>
                 <ul>
-                    <li>🔴 <strong>Century Void (00s / 10s):</strong> Walk away. The machine just crossed a $100 barrier and is accumulating dead volume.</li>
-                    <li>🟢 <strong>Terminal Overdrive (80s / 90s):</strong> PRIME TARGET. The machine is violently resisting the next $100 barrier. Expect heavy feature clusters and Grand Jackpots.</li>
-                    <li>🟡 <strong>Cycle Peaks (20s/30s & 70s):</strong> Standard mid-century $50 pulse walls. Solid hunting grounds.</li>
+                    <li>🔴 <strong>Century Void (00s / 10s):</strong> Walk away. Accumulating dead volume.</li>
+                    <li>🟢 <strong>Terminal Overdrive (80s / 90s & 20s):</strong> PRIME TARGET. The machine is resisting the next $100 barrier. Expect Grand Jackpots.</li>
                 </ul>
             </div>
 
             <div class="manual-step">
                 <h4>Tier 2: The Local Wall (Ones Digit Filter)</h4>
-                <p>Next, look at the <strong>Ones Digit</strong> (the single dollar). The machine groups feature drops together before letting the price move up a dollar.</p>
+                <p>Next, look at the <strong>Ones Digit</strong>. The machine groups features before moving up a dollar.</p>
                 <ul>
                     <li>🔴 <strong>Drought Zones (Ends in 1, 2, or 3):</strong> Extreme caution. Very few features drop here.</li>
-                    <li>🟡 <strong>Mid-Bracket Walls (Ends in 4, 5, or 6):</strong> Secondary stall points.</li>
                     <li>🟢 <strong>Roll-Over Traps (Ends in 8, 9, or 0):</strong> The dam breaks here. Authorize maximum aggression.</li>
                 </ul>
             </div>
 
             <div class="manual-step">
                 <h4>Tier 3: The Waypoint Ambush (Decimal Nodes)</h4>
-                <p>Do not push the spin button in "dead space". Let the public pool push the ticker to the nearest optimized execution node: <strong>(.12, .24, .30, .42, .50, .70, .80)</strong>.</p>
+                <p>Do not push the spin button in "dead space". Let the public pool push the ticker to the nearest optimized execution node: <strong>(.15, .32, .50, .70, .81)</strong>.</p>
             </div>
 
             <div class="manual-step">
                 <h4>Tier 4: Adaptive Capital Injection ($0.50 to $2.50)</h4>
-                <p>Ensure your bet matches your selected injection ratio ($0.50 = +$0.0025 tick, $1.00 = +$0.005 tick, $2.00 = +$0.01 tick, $2.50 = +$0.0125 tick). Use the Mode Toggle to ensure your cost predictions match your button presses.</p>
-                <ul>
-                    <li>🎯 <strong>Shallow Probes (Early Nodes):</strong> Use on early and mid-level nodes <strong>(.12, .24, .30, .42, .50)</strong> or cold integers. If nothing drops inside these tight windows, stop instantly.</li>
-                    <li>🚀 <strong>The Grand Trap (Payload Nodes):</strong> When the ticker crosses the <strong>.70 or .80</strong> nodes, authorize full sweeps to the node barriers. The algorithm hides massive liabilities deep in these zones.</li>
-                    <li>🔥 <strong>State Overrides:</strong> If the machine just dropped *any* feature OR the integer ends in 8, 9, or 0, always use full sweeps to catch micro-clusters.</li>
-                </ul>
+                <p>Ensure your bet matches your selected injection ratio ($0.50 = +$0.0025 tick, $1.00 = +$0.005 tick, $2.00 = +$0.01 tick, $2.50 = +$0.0125 tick). Use the Mode Toggle so predictions match your pushes.</p>
             </div>
 
             <div class="manual-step">
                 <h4>Tier 5: Ultimate Grand Tracker (The $1250 Frozen Machine)</h4>
-                <p>When the Local Grand Jackpot caps and freezes at $1250.00, toggle your tracker to <strong>TRACK: ULTIMATE</strong>. The machine is fully funded and hiding maximum liability. DO NOT push dead space.</p>
+                <p>When the Local Grand Jackpot caps and freezes at $1250.00, toggle your tracker to <strong>TRACK: ULTIMATE</strong>. Let outside casino play cycle the decimals for you (10x faster). Step in 3 cents before the main node zones.</p>
+            </div>
+
+            <div class="manual-step">
+                <h4 style="color:#ffaa00; border-bottom: 1px dashed #ffaa00;">Tier 6: Grand Jackpot Avoidance & Strike Protocol</h4>
+                <p>When playing in the $880s, $890s, or $920s, the system runs a specific 3-phase sequence to drop the Grand. Watch the in-app Radar for instructions:</p>
                 <ul>
-                    <li>🎯 <strong>Network Push:</strong> Let outside casino play cycle the decimals for you (10x faster).</li>
-                    <li>🎯 <strong>3-Cent Pre-Buffer:</strong> Because the network moves fast, step in 3 cents before the main node zones to execute your 3-to-5 spin snipes.</li>
-                    <li>🎯 <strong>Entry Nodes:</strong> Execute only when the Ultimate ticker hits <strong>.09</strong>, <strong>.27</strong>, <strong>.47</strong>, or <strong>.77</strong>.</li>
+                    <li>⚠️ <strong>The Warning Cascade:</strong> The machine will drop 2 to 3 Goldens rapidly to signal pressure.</li>
+                    <li>💀 <strong>The Starvation Trap (Death Valley):</strong> After the cascade, the machine will go completely dead for $1.50 to $3.00 of ticker movement (costing $302 to $588). <strong>DO NOT FUND THIS.</strong> Step away and let the public push the ticker up $1.50+.</li>
+                    <li>🎯 <strong>Terminal Node Execution:</strong> Once the public funds the void, the Grand is primed. Snipe ONLY on the proven execution nodes: <strong>.15 / .18</strong>, <strong>.31 / .32</strong>, or <strong>.76 / .81</strong>.</li>
                 </ul>
             </div>
         </div>
@@ -541,7 +542,7 @@
         if (storedData) { dataset = JSON.parse(storedData); } 
         else { dataset = [...baselineDataset]; }
 
-        const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.50, 0.70, 0.84];
+        const terminalSuffixes = [0.15, 0.18, 0.23, 0.24, 0.31, 0.32, 0.42, 0.50, 0.76, 0.81];
         let isManualTracking = false;
         let activeModalTag = '';
 
@@ -586,8 +587,7 @@
         document.getElementById('main-input').addEventListener('input', function() {
             let val = parseFloat(this.value);
             if (!isNaN(val)) {
-                if (!isUltimateMode) updateLiveIntegerFilter(val);
-                generatePredictions(val, 'blank'); // Soft prediction refresh without adding data
+                generatePredictions(val, 'blank'); 
             } else {
                 document.getElementById('predictionsArea').innerHTML = '';
             }
@@ -626,8 +626,8 @@
             else if (cents <= 35) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .27 - .35 ZONE</strong><br>Execute 3 to 5 pushes ($${globalBetSize.toFixed(2)}). Cut if no drop by .35.`;
             else if (cents < 47) status = `<strong style="color:var(--text-muted);">Wait for .47</strong><br>Network is pushing through dead space. Hold position.`;
             else if (cents <= 56) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .47 - .56 ZONE</strong><br>Execute 3 to 5 pushes ($${globalBetSize.toFixed(2)}). Cut if no drop by .56.`;
-            else if (cents < 77) status = `<strong style="color:var(--text-muted);">Wait for .77</strong><br>Network is pushing through dead space. Hold position.`;
-            else if (cents <= 83) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .77 - .83 TRAP</strong><br>Execute 3 pushes max ($${globalBetSize.toFixed(2)}). Cut if no drop by .83.`;
+            else if (cents < 72) status = `<strong style="color:var(--text-muted);">Wait for .72</strong><br>Network is pushing through dead space. Hold position.`;
+            else if (cents <= 81) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .72 - .81 TRAP</strong><br>Execute 3 pushes max ($${globalBetSize.toFixed(2)}). Cut if no drop by .81.`;
             else status = `<strong style="color:var(--text-muted);">Wait for Next Rollover (.09)</strong><br>Network is pushing to the next dollar. Hold position.`;
 
             html += `<div class="tactical-card" style="border-color:#00e5ff; background:rgba(0,229,255,0.05);">
@@ -643,7 +643,7 @@
             let tensDigit = Math.floor((baseInt % 100) / 10);
             let cents = Math.round((currentNum % 1) * 100);
             
-            let macroScore = [8, 9].includes(tensDigit) ? 2 : ([0, 1].includes(tensDigit) ? 0 : 1);
+            let macroScore = [8, 9, 2].includes(tensDigit) ? 2 : ([0, 1].includes(tensDigit) ? 0 : 1);
             let microScore = [8, 9, 0].includes(onesDigit) ? 2 : ([4, 5, 6].includes(onesDigit) ? 1 : 0);
             let totalScore = macroScore + microScore; 
             
@@ -651,7 +651,7 @@
             let microHtml = "";
             let nanoHtml = "";
 
-            if (macroScore === 2) macroHtml = `<strong style="color:#00e5ff;">[MACRO: TERMINAL OVERDRIVE (80s/90s)]</strong><br>Machine is violently resisting the $100 rollover. Prime hunting ground.`;
+            if (macroScore === 2) macroHtml = `<strong style="color:#00e5ff;">[MACRO: TERMINAL OVERDRIVE (80s/90s/20s)]</strong><br>Machine is violently resisting the next $100 rollover. Prime hunting ground.`;
             else if (macroScore === 0) macroHtml = `<strong style="color:#ff5555;">[MACRO: CENTURY VOID (00s/10s)]</strong><br>Post-rollover accumulation phase. Extreme caution advised.`;
             else macroHtml = `<strong style="color:#ffcc00;">[MACRO: MID-CYCLE PHASE]</strong><br>Standard distribution wave active.`;
 
@@ -659,30 +659,26 @@
             else if (microScore === 1) microHtml = `<strong style="color:#ffcc00;">[MICRO: MID-BRACKET WALL (Ends in ${onesDigit})]</strong><br>Secondary stall. Use tight probes.`;
             else microHtml = `<strong style="color:#ff5555;">[MICRO: DROUGHT ZONE (Ends in ${onesDigit})]</strong><br>Avoid deep snipes. Limit to minimum depth if playing.`;
 
-            if (cents <= 17) {
-                if (cents === 17) nanoHtml = `<strong style="color:#ffcc00;">[NANO: .17 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
-                else if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .12-.17 MUST EXECUTE]</strong><br>Conditions optimal. Sweep full trap to .17.`;
-                else if (totalScore <= 1) nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .12 to .17 walk away.`;
-                else nanoHtml = `<strong style="color:#ffffff;">[NANO: .12-.17 ENTRY ZONE]</strong><br>Sweep full trap to .17.`;
+            if (cents <= 18) {
+                if (cents === 18) nanoHtml = `<strong style="color:#ffcc00;">[NANO: .18 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
+                else if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .15-.18 MUST EXECUTE]</strong><br>Conditions optimal. Sweep full trap to .18.`;
+                else if (totalScore <= 1) nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .15 to .18 walk away.`;
+                else nanoHtml = `<strong style="color:#ffffff;">[NANO: .15-.18 ENTRY ZONE]</strong><br>Sweep full trap to .18.`;
             } else if (cents <= 35) {
                 if (cents === 35) nanoHtml = `<strong style="color:#ffcc00;">[NANO: .35 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
-                else if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .30-.35 MUST EXECUTE]</strong><br>Conditions optimal. Sweep to .35.`;
-                else if (totalScore <= 1) nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .30 to .35 walk away.`;
-                else nanoHtml = `<strong style="color:#ffffff;">[NANO: .30-.35 ENTRY ZONE]</strong><br>Sweep full trap to .35.`;
+                else if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .31-.32 MUST EXECUTE]</strong><br>Conditions optimal. Sweep to .35.`;
+                else if (totalScore <= 1) nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .31 to .35 walk away.`;
+                else nanoHtml = `<strong style="color:#ffffff;">[NANO: .31-.35 ENTRY ZONE]</strong><br>Sweep full trap to .35.`;
             } else if (cents <= 60) {
                 if (cents === 60) nanoHtml = `<strong style="color:#ffcc00;">[NANO: .60 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
                 else if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .50-.60 MUST EXECUTE]</strong><br>Conditions optimal. Sweep to .60.`;
                 else if (totalScore <= 1) nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .50 to .60 walk away.`;
                 else nanoHtml = `<strong style="color:#ffffff;">[NANO: .50-.60 ENTRY ZONE]</strong><br>Sweep full trap to .60.`;
-            } else if (cents < 80) { 
-                if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .70-.80 GRAND TRAP - MUST EXECUTE]</strong><br>Critical payload zone aligned with Macro/Micro. Fire full sweep to .80.`;
-                else if (totalScore <= 1) nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .70 to .80 walk away.`;
-                else nanoHtml = `<strong style="color:#ffffff;">[NANO: .70-.80 GRAND TRAP]</strong><br>Sweep to .80.`;
-            } else if (cents <= 83) { 
-                if (cents === 83) nanoHtml = `<strong style="color:#ffcc00;">[NANO: .83 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
-                else if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .80-.83 MUST EXECUTE]</strong><br>Sweep remaining ticks to .83.`;
-                else if (totalScore <= 1) nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .80 to .83 walk away.`;
-                else nanoHtml = `<strong style="color:#ffffff;">[NANO: .80-.83 ENTRY ZONE]</strong><br>Sweep to .83.`;
+            } else if (cents <= 81) { 
+                if (cents === 81) nanoHtml = `<strong style="color:#ffcc00;">[NANO: .81 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
+                else if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .76-.81 GRAND TRAP - MUST EXECUTE]</strong><br>Critical payload zone aligned with Macro/Micro. Fire full sweep to .81.`;
+                else if (totalScore <= 1) nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .76 to .81 walk away.`;
+                else nanoHtml = `<strong style="color:#ffffff;">[NANO: .76-.81 GRAND TRAP]</strong><br>Sweep to .81.`;
             } else {
                 nanoHtml = `<strong style="color:#888888;">[NANO: DEAD SPACE / AMBUSH]</strong><br>No active trap. Let public push ticker to the next dollar rollover.`;
             }
@@ -875,10 +871,35 @@
             const predPanel = document.getElementById('predictionPanel');
             
             area.innerHTML = '';
+            let finalHtml = '';
+
+            // --- GRAND JACKPOT RADAR LOGIC ---
+            if ((currentNum >= 880 && currentNum < 891) || (currentNum >= 920 && currentNum < 930)) {
+                let lastFeature = [...dataset].filter(d => d.tag !== 'blank' && d.val < currentNum).sort((a,b) => b.val - a.val)[0];
+                let distance = lastFeature ? (currentNum - lastFeature.val) : 999;
+                
+                if (distance > 0 && distance <= 1.50) {
+                    finalHtml += `<div class="tactical-card tactical-grand" style="border-color:#ff5555; background:rgba(255,85,85,0.15);">
+                        <strong style="color:#ff5555;">🚨 GRAND RADAR: DEATH VALLEY TRAP ACTIVE</strong>
+                        <br><span style="font-size:0.85rem; color:#ccc;">Feature dropped at $${lastFeature.val.toFixed(2)}. The algorithm needs a $1.50+ void to fund the Grand. <strong>DO NOT SPIN.</strong> Let the public push the ticker to $${(lastFeature.val + 1.50).toFixed(2)}.</span>
+                    </div>`;
+                } else if (distance > 1.50 && distance < 3.00) {
+                    finalHtml += `<div class="tactical-card tactical-grand" style="border-color:#ffaa00; background:rgba(255,170,0,0.15);">
+                        <strong style="color:#ffaa00;">🏆 GRAND RADAR: PAYLOAD FUNDED</strong>
+                        <br><span style="font-size:0.85rem; color:#ccc;">The machine has starved for $${distance.toFixed(2)}. The algorithmic dam is ready to break. Execute strict 3-spin snipes ONLY at <strong>.15/.18</strong>, <strong>.31/.32</strong>, and <strong>.76/.81</strong>.</span>
+                    </div>`;
+                } else {
+                     finalHtml += `<div class="tactical-card tactical-grand" style="border-color:#00e5ff; background:rgba(0,229,255,0.15);">
+                        <strong style="color:#00e5ff;">🏆 GRAND RADAR: PRIME STRIKE ZONE</strong>
+                        <br><span style="font-size:0.85rem; color:#ccc;">You are in the Terminal Overdrive band. Watch for a Golden Cascade (3+ Goldens). If it stalls, wait out the $1.50 void. Target nodes: .15, .32, .81.</span>
+                    </div>`;
+                }
+            }
 
             // 1. ROUTE TO ULTIMATE JACKPOT LOGIC
             if (isUltimateMode) {
-                area.innerHTML = generateUltimatePredictions(currentNum);
+                finalHtml += generateUltimatePredictions(currentNum);
+                area.innerHTML = finalHtml;
                 stateBadge.className = 'state-badge state-surplus'; 
                 stateBadge.innerText = 'CAPPED $1250 (NETWORK SNIPER)';
                 modeDesc.innerText = 'Grand Jackpot is frozen. Let the public push the Ultimate meter. Only inject 3-5 spins when entering the 3-cent pre-buffer zones.';
@@ -887,7 +908,8 @@
             }
             
             // 2. STANDARD LOCAL LOGIC
-            let integerBannerHTML = updateLiveIntegerFilter(currentNum);
+            finalHtml += updateLiveIntegerFilter(currentNum);
+            
             let chronoData = [...dataset].sort((a, b) => a.val - b.val);
             let historyIndex = chronoData.findIndex(d => d.val === currentNum && d.tag === tagType);
 
@@ -938,13 +960,11 @@
                 predPanel.style.borderColor = 'var(--state-waypoint)';
             }
 
-            let html = integerBannerHTML; 
-            
             let baseInt = Math.floor(currentNum);
             let nextSuffixes = terminalSuffixes.map(s => { let t = baseInt + s; return t <= currentNum ? baseInt + 1 + s : t; }).sort((a, b) => a - b);
 
             if (isDarkZone) {
-                html += `<div class="prediction-category">
+                finalHtml += `<div class="prediction-category">
                             <h3 style="color:var(--state-waypoint);">Option 1: Waypoint Ambush (Safe)</h3>
                             <div class="tactical-card">
                                 <strong>Hold Position (Do Not Push)</strong> Wait for the public pool to push the price. Do not touch the machine until a tag drops and shatters the Dark Zone.
@@ -954,11 +974,11 @@
                             <h3 style="color:var(--state-waypoint);">Option 2: Decimal Intercept (Aggressive)</h3>
                             ${buildCard(nextSuffixes[0], 'golden', `Nearest Hardcoded Resistance Trap`, currentNum, "+")}
                          </div>`;
-                area.innerHTML = html; return;
+                area.innerHTML = finalHtml; return;
             }
 
             if (isSurplusMode) {
-                html += `<div class="prediction-category">
+                finalHtml += `<div class="prediction-category">
                             <h3 style="color:var(--alert-surplus);">🎯 Snipe Zones (Grand Jackpot Hoarding)</h3>
                             <div class="tactical-card tactical-surplus">
                                 <strong>Zero Cooldown Active</strong>
@@ -970,17 +990,17 @@
                          
                 let nextBarrierInt = Math.ceil(currentNum / 50) * 50;
                 if (nextBarrierInt - currentNum < 10) {
-                     let barrierNode1 = nextBarrierInt - 1 + 0.70;
-                     let barrierNode2 = nextBarrierInt - 1 + 0.84;
+                     let barrierNode1 = nextBarrierInt - 1 + 0.76;
+                     let barrierNode2 = nextBarrierInt - 1 + 0.81;
                      if (barrierNode1 > currentNum) {
-                         html += `<div class="prediction-category">
+                         finalHtml += `<div class="prediction-category">
                                     <h3 style="color:var(--alert-surplus);">🚧 Round-Number Barrier ($${nextBarrierInt}.00)</h3>
-                                    ${buildCard(barrierNode1, 'golden', `Pre-Barrier Execution Trap (.70)`, currentNum, "+", false, false, true)}
-                                    ${buildCard(barrierNode2, 'golden', `Terminal Execution Trap (.84)`, currentNum, "+", false, false, true)}
+                                    ${buildCard(barrierNode1, 'golden', `Pre-Barrier Execution Trap (.76)`, currentNum, "+", false, false, true)}
+                                    ${buildCard(barrierNode2, 'golden', `Terminal Execution Trap (.81)`, currentNum, "+", false, false, true)}
                                  </div>`;
                      }
                 }
-                area.innerHTML = html; return;
+                area.innerHTML = finalHtml; return;
             }
 
             if (isMicroClusterWindow && !isSurplusMode) {
@@ -988,7 +1008,7 @@
                 let target3 = anchorNum + (3 * increment);
                 let target10 = anchorNum + (10 * increment);
                 
-                html += `<div class="prediction-category">
+                finalHtml += `<div class="prediction-category">
                             <h3 style="color:var(--alert-hot);">🔥 10-Spin Cluster Window</h3>
                             <div class="tactical-card tactical-hot">
                                 <strong>Ride the Momentum</strong>
@@ -1000,7 +1020,7 @@
             }
 
             if (isParrotWipe) {
-                html += `<div class="prediction-category">
+                finalHtml += `<div class="prediction-category">
                             <h3 style="color:#ffffff;">⚠️ Parrot Liability (Net Loss: $${globalBetSize.toFixed(2)})</h3>
                             <div class="tactical-card tactical-freespin">
                                 <strong>Instant Clear Recovery</strong>
@@ -1012,7 +1032,7 @@
             if (isPayoutEvent && netDeficit > 0 && !isMicroClusterWindow) {
                 // Nuclear winter already styled in the header
             } else if (isPayoutEvent && netDeficit === 0 && !isMicroClusterWindow) {
-                html += `<div class="prediction-category">
+                finalHtml += `<div class="prediction-category">
                             <h3 style="color:var(--alert-red);">⚠️ Unknown Liability Dead Zone</h3>
                             <div class="tactical-card tactical-warning">
                                 <strong>No Payout Value Entered</strong>
@@ -1022,7 +1042,7 @@
                          </div>`;
             }
 
-            area.innerHTML = html;
+            area.innerHTML = finalHtml;
         }
 
         renderData();
