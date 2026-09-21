@@ -31,6 +31,7 @@
             --alert-surplus: #00e5ff; 
             --alert-surplus-muted: #005566;
             --alert-mode: #ff00ff;
+            --alert-ultimate: #00e5ff;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -151,10 +152,11 @@
         .sys-tag-live { background: #ffffff; color: #000000; }
 
         .mode-description { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
-        .util-bar { display: flex; gap: 10px; margin-top: 10px; width: 100%; }
-        .btn-clear { background: none; border: 1px solid #555; color: #888; padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; transition: all 0.2s;}
+        .util-bar { display: flex; gap: 10px; margin-top: 10px; width: 100%; flex-wrap: wrap; }
+        .btn-clear { flex: 1 1 calc(33% - 10px); background: none; border: 1px solid #555; color: #888; padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: all 0.2s; text-align: center; }
         .btn-clear:hover { background: #222; color: #fff; border-color: #fff; }
         .btn-mode-toggle { border-color: var(--alert-mode); color: #fff; background: rgba(255,0,255,0.1); }
+        .btn-ultimate-toggle { border-color: #555; color: #888; }
         
         .section-divider { margin-top: 24px; margin-bottom: 8px; font-size: 0.95rem; color: #fff; border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; }
         .empty-placeholder { font-size: 0.85rem; color: var(--text-muted); font-style: italic; padding: 8px 4px; }
@@ -248,7 +250,8 @@
             
             <div class="util-bar">
                 <button class="btn-clear btn-mode-toggle" id="btnBetToggle" onclick="toggleBetSize()">MODE: $2.00 BET</button>
-                <button class="btn-clear" onclick="clearData()">Reset Database</button>
+                <button class="btn-clear btn-ultimate-toggle" id="btnJackpotToggle" onclick="toggleJackpotMode()">TRACK: LOCAL</button>
+                <button class="btn-clear" onclick="clearData()">Reset DB</button>
             </div>
         </div>
 
@@ -269,7 +272,7 @@
         
         <!-- USER MANUAL PANEL -->
         <div class="panel full-width">
-            <h2>User Manual: The 4-Tier Target System</h2>
+            <h2>User Manual: The 5-Tier Target System</h2>
             
             <div class="manual-step">
                 <h4>Tier 1: Century Phase (Tens Digit Filter)</h4>
@@ -305,14 +308,24 @@
                     <li>🔥 <strong>State Overrides:</strong> If the machine just dropped *any* feature OR the integer ends in 8, 9, or 0, always use full sweeps to catch micro-clusters.</li>
                 </ul>
             </div>
+
+            <div class="manual-step">
+                <h4>Tier 5: Ultimate Grand Tracker (The $1250 Frozen Machine)</h4>
+                <p>When the Local Grand Jackpot caps and freezes at $1250.00, toggle your tracker to <strong>TRACK: ULTIMATE</strong>. The machine is fully funded and hiding maximum liability. DO NOT push dead space.</p>
+                <ul>
+                    <li>🎯 <strong>Network Push:</strong> Let outside casino play cycle the decimals for you (10x faster).</li>
+                    <li>🎯 <strong>3-Cent Pre-Buffer:</strong> Because the network moves fast, step in 3 cents before the main node zones to execute your 3-to-5 spin snipes.</li>
+                    <li>🎯 <strong>Entry Nodes:</strong> Execute only when the Ultimate ticker hits <strong>.09</strong>, <strong>.27</strong>, <strong>.47</strong>, or <strong>.77</strong>.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
     <script>
-        // GLOBAL BET SIZE STATE
+        // GLOBAL STATE
         let globalBetSize = 2.00;
+        let isUltimateMode = false;
 
-        // MASSIVE CONFIRMED BASELINE DATASET (SYSTEMS: R = Royal, D = Dolphin, S = Soldier)
         const baselineDataset = [
             // --- SYSTEM R: ROYAL HOTEL PARROT ---
             {val: 785.43, tag: 'golden', sys: 'R', block: 1, gross: 0, net: 0},
@@ -468,24 +481,36 @@
 
         let dataset = [];
         let storedData = localStorage.getItem('rngTrackerData');
-        if (storedData) {
-            dataset = JSON.parse(storedData);
-        } else {
-            dataset = [...baselineDataset];
-        }
+        if (storedData) { dataset = JSON.parse(storedData); } 
+        else { dataset = [...baselineDataset]; }
 
         const terminalSuffixes = [0.23, 0.24, 0.25, 0.30, 0.32, 0.42, 0.43, 0.50, 0.70, 0.84];
         let isManualTracking = false;
         let activeModalTag = '';
 
-        // --- GLOBAL BET TOGGLE ---
+        // --- TOGGLES ---
         function toggleBetSize() {
             globalBetSize = globalBetSize === 2.00 ? 2.50 : 2.00;
             document.getElementById('btnBetToggle').innerText = `MODE: $${globalBetSize.toFixed(2)} BET`;
             document.getElementById('hs-bet-size').value = globalBetSize.toFixed(2);
-            
-            const inputField = document.getElementById('main-input');
-            if (inputField.value) inputField.dispatchEvent(new Event('input'));
+            refreshPrediction();
+        }
+
+        function toggleJackpotMode() {
+            isUltimateMode = !isUltimateMode;
+            const btn = document.getElementById('btnJackpotToggle');
+            if (isUltimateMode) {
+                btn.innerText = "TRACK: ULTIMATE";
+                btn.style.borderColor = "var(--alert-ultimate)";
+                btn.style.background = "rgba(0, 229, 255, 0.1)";
+                btn.style.color = "#fff";
+            } else {
+                btn.innerText = "TRACK: LOCAL";
+                btn.style.borderColor = "#555";
+                btn.style.background = "none";
+                btn.style.color = "#888";
+            }
+            refreshPrediction();
         }
 
         document.getElementById('hs-bet-size').addEventListener('change', function() {
@@ -494,11 +519,17 @@
             calculateInjectedVolume();
         });
 
-        // --- LIVE 3-TIER FILTER LISTENER ---
+        function refreshPrediction() {
+            const inputField = document.getElementById('main-input');
+            if (inputField.value) inputField.dispatchEvent(new Event('input'));
+        }
+
+        // --- LIVE FILTER LISTENER ---
         document.getElementById('main-input').addEventListener('input', function() {
             let val = parseFloat(this.value);
             if (!isNaN(val)) {
-                updateLiveIntegerFilter(val);
+                if (!isUltimateMode) updateLiveIntegerFilter(val);
+                generatePredictions(val, 'blank'); // Soft prediction refresh without adding data
             } else {
                 document.getElementById('predictionsArea').innerHTML = '';
             }
@@ -516,16 +547,39 @@
             if (!isNaN(currentNum)) {
                 let increment = globalBetSize === 2.50 ? 0.0125 : 0.01;
                 currentNum = currentNum + increment;
-                // Rounding to nearest cent for display
                 input.value = (Math.round(currentNum * 100) / 100).toFixed(2);
                 isManualTracking = true; 
-                updateLiveIntegerFilter(parseFloat(input.value)); 
+                refreshPrediction();
             }
         }
 
-        // --- ADAPTIVE 3-TIER FILTER BROADCASTER (HEAT SCORE LOGIC) ---
+        // --- ULTIMATE PREDICTION LOGIC ---
+        function generateUltimatePredictions(currentNum) {
+            let cents = Math.round((currentNum % 1) * 100);
+            let html = `<div class="tactical-card tactical-surplus">
+                <strong>Ultimate Network Tracker Active</strong>
+                Do not push dead space. Let outside network volume move the ticker. Look at the cent values (.XX) to time your entry.
+            </div>`;
+
+            let status = "";
+            if (cents < 9) status = `<strong style="color:var(--text-muted);">Wait for .09</strong><br>Network is pushing through dead space. Hold position.`;
+            else if (cents <= 17) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .09 - .17 ZONE</strong><br>Execute 3 to 5 pushes ($2.50). Cut if no drop by .17.`;
+            else if (cents < 27) status = `<strong style="color:var(--text-muted);">Wait for .27</strong><br>Network is pushing through dead space. Hold position.`;
+            else if (cents <= 35) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .27 - .35 ZONE</strong><br>Execute 3 to 5 pushes ($2.50). Cut if no drop by .35.`;
+            else if (cents < 47) status = `<strong style="color:var(--text-muted);">Wait for .47</strong><br>Network is pushing through dead space. Hold position.`;
+            else if (cents <= 56) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .47 - .56 ZONE</strong><br>Execute 3 to 5 pushes ($2.50). Cut if no drop by .56.`;
+            else if (cents < 77) status = `<strong style="color:var(--text-muted);">Wait for .77</strong><br>Network is pushing through dead space. Hold position.`;
+            else if (cents <= 83) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .77 - .83 TRAP</strong><br>Execute 3 pushes max ($2.50). Cut if no drop by .83.`;
+            else status = `<strong style="color:var(--text-muted);">Wait for Next Rollover (.09)</strong><br>Network is pushing to the next dollar. Hold position.`;
+
+            html += `<div class="tactical-card" style="border-color:#00e5ff; background:rgba(0,229,255,0.05);">
+                ${status}
+            </div>`;
+            return html;
+        }
+
+        // --- LOCAL 3-TIER FILTER LOGIC ---
         function updateLiveIntegerFilter(currentNum) {
-            const area = document.getElementById('predictionsArea');
             let baseInt = Math.floor(currentNum);
             let onesDigit = baseInt % 10;
             let tensDigit = Math.floor((baseInt % 100) / 10);
@@ -539,21 +593,13 @@
             let microHtml = "";
             let nanoHtml = "";
 
-            if (macroScore === 2) {
-                macroHtml = `<strong style="color:#00e5ff;">[MACRO: TERMINAL OVERDRIVE (80s/90s)]</strong><br>Machine is violently resisting the $100 rollover. Prime hunting ground.`;
-            } else if (macroScore === 0) {
-                macroHtml = `<strong style="color:#ff5555;">[MACRO: CENTURY VOID (00s/10s)]</strong><br>Post-rollover accumulation phase. Extreme caution advised.`;
-            } else {
-                macroHtml = `<strong style="color:#ffcc00;">[MACRO: MID-CYCLE PHASE]</strong><br>Standard distribution wave active.`;
-            }
+            if (macroScore === 2) macroHtml = `<strong style="color:#00e5ff;">[MACRO: TERMINAL OVERDRIVE (80s/90s)]</strong><br>Machine is violently resisting the $100 rollover. Prime hunting ground.`;
+            else if (macroScore === 0) macroHtml = `<strong style="color:#ff5555;">[MACRO: CENTURY VOID (00s/10s)]</strong><br>Post-rollover accumulation phase. Extreme caution advised.`;
+            else macroHtml = `<strong style="color:#ffcc00;">[MACRO: MID-CYCLE PHASE]</strong><br>Standard distribution wave active.`;
 
-            if (microScore === 2) {
-                microHtml = `<strong style="color:#00e5ff;">[MICRO: ROLL-OVER TRAP (Ends in ${onesDigit})]</strong><br>Local dam ready to break. Authorize full sweeps.`;
-            } else if (microScore === 1) {
-                microHtml = `<strong style="color:#ffcc00;">[MICRO: MID-BRACKET WALL (Ends in ${onesDigit})]</strong><br>Secondary stall. Use tight probes.`;
-            } else {
-                microHtml = `<strong style="color:#ff5555;">[MICRO: DROUGHT ZONE (Ends in ${onesDigit})]</strong><br>Avoid deep snipes. Limit to minimum depth if playing.`;
-            }
+            if (microScore === 2) microHtml = `<strong style="color:#00e5ff;">[MICRO: ROLL-OVER TRAP (Ends in ${onesDigit})]</strong><br>Local dam ready to break. Authorize full sweeps.`;
+            else if (microScore === 1) microHtml = `<strong style="color:#ffcc00;">[MICRO: MID-BRACKET WALL (Ends in ${onesDigit})]</strong><br>Secondary stall. Use tight probes.`;
+            else microHtml = `<strong style="color:#ff5555;">[MICRO: DROUGHT ZONE (Ends in ${onesDigit})]</strong><br>Avoid deep snipes. Limit to minimum depth if playing.`;
 
             if (cents <= 17) {
                 if (cents === 17) nanoHtml = `<strong style="color:#ffcc00;">[NANO: .17 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
@@ -583,19 +629,14 @@
                 nanoHtml = `<strong style="color:#888888;">[NANO: DEAD SPACE / AMBUSH]</strong><br>No active trap. Let public push ticker to the next dollar rollover.`;
             }
 
-            let html = `<div class="tactical-card" style="margin-top: 10px; border-color: #555;">
-                            <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #444;">${macroHtml}</div>
-                            <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #444;">${microHtml}</div>
-                            <div>${nanoHtml}</div>
-                        </div>`;
-
-            const stateBadge = document.getElementById('stateBadge');
-            if (stateBadge.innerText === "AWAITING INPUT" || stateBadge.innerText.includes("SEARCHING")) {
-                area.innerHTML = html;
-            }
-            return html; 
+            return `<div class="tactical-card" style="margin-top: 10px; border-color: #555;">
+                        <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #444;">${macroHtml}</div>
+                        <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #444;">${microHtml}</div>
+                        <div>${nanoHtml}</div>
+                    </div>`;
         }
 
+        // --- UTILS ---
         function saveData() { localStorage.setItem('rngTrackerData', JSON.stringify(dataset)); }
 
         function clearData() {
@@ -635,7 +676,7 @@
                     </div>`;
         }
 
-        // --- UNIFIED MODAL LOGIC WITH LIVE-ONLY AUTO-ANCHOR ---
+        // --- MODAL ---
         function openLedgerModal(tagType) {
             const numInput = document.getElementById('main-input').value;
             if (!numInput) { alert("Please enter the current Progressive Ticker price first."); return; }
@@ -696,7 +737,6 @@
             processDataEntry(activeModalTag, netDeficit, grossPayout);
         }
 
-        // --- DATA ENTRY LOGIC ---
         function addNumber(tagType) {
             if (tagType === 'blank') { processDataEntry('blank', 0, 0); }
         }
@@ -769,6 +809,7 @@
             if (!hasLive) { listLive.innerHTML = '<div class="empty-placeholder">No new data entries yet.</div>'; }
         }
 
+        // --- MASTER PREDICTIONS (ROUTING) ---
         function generatePredictions(currentNum, tagType) {
             const area = document.getElementById('predictionsArea');
             const stateBadge = document.getElementById('stateBadge');
@@ -776,9 +817,19 @@
             const predPanel = document.getElementById('predictionPanel');
             
             area.innerHTML = '';
-            
-            let integerBannerHTML = updateLiveIntegerFilter(currentNum);
 
+            // 1. ROUTE TO ULTIMATE JACKPOT LOGIC
+            if (isUltimateMode) {
+                area.innerHTML = generateUltimatePredictions(currentNum);
+                stateBadge.className = 'state-badge state-surplus'; 
+                stateBadge.innerText = 'CAPPED $1250 (NETWORK SNIPER)';
+                modeDesc.innerText = 'Grand Jackpot is frozen. Let the public push the Ultimate meter. Only inject 3-5 spins when entering the 3-cent pre-buffer zones.';
+                predPanel.style.borderColor = 'var(--alert-ultimate)';
+                return;
+            }
+            
+            // 2. STANDARD LOCAL LOGIC
+            let integerBannerHTML = updateLiveIntegerFilter(currentNum);
             let chronoData = [...dataset].sort((a, b) => a.val - b.val);
             let historyIndex = chronoData.findIndex(d => d.val === currentNum && d.tag === tagType);
 
