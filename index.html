@@ -199,6 +199,8 @@
             <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid var(--alert-mode);">
                 <label style="color:#fff;">Active Bet Size</label>
                 <select id="hs-bet-size">
+                    <option value="0.50">$0.50 / Spin</option>
+                    <option value="1.00">$1.00 / Spin</option>
                     <option value="2.00">$2.00 / Spin</option>
                     <option value="2.50">$2.50 / Spin</option>
                 </select>
@@ -300,8 +302,8 @@
             </div>
 
             <div class="manual-step">
-                <h4>Tier 4: Adaptive Capital Injection ($2.00 vs $2.50)</h4>
-                <p>Ensure your bet matches your selected injection ratio ($2.00 = +$0.01 tick, or $2.50 = +$0.0125 tick). Use the Mode Toggle to ensure your cost predictions match your button presses.</p>
+                <h4>Tier 4: Adaptive Capital Injection ($0.50 to $2.50)</h4>
+                <p>Ensure your bet matches your selected injection ratio ($0.50 = +$0.0025 tick, $1.00 = +$0.005 tick, $2.00 = +$0.01 tick, $2.50 = +$0.0125 tick). Use the Mode Toggle to ensure your cost predictions match your button presses.</p>
                 <ul>
                     <li>🎯 <strong>Shallow Probes (Early Nodes):</strong> Use on early and mid-level nodes <strong>(.12, .24, .30, .42, .50)</strong> or cold integers. If nothing drops inside these tight windows, stop instantly.</li>
                     <li>🚀 <strong>The Grand Trap (Payload Nodes):</strong> When the ticker crosses the <strong>.70 or .80</strong> nodes, authorize full sweeps to the node barriers. The algorithm hides massive liabilities deep in these zones.</li>
@@ -325,6 +327,7 @@
         // GLOBAL STATE
         let globalBetSize = 2.00;
         let isUltimateMode = false;
+        const betSizes = [0.50, 1.00, 2.00, 2.50];
 
         const baselineDataset = [
             // --- SYSTEM R: ROYAL HOTEL PARROT ---
@@ -476,7 +479,61 @@
             {val: 845.71, tag: 'parrots', sys: 'S', block: 2, gross: 11.00, net: 0},
             {val: 847.90, tag: 'blank', sys: 'S', block: 2, gross: 0, net: 0},
             {val: 848.16, tag: 'blank', sys: 'S', block: 2, gross: 0, net: 0},
-            {val: 848.43, tag: 'blank', sys: 'S', block: 2, gross: 0, net: 0}
+            {val: 848.43, tag: 'blank', sys: 'S', block: 2, gross: 0, net: 0},
+
+            // --- SYSTEM G: GARDEN HOTEL ---
+            {val: 878.90, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 879.20, tag: 'golden', sys: 'G', block: 1, gross: 32.00, net: 0},
+            {val: 879.32, tag: 'big', sys: 'G', block: 1, gross: 6.40, net: 0},
+            {val: 879.35, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 879.53, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 879.59, tag: 'parrots', sys: 'G', block: 1, gross: 6.60, net: 0},
+            {val: 879.60, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 879.70, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 879.80, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 879.83, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 880.00, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 880.17, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 880.25, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 880.31, tag: 'parrots', sys: 'G', block: 1, gross: 50.00, net: 0},
+            {val: 880.35, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 880.47, tag: 'parrots', sys: 'G', block: 1, gross: 6.00, net: 0},
+            {val: 880.60, tag: 'golden', sys: 'G', block: 1, gross: 7.00, net: 0},
+            {val: 880.70, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 880.80, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 880.83, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 880.85, tag: 'golden', sys: 'G', block: 1, gross: 19.00, net: 0},
+            {val: 881.02, tag: 'big', sys: 'G', block: 1, gross: 12.00, net: 0},
+            {val: 881.17, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 881.23, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 881.30, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 881.31, tag: 'parrots', sys: 'G', block: 1, gross: 7.00, net: 0},
+            {val: 881.35, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 881.41, tag: 'golden', sys: 'G', block: 1, gross: 69.00, net: 0},
+            {val: 881.60, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 881.64, tag: 'golden', sys: 'G', block: 1, gross: 6.00, net: 0},
+            {val: 881.70, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 881.80, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 881.83, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 881.90, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 882.01, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 882.06, tag: 'golden', sys: 'G', block: 1, gross: 26.00, net: 0},
+            {val: 882.23, tag: 'golden', sys: 'G', block: 1, gross: 4.00, net: 0},
+            {val: 882.37, tag: 'parrots', sys: 'G', block: 1, gross: 7.00, net: 0},
+            {val: 882.50, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 882.66, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 882.80, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 882.83, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 883.11, tag: 'golden', sys: 'G', block: 1, gross: 51.00, net: 0},
+            {val: 883.17, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
+            {val: 883.67, tag: 'golden', sys: 'G', block: 1, gross: 40.00, net: 0},
+            {val: 885.18, tag: 'golden', sys: 'G', block: 1, gross: 330.00, net: 0},
+            {val: 750.81, tag: 'parrots', sys: 'G', block: 2, gross: 132.50, net: 0},
+            {val: 751.39, tag: 'golden', sys: 'G', block: 2, gross: 82.50, net: 0},
+            {val: 751.66, tag: 'golden', sys: 'G', block: 2, gross: 2.50, net: 0},
+            {val: 752.06, tag: 'golden', sys: 'G', block: 2, gross: 35.00, net: 0},
+            {val: 752.31, tag: 'golden', sys: 'G', block: 2, gross: 5.00, net: 0},
+            {val: 753.77, tag: 'parrots', sys: 'G', block: 2, gross: 226.00, net: 0}
         ];
 
         let dataset = [];
@@ -490,7 +547,8 @@
 
         // --- TOGGLES ---
         function toggleBetSize() {
-            globalBetSize = globalBetSize === 2.00 ? 2.50 : 2.00;
+            let currentIndex = betSizes.indexOf(globalBetSize);
+            globalBetSize = betSizes[(currentIndex + 1) % betSizes.length];
             document.getElementById('btnBetToggle').innerText = `MODE: $${globalBetSize.toFixed(2)} BET`;
             document.getElementById('hs-bet-size').value = globalBetSize.toFixed(2);
             refreshPrediction();
@@ -545,7 +603,7 @@
             if (!input.value) return;
             let currentNum = parseFloat(input.value);
             if (!isNaN(currentNum)) {
-                let increment = globalBetSize === 2.50 ? 0.0125 : 0.01;
+                let increment = globalBetSize * 0.005; // 0.50 -> 0.0025 | 1.00 -> 0.005 | 2.00 -> 0.01 | 2.50 -> 0.0125
                 currentNum = currentNum + increment;
                 input.value = (Math.round(currentNum * 100) / 100).toFixed(2);
                 isManualTracking = true; 
@@ -563,13 +621,13 @@
 
             let status = "";
             if (cents < 9) status = `<strong style="color:var(--text-muted);">Wait for .09</strong><br>Network is pushing through dead space. Hold position.`;
-            else if (cents <= 17) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .09 - .17 ZONE</strong><br>Execute 3 to 5 pushes ($2.50). Cut if no drop by .17.`;
+            else if (cents <= 17) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .09 - .17 ZONE</strong><br>Execute 3 to 5 pushes ($${globalBetSize.toFixed(2)}). Cut if no drop by .17.`;
             else if (cents < 27) status = `<strong style="color:var(--text-muted);">Wait for .27</strong><br>Network is pushing through dead space. Hold position.`;
-            else if (cents <= 35) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .27 - .35 ZONE</strong><br>Execute 3 to 5 pushes ($2.50). Cut if no drop by .35.`;
+            else if (cents <= 35) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .27 - .35 ZONE</strong><br>Execute 3 to 5 pushes ($${globalBetSize.toFixed(2)}). Cut if no drop by .35.`;
             else if (cents < 47) status = `<strong style="color:var(--text-muted);">Wait for .47</strong><br>Network is pushing through dead space. Hold position.`;
-            else if (cents <= 56) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .47 - .56 ZONE</strong><br>Execute 3 to 5 pushes ($2.50). Cut if no drop by .56.`;
+            else if (cents <= 56) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .47 - .56 ZONE</strong><br>Execute 3 to 5 pushes ($${globalBetSize.toFixed(2)}). Cut if no drop by .56.`;
             else if (cents < 77) status = `<strong style="color:var(--text-muted);">Wait for .77</strong><br>Network is pushing through dead space. Hold position.`;
-            else if (cents <= 83) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .77 - .83 TRAP</strong><br>Execute 3 pushes max ($2.50). Cut if no drop by .83.`;
+            else if (cents <= 83) status = `<strong style="color:var(--alert-hot);">🔥 FIRE NOW: .77 - .83 TRAP</strong><br>Execute 3 pushes max ($${globalBetSize.toFixed(2)}). Cut if no drop by .83.`;
             else status = `<strong style="color:var(--text-muted);">Wait for Next Rollover (.09)</strong><br>Network is pushing to the next dollar. Hold position.`;
 
             html += `<div class="tactical-card" style="border-color:#00e5ff; background:rgba(0,229,255,0.05);">
@@ -653,7 +711,7 @@
 
         function formatDeltaPrice(targetNum, currentNum) {
             let diff = Math.abs(targetNum - currentNum);
-            let tickerIncrement = globalBetSize === 2.50 ? 0.0125 : 0.01;
+            let tickerIncrement = globalBetSize * 0.005;
             let totalSpins = Math.round(diff / tickerIncrement);
             let price = totalSpins * globalBetSize;
             return (targetNum >= currentNum ? "+$" : "-$") + price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -662,7 +720,7 @@
         function buildCard(val, tag, logicText, currentNum, prefix = "+", isVoid = false, isCluster = false, isSurplus = false) {
             let priceGap = formatDeltaPrice(val, currentNum);
             let diff = Math.abs(val - currentNum);
-            let tickerIncrement = globalBetSize === 2.50 ? 0.0125 : 0.01;
+            let tickerIncrement = globalBetSize * 0.005;
             let spins = Math.round(diff / tickerIncrement);
             
             let cardClass = isVoid ? `card-void` : (isSurplus ? `card-surplus` : (isCluster ? `card-cluster` : `card-${tag}`));
@@ -720,7 +778,7 @@
                 return;
             }
             
-            let tickerIncrement = betSize === 2.50 ? 0.0125 : 0.01;
+            let tickerIncrement = betSize * 0.005;
             let spins = Math.round(diff / tickerIncrement);
             let volume = spins * betSize;
             
@@ -846,7 +904,8 @@
             let isFreeSpin = (effectiveTag === 'parrots'); 
             let isPayoutEvent = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'parrots');
             
-            let ticksSinceAnchor = Math.round((currentNum - anchorNum) / (globalBetSize === 2.50 ? 0.0125 : 0.01));
+            let tickerIncrement = globalBetSize * 0.005;
+            let ticksSinceAnchor = Math.round((currentNum - anchorNum) / tickerIncrement);
             let isMicroClusterWindow = (!isDarkZone && tagType !== 'blank') || (tagType === 'blank' && ticksSinceAnchor <= 10 && ticksSinceAnchor > 0);
             let isSurplusMode = isPayoutEvent && netDeficit < 0;
             let isParrotWipe = isFreeSpin && netDeficit > 0 && netDeficit <= globalBetSize; 
@@ -925,7 +984,7 @@
             }
 
             if (isMicroClusterWindow && !isSurplusMode) {
-                let increment = globalBetSize === 2.50 ? 0.0125 : 0.01;
+                let increment = globalBetSize * 0.005;
                 let target3 = anchorNum + (3 * increment);
                 let target10 = anchorNum + (10 * increment);
                 
