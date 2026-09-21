@@ -290,7 +290,7 @@
                 <p>Before sitting down, look at the <strong>Tens Digit</strong>. This dictates the macro-algorithmic phase.</p>
                 <ul>
                     <li>🔴 <strong>Century Void (00s / 10s):</strong> Walk away. Accumulating dead volume.</li>
-                    <li>🟢 <strong>Terminal Overdrive (80s / 90s & 20s):</strong> PRIME TARGET. The machine is resisting the next $100 barrier. Expect Grand Jackpots.</li>
+                    <li>🟢 <strong>Terminal Overdrive (80s / 90s & 20s):</strong> PRIME TARGET. The machine is resisting the next major barrier. Expect Grand Jackpots.</li>
                 </ul>
             </div>
 
@@ -310,28 +310,27 @@
 
             <div class="manual-step">
                 <h4>Tier 4: Adaptive Capital Injection ($0.50 to $2.50)</h4>
-                <p>Ensure your bet matches your selected injection ratio ($0.50 = +$0.0025 tick, $1.00 = +$0.005 tick, $2.00 = +$0.01 tick, $2.50 = +$0.0125 tick). Use the Mode Toggle so predictions match your pushes.</p>
+                <p>Ensure your bet matches your selected injection ratio. Use the Mode Toggle so predictions match your pushes.</p>
             </div>
 
             <div class="manual-step">
-                <h4>Tier 5: Ultimate Grand Tracker (The Latency Windows)</h4>
-                <p>When the Local Grand Jackpot caps and freezes at $1250.00, toggle your tracker to <strong>TRACK: ULTIMATE</strong>. You are now targeting outside network volume. The nodes are widened to absorb latency.</p>
+                <h4>Tier 5: Ultimate Grand Tracker (Macro & Latency Logic)</h4>
+                <p>When the Local Grand Jackpot caps at $1250, toggle to <strong>TRACK: ULTIMATE</strong>. The tracker will now automatically analyze the Macro-Cycle (Tens Digit) to tell you if the network is starved or primed, and adjusts decimal snipes for latency:</p>
                 <ul>
                     <li>🎯 <strong>The Early Trap:</strong> .10 to .16</li>
                     <li>🎯 <strong>The Quarter Trap:</strong> .25 to .37</li>
                     <li>🎯 <strong>The Mid-Wall:</strong> .39 to .47</li>
                     <li>🚀 <strong>Terminal Payload Block:</strong> .70 to .87 (Massive un-broken hit zone).</li>
-                    <li>🛑 <strong>Dead Zones:</strong> DO NOT push between .48 and .69. Let the floor pay for the volume.</li>
                 </ul>
             </div>
 
             <div class="manual-step">
                 <h4 style="color:#ffaa00; border-bottom: 1px dashed #ffaa00;">Tier 6: Grand Jackpot Avoidance & Strike Protocol</h4>
-                <p>When playing in the $880s, $890s, or $920s, the system runs a specific 3-phase sequence to drop the Grand. Watch the in-app Radar for instructions:</p>
+                <p>When playing in the $880s, $890s, or $920s, watch the in-app Radar for instructions:</p>
                 <ul>
-                    <li>⚠️ <strong>The Warning Cascade:</strong> The machine will drop 2 to 3 Goldens rapidly to signal pressure.</li>
-                    <li>💀 <strong>The Starvation Trap (Death Valley):</strong> After a massive hit ($300+ payout) or the cascade, the machine will go completely dead for $1.50 to $3.00 of ticker movement (costing $302 to $588). <strong>DO NOT FUND THIS.</strong> Step away and let the public push the ticker up $1.50+.</li>
-                    <li>🎯 <strong>Terminal Node Execution:</strong> Once the public funds the void, the Grand is primed. Snipe ONLY on the proven execution nodes: <strong>.15 / .18</strong>, <strong>.31 / .32</strong>, or <strong>.76 / .81</strong>.</li>
+                    <li>⚠️ <strong>The Warning Cascade:</strong> 2 to 3 Goldens drop rapidly.</li>
+                    <li>💀 <strong>The Starvation Trap (Death Valley):</strong> After a massive hit ($300+ payout) or the cascade, the machine will go dead for $1.50 to $3.00 of ticker movement. <strong>DO NOT FUND THIS.</strong> Step away.</li>
+                    <li>🎯 <strong>Terminal Node Execution:</strong> Once the public funds the void, snipe ONLY on the proven execution nodes: <strong>.15 / .18</strong>, <strong>.31 / .32</strong>, or <strong>.76 / .81</strong>.</li>
                 </ul>
             </div>
         </div>
@@ -695,12 +694,42 @@
             }
         }
 
-        // --- ULTIMATE PREDICTION LOGIC (RECALIBRATED +0.02 NETWORK LATENCY) ---
+        // --- ULTIMATE PREDICTION LOGIC (MACRO-FORECASTING + LATENCY) ---
         function generateUltimatePredictions(currentNum) {
+            let baseInt = Math.floor(currentNum);
+            let tensDigit = Math.floor((baseInt % 100) / 10);
+            let centuryBase = Math.floor(currentNum / 100) * 100;
             let cents = Math.round((currentNum % 1) * 100);
-            let html = `<div class="tactical-card tactical-surplus">
-                <strong>Ultimate Network Tracker Active (Latency Adjusted)</strong>
-                Local Grand is capped. You are targeting networked pool volume. The prediction windows are expanded by +/- 0.02 to absorb network ricochet.
+            
+            let macroStatus = "";
+
+            if (tensDigit === 0 || tensDigit === 1) {
+                macroStatus = `<div class="tactical-card tactical-warning" style="margin-bottom: 8px;">
+                    <strong>🛑 MACRO VOID (00s - 10s)</strong><br>
+                    The network is in deep accumulation. The Grand will likely not drop here. Let the floor push the volume.<br>
+                    <span style="color:#fff; font-size: 0.95rem; display:block; margin-top:6px;">Next Prime Strike Zone: <strong>$${(centuryBase + 28).toFixed(2)} - $${(centuryBase + 30).toFixed(2)}</strong></span>
+                </div>`;
+            } else if (tensDigit === 2) {
+                macroStatus = `<div class="tactical-card tactical-grand" style="margin-bottom: 8px;">
+                    <strong>🏆 TERMINAL OVERDRIVE (20s)</strong><br>
+                    Prime Grand Jackpot strike zone. The network is resisting the $30 barrier. Target integers ending in 8 or 9.
+                </div>`;
+            } else if (tensDigit >= 3 && tensDigit <= 7) {
+                macroStatus = `<div class="tactical-card tactical-warning" style="margin-bottom: 8px;">
+                    <strong>⚠️ MID-CYCLE ACCUMULATION (${tensDigit}0s)</strong><br>
+                    Standard distribution wave. The algorithm is building liability for the macro drop. Do not chase.<br>
+                    <span style="color:#fff; font-size: 0.95rem; display:block; margin-top:6px;">Next Prime Strike Zone: <strong>$${(centuryBase + 88).toFixed(2)} - $${(centuryBase + 90).toFixed(2)}</strong></span>
+                </div>`;
+            } else if (tensDigit === 8 || tensDigit === 9) {
+                macroStatus = `<div class="tactical-card tactical-grand" style="margin-bottom: 8px;">
+                    <strong>🏆 TERMINAL OVERDRIVE (80s - 90s)</strong><br>
+                    Prime Grand Jackpot strike zone. The network is heavily resisting the $100 rollover barrier. Target integers ending in 8 or 9.
+                </div>`;
+            }
+
+            let html = macroStatus + `<div class="tactical-card tactical-surplus">
+                <strong>Ultimate Network Decimal Tracker</strong>
+                Prediction windows are expanded by +/- 0.02 to absorb network ricochet.
             </div>`;
 
             let status = "";
@@ -991,7 +1020,7 @@
                     <div><span class="${sysClass}">Sys ${item.sys}</span><span>${item.val.toFixed(2)}${payoutText}</span></div>
                     <div class="tag-group">${tagsHtml}</div>`;
                 
-                if (item.sys === 'Live' || (item.sys === 'U' && item.block > 1 && item.val < 23800)) { // Simple heuristic for newly added user data
+                if (item.sys === 'Live' || (item.sys === 'U' && item.block > 1 && item.val < 23800)) { 
                     listLive.appendChild(li); hasLive = true; 
                 } 
                 else { listBaseline.appendChild(li); }
