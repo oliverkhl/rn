@@ -3,28 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Progressive Engine Predictor</title>
+    <title>Note</title>
     <style>
         :root {
-            /* Black & White Grayscale Palette */
+            /* Minimal Grayscale Palette for the entire UI */
             --bg-color: #000000;
-            --panel-bg: #111111;
+            --panel-bg: #0a0a0a;
             --text-main: #ffffff;
             --text-muted: #888888;
             
-            /* Tag Accents */
+            /* Tag Accents - Converted to Grayscale */
             --accent-golden: #ffffff;
-            --accent-parrots: #cccccc;
-            --accent-big: #333333;
+            --accent-parrots: #bbbbbb;
+            --accent-big: #777777;
             --accent-blank: #444444; 
-            --accent-price: #dddddd;
+            --accent-price: #cccccc;
             
-            /* UI Elements & Alert Colors */
-            --border-color: #333333;
-            --state-dormant: #777777;
+            /* UI Elements */
+            --border-color: #222222;
+            --state-dormant: #666666;
             --state-active: #ffffff;
-            --state-waypoint: #999999;
+            --state-waypoint: #777777;
             --state-freespin: #ffffff;
+            
+            /* Important Alerts - KEPT IN COLOR for proper attention */
             --alert-red: #ff5555;
             --alert-red-muted: #aa3333;
             --alert-hot: #ffcc00;
@@ -57,7 +59,7 @@
 
         .panel {
             background-color: var(--panel-bg); border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            border-radius: 4px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
             width: 100%; transition: border-color 0.3s ease;
         }
 
@@ -67,50 +69,53 @@
         }
 
         .state-badge {
-            font-size: 0.75rem; padding: 4px 8px; border-radius: 12px;
+            font-size: 0.75rem; padding: 4px 8px; border-radius: 4px;
             font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;
-            color: var(--text-muted); border: 1px solid var(--border-color); background-color: #222222;
+            color: var(--text-muted); border: 1px solid var(--border-color); background-color: #111111;
         }
 
-        .state-dormant { background-color: #1a1a1a; color: var(--state-dormant); border: 1px solid var(--state-dormant); }
-        .state-cluster { background-color: #332200; color: var(--alert-hot); border: 1px solid var(--alert-hot); }
-        .state-surplus { background-color: #001a22; color: var(--alert-surplus); border: 1px solid var(--alert-surplus); }
-        .state-waypoint { background-color: #111111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
+        .state-dormant { background-color: #111; color: var(--state-dormant); border: 1px solid var(--state-dormant); }
+        .state-cluster { background-color: rgba(255, 204, 0, 0.1); color: var(--alert-hot); border: 1px solid var(--alert-hot); }
+        .state-surplus { background-color: rgba(0, 229, 255, 0.1); color: var(--alert-surplus); border: 1px solid var(--alert-surplus); }
+        .state-waypoint { background-color: #111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
         .state-freespin { background-color: #ffffff; color: #000000; border: 1px solid #ffffff; }
 
-        .main-input-group { display: flex; gap: 10px; margin-bottom: 16px; }
+        .main-input-group { display: flex; gap: 8px; margin-bottom: 16px; align-items: stretch; }
+        .main-input-col { display: flex; flex-direction: column; gap: 8px; flex: 1; }
 
-        #main-input {
-            width: 100%; background-color: #000000; border: 2px solid #555555;
-            color: #ffffff; padding: 14px; border-radius: 6px;
+        .main-input-col input {
+            width: 100%; background-color: #000000; border: 1px solid #555555;
+            color: #ffffff; padding: 14px; border-radius: 4px;
             font-family: monospace; font-size: 1.3rem; text-align: center; transition: border-color 0.2s ease;
         }
-        #main-input:focus { outline: none; border-color: #ffffff; }
+        .main-input-col input:focus { outline: none; border-color: #ffffff; }
+        .main-input-col input::placeholder { color: #555; font-size: 1rem; }
 
         .btn-step {
-            background-color: #222222; border: 1px solid #555555; color: #ffffff;
-            padding: 0 16px; border-radius: 6px; font-weight: bold; font-size: 0.9rem;
-            cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+            background-color: #111; border: 1px solid #555; color: #ffffff;
+            padding: 0 16px; border-radius: 4px; font-weight: bold; font-size: 1.1rem;
+            cursor: pointer; transition: all 0.2s ease; white-space: nowrap; width: 80px;
         }
         .btn-step:active { background-color: #ffffff; color: #000000; border-color: #ffffff; }
 
         .tag-buttons-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px; }
         .tag-btn {
-            border: none; padding: 10px 2px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.75rem;
+            border: 1px solid #444; padding: 10px 2px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.75rem;
             display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
             transition: opacity 0.2s; touch-action: manipulation; text-align: center;
         }
         .tag-btn span {
-            font-size: 0.65rem; background: rgba(128,128,128,0.3); padding: 2px 6px;
-            border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.65rem; background: rgba(0,0,0,0.5); padding: 2px 6px;
+            border-radius: 4px; border: 1px solid #555;
         }
         .tag-btn:active { opacity: 0.6; }
         
-        .btn-golden { background-color: #ffffff; color: #000000; }
-        .btn-parrots { background-color: #cccccc; color: #000000; }
-        .btn-big { background-color: #333333; color: #ffffff; border: 1px solid #555555; }
-        .btn-blank { background-color: #111111; color: #aaaaaa; border: 1px dashed #555555; }
-        .btn-jackpot { background-color: #ffaa00; color: #000000; }
+        /* Grayscale Tags */
+        .btn-golden { background-color: #ffffff; color: #000000; border-color: #ffffff; }
+        .btn-parrots { background-color: #aaaaaa; color: #000000; border-color: #aaaaaa; }
+        .btn-big { background-color: #555555; color: #ffffff; border-color: #777777; }
+        .btn-blank { background-color: #1a1a1a; color: #aaaaaa; border-color: #444444; border-style: dashed; }
+        .btn-jackpot { background-color: #dddddd; color: #000000; border-color: #dddddd; }
 
         .pred-card {
             background-color: var(--bg-color); padding: 10px 12px; margin-bottom: 8px; border-radius: 4px;
@@ -122,7 +127,7 @@
         .card-golden { border-left-color: var(--accent-golden); }
         .card-parrots { border-left-color: var(--accent-parrots); }
         .card-big { border-left-color: var(--accent-big); }
-        .card-jackpot { border-left-color: var(--alert-grand); }
+        .card-jackpot { border-left-color: #dddddd; }
         .card-void { border-left-color: var(--alert-red); background-color: rgba(255, 0, 0, 0.05); }
         .card-cluster { border-left-color: var(--alert-hot); border-color: var(--alert-hot); }
         .card-surplus { border-left-color: var(--alert-surplus); border-color: var(--alert-surplus-muted); background-color: rgba(0, 229, 255, 0.05); }
@@ -132,10 +137,12 @@
         .pred-logic { font-size: 0.8rem; color: var(--text-muted); }
 
         .tactical-card {
-            background-color: #1a1a1a; border: 1px dashed var(--text-muted); border-radius: 4px; padding: 12px;
+            background-color: #111111; border: 1px dashed var(--text-muted); border-radius: 4px; padding: 12px;
             font-size: 0.85rem; color: #cccccc; margin-bottom: 12px; line-height: 1.5;
         }
         .tactical-card strong { color: var(--accent-golden); display: inline-block; font-size: 0.9rem; margin-bottom: 4px; }
+        
+        /* Attention Colors Kept Here */
         .tactical-warning { border-color: var(--alert-red-muted); background-color: rgba(170, 51, 51, 0.1); }
         .tactical-warning strong { color: var(--alert-red); }
         .tactical-freespin { border-color: #ffffff; background-color: #222222; }
@@ -153,15 +160,14 @@
         
         .tag-group { display: flex; gap: 4px; }
         .tag { font-size: 0.65rem; padding: 3px 6px; border-radius: 4px; background-color: var(--border-color); text-transform: uppercase; font-weight: bold; color: #ffffff; }
-        .sys-tag { font-size: 0.65rem; color: #ffffff; background: #444444; padding: 2px 5px; border-radius: 4px; margin-right: 8px; }
+        .sys-tag { font-size: 0.65rem; color: #ffffff; background: #333333; padding: 2px 5px; border-radius: 4px; margin-right: 8px; border: 1px solid #444; }
         .sys-tag-live { background: #ffffff; color: #000000; }
-        .sys-tag-ult { background: var(--alert-ultimate); color: #000000; }
+        .sys-tag-ult { background: #666666; color: #ffffff; }
 
         .mode-description { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
         .util-bar { display: flex; gap: 10px; margin-top: 10px; width: 100%; flex-wrap: wrap; }
-        .btn-clear { flex: 1 1 calc(50% - 5px); background: none; border: 1px solid #555; color: #888; padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: all 0.2s; text-align: center; }
+        .btn-clear { flex: 1 1 100%; background: #000; border: 1px solid #555; color: #888; padding: 10px 12px; border-radius: 4px; font-size: 0.85rem; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: all 0.2s; text-align: center; }
         .btn-clear:hover { background: #222; color: #fff; border-color: #fff; }
-        .btn-ultimate-toggle { border-color: #555; color: #888; }
         
         .section-divider { margin-top: 24px; margin-bottom: 8px; font-size: 0.95rem; color: #fff; border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; }
         .empty-placeholder { font-size: 0.85rem; color: var(--text-muted); font-style: italic; padding: 8px 4px; }
@@ -169,28 +175,28 @@
         /* Modal Styles */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(3px);
+            background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(3px);
         }
         .modal-content {
-            background: #111; border: 1px solid #555; border-radius: 8px; padding: 20px; width: 90%; max-width: 420px;
+            background: #0a0a0a; border: 1px solid #444; border-radius: 4px; padding: 20px; width: 90%; max-width: 420px;
             color: #fff; display: flex; flex-direction: column; gap: 12px;
         }
-        .modal-content h3 { margin-top: 0; margin-bottom: 6px; border-bottom: 1px dashed #555; padding-bottom: 10px; }
-        .modal-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; border-radius: 4px; }
+        .modal-content h3 { margin-top: 0; margin-bottom: 6px; border-bottom: 1px dashed #444; padding-bottom: 10px; }
+        .modal-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 12px; border-radius: 4px; border: 1px solid #222;}
         .modal-row input[type="number"] { width: 110px; background: #000; color: #fff; border: 1px solid #555; padding: 8px; text-align: right; font-family: monospace; font-size: 1rem;}
         .modal-row select { width: 110px; background: #000; color: #fff; border: 1px solid #555; padding: 8px; font-family: monospace; font-size: 0.9rem; border-radius: 4px;}
-        .modal-row label { font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; }
+        .modal-row label { font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; color: #ccc; }
         .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
         .btn-modal-submit { flex: 1; background: #fff; color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        .btn-modal-cancel { flex: 1; background: #333; color: #fff; border: 1px solid #555; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .btn-modal-cancel { flex: 1; background: #222; color: #888; border: 1px solid #444; padding: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; }
 
         /* User Manual Styles */
-        .manual-step { background: #1a1a1a; padding: 14px; border-radius: 6px; border: 1px solid #333; margin-bottom: 12px; }
+        .manual-step { background: #111111; padding: 14px; border-radius: 4px; border: 1px solid #222; margin-bottom: 12px; }
         .manual-step h4 { margin-top: 0; color: #fff; margin-bottom: 8px; border-bottom: 1px dashed #444; padding-bottom: 6px; font-size: 1rem; }
         .manual-step p { margin: 0; color: #ccc; font-size: 0.9rem; line-height: 1.5; }
         .manual-step ul { margin: 8px 0 0; padding-left: 20px; color: #ccc; font-size: 0.9rem; line-height: 1.5; }
         .manual-step li { margin-bottom: 6px; }
-        .manual-step strong { color: var(--accent-golden); }
+        .manual-step strong { color: #fff; }
     </style>
 </head>
 <body>
@@ -201,23 +207,23 @@
             <h3 id="modal-title">Ledger Entry</h3>
             <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">Enter both tickers simultaneously to map dual-node network cross-strikes.</div>
             
-            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid var(--alert-ultimate);">
-                <label style="color:var(--alert-ultimate);">Ultimate Ticker</label>
+            <div class="modal-row" style="border-left: 2px solid var(--alert-ultimate);">
+                <label style="color:var(--text-main);">Ultimate Ticker</label>
                 <input type="number" id="hs-ult-ticker" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
             </div>
 
-            <div class="modal-row" style="border-left: 2px solid #fff;">
+            <div class="modal-row" style="border-left: 2px dashed #aaa;">
                 <label>Gross Payout / Cashout ($)</label>
                 <input type="number" id="hs-total" value="" placeholder="0.00" step="0.01" inputmode="decimal">
             </div>
 
-            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid #888;">
+            <div class="modal-row" style="border-left: 2px solid #666;">
                 <label style="color:#ccc;">Local Ticker</label>
                 <input type="number" id="hs-local-ticker" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
             </div>
 
-            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid var(--alert-mode);">
-                <label style="color:#fff;">Active Bet Size</label>
+            <div class="modal-row" style="border-left: 2px dashed #555;">
+                <label style="color:#aaa;">Active Bet Size</label>
                 <select id="hs-bet-size">
                     <option value="0.50">$0.50 / Spin</option>
                     <option value="1.00">$1.00 / Spin</option>
@@ -226,14 +232,14 @@
                 </select>
             </div>
 
-            <div class="modal-row" style="border-left: 2px solid #00e5ff; margin-top: 10px;">
-                <label style="color:#fff;">Calculated Since Ticker:</label>
+            <div class="modal-row" style="border-left: 2px solid #444; margin-top: 10px;">
+                <label style="color:#aaa;">Calculated Since Ticker:</label>
                 <input type="number" id="hs-start-ticker" value="" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
             </div>
 
-            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid #ffcc00;">
-                <label style="color:#ffcc00;">Calculated Capital Injected ($)</label>
-                <input type="number" id="hs-buyin" value="0.00" readonly style="color:#ffcc00; font-weight:bold;" inputmode="decimal">
+            <div class="modal-row" style="border-left: 2px solid #ccc;">
+                <label style="color:#fff;">Calculated Capital Injected ($)</label>
+                <input type="number" id="hs-buyin" value="0.00" readonly style="color:#fff; font-weight:bold;" inputmode="decimal">
             </div>
 
             <div class="modal-actions">
@@ -249,20 +255,22 @@
             <h2>Note</h2>
 
             <div class="main-input-group">
-                <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="0.00">
-                <button id="btn-step" class="btn-step" onclick="stepNumber()">TICK</button>
+                <div class="main-input-col">
+                    <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="Local Ticker Price...">
+                    <input type="number" id="ult-input" step="0.01" inputmode="decimal" placeholder="Ultimate Grand Ticker...">
+                </div>
+                <button id="btn-step" class="btn-step" onclick="stepNumber()">TCK</button>
             </div>
 
             <div class="tag-buttons-grid">
-                <button class="tag-btn btn-golden" onclick="openLedgerModal('golden')">GOLDEN <span id="count-golden">0</span></button>
-                <button class="tag-btn btn-parrots" onclick="openLedgerModal('parrots')">PARROT <span id="count-parrots">0</span></button>
+                <button class="tag-btn btn-golden" onclick="openLedgerModal('golden')">GLD <span id="count-golden">0</span></button>
+                <button class="tag-btn btn-parrots" onclick="openLedgerModal('parrots')">PRT <span id="count-parrots">0</span></button>
                 <button class="tag-btn btn-big" onclick="openLedgerModal('big')">BIG <span id="count-big">0</span></button>
-                <button class="tag-btn btn-blank" onclick="addNumber('blank')">START <span id="count-blank">0</span></button>
-                <button class="tag-btn btn-blank" onclick="openLedgerModal('jackpot')">JP <span id="count-jackpot">0</span></button>
+                <button class="tag-btn btn-blank" onclick="addNumber('blank')">SRT <span id="count-blank">0</span></button>
+                <button class="tag-btn btn-jackpot" onclick="openLedgerModal('jackpot')">JKP <span id="count-jackpot">0</span></button>
             </div>
             
             <div class="util-bar">
-                <button class="btn-clear btn-ultimate-toggle" id="btnJackpotToggle" onclick="toggleJackpotMode()">TRACK: LOCAL</button>
                 <button class="btn-clear" onclick="clearData()">Reset DB</button>
             </div>
         </div>
@@ -290,8 +298,8 @@
                 <h4>Tier 1: Century Phase (Tens Digit Filter)</h4>
                 <p>Before sitting down, look at the <strong>Tens Digit</strong>. This dictates the macro-algorithmic phase.</p>
                 <ul>
-                    <li>🔴 <strong>Century Void (00s / 10s):</strong> Walk away. Accumulating dead volume.</li>
-                    <li>🟢 <strong>Terminal Overdrive (80s / 90s & 20s):</strong> PRIME TARGET. The machine is resisting the next major barrier. Expect Grand Jackpots.</li>
+                    <li><strong>Century Void (00s / 10s):</strong> Walk away. Accumulating dead volume.</li>
+                    <li><strong>Terminal Overdrive (80s / 90s & 20s):</strong> PRIME TARGET. The machine is resisting the next major barrier. Expect Grand Jackpots.</li>
                 </ul>
             </div>
 
@@ -299,8 +307,8 @@
                 <h4>Tier 2: The Local Wall (Ones Digit Filter)</h4>
                 <p>Next, look at the <strong>Ones Digit</strong>. The machine groups features before moving up a dollar.</p>
                 <ul>
-                    <li>🔴 <strong>Drought Zones (Ends in 1, 2, or 3):</strong> Extreme caution. Very few features drop here.</li>
-                    <li>🟢 <strong>Roll-Over Traps (Ends in 8, 9, or 0):</strong> The dam breaks here. Authorize maximum aggression.</li>
+                    <li><strong>Drought Zones (Ends in 1, 2, or 3):</strong> Extreme caution. Very few features drop here.</li>
+                    <li><strong>Roll-Over Traps (Ends in 8, 9, or 0):</strong> The dam breaks here. Authorize maximum aggression.</li>
                 </ul>
             </div>
 
@@ -310,37 +318,35 @@
             </div>
 
             <div class="manual-step">
-                <h4>Tier 4: Adaptive Capital Injection ($0.50 to $2.50)</h4>
-                <p>Ensure your bet matches your selected injection ratio. Select your mode in the entry popup to align the prediction logic.</p>
+                <h4>Tier 4: Cross-Node Alignment (Dolphin Protocol)</h4>
+                <p>Type both the local price and the ultimate grand price into the tracker boxes. The engine will automatically flag massive cross-node drop possibilities if both grids align.</p>
             </div>
 
             <div class="manual-step">
                 <h4>Tier 5: Ultimate Grand Tracker (Macro & Latency Logic)</h4>
-                <p>When the Local Grand Jackpot caps at $1250, toggle to <strong>TRACK: ULTIMATE</strong>. The tracker will now automatically analyze the Macro-Cycle (Tens Digit) to tell you if the network is starved or primed, and adjusts decimal snipes for latency:</p>
+                <p>When the Local Grand Jackpot caps at $1250, fill only the Ultimate box. The tracker will now automatically analyze the Macro-Cycle (Tens Digit) to tell you if the network is starved or primed, and adjusts decimal snipes for latency:</p>
                 <ul>
-                    <li>🎯 <strong>The Early Trap:</strong> .10 to .16</li>
-                    <li>🎯 <strong>The Quarter Trap:</strong> .25 to .37</li>
-                    <li>🎯 <strong>The Mid-Wall:</strong> .39 to .47</li>
-                    <li>🚀 <strong>Terminal Payload Block:</strong> .70 to .87 (Massive un-broken hit zone).</li>
+                    <li><strong>The Early Trap:</strong> .10 to .16</li>
+                    <li><strong>The Quarter Trap:</strong> .25 to .37</li>
+                    <li><strong>The Mid-Wall:</strong> .39 to .47</li>
+                    <li><strong>Terminal Payload Block:</strong> .70 to .87</li>
                 </ul>
             </div>
-
-            <div class="manual-step">
-                <h4 style="color:#ffaa00; border-bottom: 1px dashed #ffaa00;">Tier 6: Grand Jackpot Avoidance & Strike Protocol</h4>
-                <p>When playing in the $880s, $890s, or $920s, watch the in-app Radar for instructions:</p>
-                <ul>
-                    <li>⚠️ <strong>The Warning Cascade:</strong> 2 to 3 Goldens drop rapidly.</li>
-                    <li>💀 <strong>The Starvation Trap (Death Valley):</strong> After a massive hit ($300+ payout) or the cascade, the machine will go dead for $1.50 to $3.00 of ticker movement. <strong>DO NOT FUND THIS.</strong> Step away.</li>
-                    <li>🎯 <strong>Terminal Node Execution:</strong> Once the public funds the void, snipe ONLY on the proven execution nodes: <strong>.15 / .18</strong>, <strong>.31 / .32</strong>, or <strong>.76 / .81</strong>.</li>
-                </ul>
-            </div>
+			<div class="manual-step">
+				<h4>Tier 6: Grand Jackpot Avoidance & Strike Protocol</h4>
+				<p>When playing in the $880s, $890s, or $920s, watch the in-app Radar for instructions:</p>
+				<ul>
+					<li><strong>⚠️ The Warning Cascade:</strong> 2 to 3 Goldens drop rapidly.</li>
+					<li><strong>💀 The Starvation Trap (Death Valley):</strong> After a massive hit ($300+ payout) or the cascade, the machine will go dead for $1.50 to $3.00 of ticker movement. DO NOT FUND THIS. Step away.</li>
+					<li><strong>🎯 Terminal Node Execution:</strong> Once the public funds the void, snipe ONLY on the proven execution nodes: .15 / .18, .31 / .32, or .76 / .81.</li>
+				</ul>
+			</div>
         </div>
     </div>
 
     <script>
         // GLOBAL STATE
         let globalBetSize = 2.00;
-        let isUltimateMode = false;
         const betSizes = [0.50, 1.00, 2.00, 2.50];
 
         const baselineDataset = [
@@ -453,7 +459,7 @@
             {val: 889.51, tag: 'golden', sys: 'D', block: 2, gross: 25.00, net: 0},
             {val: 890.32, tag: 'golden', sys: 'D', block: 2, gross: 42.50, net: 0},
             {val: 890.56, tag: 'golden', sys: 'D', block: 2, gross: 242.50, net: 0},
-            {val: 890.76, tag: 'golden', sys: 'D', block: 2, gross: 1160.76, net: 0},
+            {val: 890.76, tag: 'jackpot', sys: 'D', block: 2, gross: 1160.76, net: 0},
             {val: 1078.14, tag: 'golden', sys: 'D', block: 6, gross: 0, net: 0},
             {val: 1078.48, tag: 'golden', sys: 'D', block: 6, gross: 0, net: 0},
             {val: 1079.46, tag: 'parrots', sys: 'D', block: 6, gross: 0, net: 0},
@@ -483,7 +489,7 @@
             {val: 1138.96, tag: 'golden', sys: 'D', block: 7, gross: 0, net: 0},
             {val: 1139.01, tag: 'golden', sys: 'D', block: 7, gross: 0, net: 0},
             // CROSS-NODE LOCAL: DOLPHIN DOUBLE-MINI HIT
-            {val: 848.34, tag: 'golden', sys: 'D', block: 3, gross: 600.00, net: 0},
+            {val: 848.34, tag: 'jackpot', sys: 'D', block: 3, gross: 600.00, net: 0},
 
             // --- SYSTEM T: SANDOWN TIGER (NEW - POST RECOVERY) ---
             {val: 850.62, tag: 'blank', sys: 'T', block: 1, gross: 0, net: 0},
@@ -617,7 +623,7 @@
             {val: 23903.57, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
             
             // CROSS-NODE ULTIMATE: DOLPHIN DOUBLE-MINI HIT & TIGER RECOVERY
-            {val: 23906.25, tag: 'golden', sys: 'U', block: 2, gross: 600.00, net: 0},
+            {val: 23906.25, tag: 'jackpot', sys: 'U', block: 2, gross: 600.00, net: 0},
             {val: 23907.81, tag: 'blank', sys: 'U', block: 2, gross: 0, net: 0}
         ];
 
@@ -630,47 +636,52 @@
         let isManualTracking = false;
         let activeModalTag = '';
 
-        // --- TOGGLES ---
-        function toggleJackpotMode() {
-            isUltimateMode = !isUltimateMode;
-            const btn = document.getElementById('btnJackpotToggle');
-            if (isUltimateMode) {
-                btn.innerText = "TRACK: ULTIMATE";
-                btn.style.borderColor = "var(--alert-ultimate)";
-                btn.style.background = "rgba(0, 229, 255, 0.1)";
-                btn.style.color = "#fff";
-            } else {
-                btn.innerText = "TRACK: LOCAL";
-                btn.style.borderColor = "#555";
-                btn.style.background = "none";
-                btn.style.color = "#888";
-            }
-            refreshPrediction();
-        }
-
         document.getElementById('hs-bet-size').addEventListener('change', function() {
             globalBetSize = parseFloat(this.value);
             calculateInjectedVolume();
         });
 
-        function refreshPrediction() {
-            const inputField = document.getElementById('main-input');
-            if (inputField.value) inputField.dispatchEvent(new Event('input'));
-        }
-
-        // --- LIVE FILTER LISTENER ---
-        document.getElementById('main-input').addEventListener('input', function() {
-            let val = parseFloat(this.value);
-            if (!isNaN(val)) {
-                generatePredictions(val, 'blank'); 
+        // --- UNIFIED INPUT LISTENER ---
+        function handleInput() {
+            isManualTracking = false;
+            let localVal = parseFloat(document.getElementById('main-input').value);
+            let ultVal = parseFloat(document.getElementById('ult-input').value);
+            
+            if (!isNaN(localVal) && !isNaN(ultVal)) {
+                generateCrossNodePredictions(localVal, ultVal);
+            } else if (!isNaN(localVal)) {
+                generatePredictions(localVal, 'blank');
+            } else if (!isNaN(ultVal)) {
+                const area = document.getElementById('predictionsArea');
+                const stateBadge = document.getElementById('stateBadge');
+                const modeDesc = document.getElementById('modeDescription');
+                const predPanel = document.getElementById('predictionPanel');
+                
+                area.innerHTML = generateUltimatePredictions(ultVal);
+                stateBadge.className = 'state-badge state-surplus'; 
+                stateBadge.innerText = 'CAPPED $1250 (NETWORK SNIPER)';
+                modeDesc.innerText = 'Grand Jackpot is frozen. Let the public push the Ultimate meter. Only inject 3-5 spins when entering the 3-cent pre-buffer zones.';
+                predPanel.style.borderColor = 'var(--alert-ultimate)';
             } else {
                 document.getElementById('predictionsArea').innerHTML = '';
+                document.getElementById('stateBadge').className = 'state-badge';
+                document.getElementById('stateBadge').innerText = 'AWAITING INPUT';
+                document.getElementById('modeDescription').innerText = 'Input the progressive ticker price and select a tag to calculate underlying net ledger liabilities.';
+                document.getElementById('predictionPanel').style.borderColor = 'var(--border-color)';
             }
-        });
+        }
+
+        document.getElementById('main-input').addEventListener('input', handleInput);
+        document.getElementById('ult-input').addEventListener('input', handleInput);
 
         document.getElementById('main-input').addEventListener('focus', function() {
-            this.value = ''; isManualTracking = false;
-            document.getElementById('predictionsArea').innerHTML = '';
+            this.value = ''; 
+            handleInput();
+        });
+        
+        document.getElementById('ult-input').addEventListener('focus', function() {
+            this.value = ''; 
+            handleInput();
         });
         
         function stepNumber() {
@@ -682,11 +693,95 @@
                 currentNum = currentNum + increment;
                 input.value = (Math.round(currentNum * 100) / 100).toFixed(2);
                 isManualTracking = true; 
-                refreshPrediction();
+                handleInput();
             }
         }
 
+        function generateCrossNodePredictions(localNum, ultNum) {
+            const area = document.getElementById('predictionsArea');
+            const stateBadge = document.getElementById('stateBadge');
+            const modeDesc = document.getElementById('modeDescription');
+            const predPanel = document.getElementById('predictionPanel');
+
+            // Evaluate Local
+            let lBaseInt = Math.floor(localNum);
+            let lOnes = lBaseInt % 10;
+            let lTens = Math.floor((lBaseInt % 100) / 10);
+            let lCents = Math.round((localNum % 1) * 100);
+            
+            let lMacroScore = [8, 9, 2].includes(lTens) ? 2 : ([0, 1].includes(lTens) ? 0 : 1);
+            let lMicroScore = [8, 9, 0].includes(lOnes) ? 2 : ([4, 5, 6].includes(lOnes) ? 1 : 0);
+            let lIsNode = (lCents >= 15 && lCents <= 18) || (lCents >= 31 && lCents <= 35) || (lCents >= 76 && lCents <= 81);
+            let lScore = lMacroScore + lMicroScore + (lIsNode ? 2 : 0);
+
+            // Evaluate Ultimate
+            let uBaseInt = Math.floor(ultNum);
+            let uTens = Math.floor((uBaseInt % 100) / 10);
+            let uCents = Math.round((ultNum % 1) * 100);
+            
+            let uMacroScore = [8, 9, 2].includes(uTens) ? 2 : ([0, 1].includes(uTens) ? 0 : 1);
+            let uIsNode = (uCents >= 10 && uCents <= 16) || (uCents >= 25 && uCents <= 37) || (uCents >= 70 && uCents <= 87);
+            let uScore = uMacroScore + (uIsNode ? 2 : 0);
+
+            let totalScore = lScore + uScore;
+            let finalHtml = "";
+
+            if (totalScore >= 7) {
+                stateBadge.className = 'state-badge state-freespin'; 
+                stateBadge.innerText = 'CROSS-NODE ALIGNMENT';
+                modeDesc.innerText = 'Both grids report simultaneous terminal payload readiness.';
+                predPanel.style.borderColor = '#ffffff';
+
+                finalHtml = `<div class="tactical-card" style="border-color: #ffffff; background-color: #1a1a1a; color: #ffffff; border-width: 2px;">
+                    <strong style="font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #ffffff; padding-bottom: 4px; display: block; margin-bottom: 8px;">DOLPHIN-CLASS DROPS IMMINENT</strong>
+                    Local Ticker (${localNum}) and Ultimate Ticker (${ultNum}) are simultaneously crossing terminal execution nodes in Overdrive zones. Authorize maximum push for massive feature drop.
+                </div>`;
+            } else {
+                stateBadge.className = 'state-badge state-waypoint'; 
+                stateBadge.innerText = 'STANDARD SPLIT-GRID';
+                modeDesc.innerText = 'Grids are out of sync. Standard single-machine drop probabilities apply.';
+                predPanel.style.borderColor = '#555555';
+
+                finalHtml = `<div class="tactical-card" style="border-color: #888888; border-style: dashed;">
+                    <strong style="color:#cccccc;">NO CRITICAL ALIGNMENT</strong><br>
+                    The combined network threshold is not met. Proceed with standard local grid tactics below.
+                </div>`;
+            }
+
+            finalHtml += `<div style="border-top: 1px dashed #333; margin-top: 15px; padding-top: 15px;">
+                <h3 style="color:#aaaaaa; font-size:0.9rem; margin-top:0;">Local Overlay (${localNum})</h3>
+                ${updateLiveIntegerFilter(localNum)}
+                <h3 style="color:#aaaaaa; font-size:0.9rem; margin-top:15px;">Ultimate Overlay (${ultNum})</h3>
+                ${generateUltimatePredictionsRaw(ultNum)}
+            </div>`;
+
+            area.innerHTML = finalHtml;
+        }
+
         // --- ULTIMATE PREDICTION LOGIC (MACRO-FORECASTING + LATENCY) ---
+        function generateUltimatePredictionsRaw(currentNum) {
+            let baseInt = Math.floor(currentNum);
+            let tensDigit = Math.floor((baseInt % 100) / 10);
+            let cents = Math.round((currentNum % 1) * 100);
+            let macroStatus = "";
+
+            if (tensDigit === 0 || tensDigit === 1) macroStatus = `<strong style="color:var(--alert-red);">[ULT-MACRO: VOID]</strong> Deep accumulation.`;
+            else if (tensDigit === 2) macroStatus = `<strong style="color:var(--alert-grand);">[ULT-MACRO: 20s OVERDRIVE]</strong> Prime strike zone.`;
+            else if (tensDigit >= 3 && tensDigit <= 7) macroStatus = `<strong style="color:var(--alert-hot);">[ULT-MACRO: MID-CYCLE]</strong> Standard distribution.`;
+            else if (tensDigit === 8 || tensDigit === 9) macroStatus = `<strong style="color:var(--alert-grand);">[ULT-MACRO: TERMINAL 80s/90s]</strong> Massive resistance break.`;
+
+            let nodeStatus = "";
+            if (cents <= 16 && cents >= 10) nodeStatus = `<strong style="color:var(--alert-hot);">[ULT-NODE: EARLY TRAP]</strong> Execute sweeps.`;
+            else if (cents <= 37 && cents >= 25) nodeStatus = `<strong style="color:var(--alert-hot);">[ULT-NODE: QUARTER TRAP]</strong> Execute pushes.`;
+            else if (cents <= 47 && cents >= 39) nodeStatus = `<strong style="color:var(--alert-hot);">[ULT-NODE: MID-WALL]</strong> High lethal zone.`;
+            else if (cents <= 87 && cents >= 70) nodeStatus = `<strong style="color:var(--alert-surplus);">[ULT-NODE: TERMINAL PAYLOAD]</strong> Maximum aggression authorized.`;
+            else nodeStatus = `<strong style="color:var(--text-muted);">[ULT-NODE: DEAD SPACE]</strong> Do not push.`;
+
+            return `<div class="tactical-card" style="border-style:dashed; border-color:#444;">
+                ${macroStatus}<br>${nodeStatus}
+            </div>`;
+        }
+
         function generateUltimatePredictions(currentNum) {
             let baseInt = Math.floor(currentNum);
             let tensDigit = Math.floor((baseInt % 100) / 10);
@@ -813,7 +908,9 @@
                 localStorage.removeItem('rngTrackerData');
                 dataset = [...baselineDataset];
                 document.getElementById('predictionsArea').innerHTML = '';
-                isManualTracking = false; document.getElementById('main-input').value = '';
+                isManualTracking = false; 
+                document.getElementById('main-input').value = '';
+                document.getElementById('ult-input').value = '';
                 renderData();
             }
         }
@@ -847,28 +944,25 @@
 
         // --- MODAL & DATA CAPTURE ---
         function openLedgerModal(tagType) {
-            const numInput = document.getElementById('main-input').value;
-            if (!numInput) { alert("Please enter the current Progressive Ticker price first."); return; }
+            const localInput = document.getElementById('main-input').value;
+            const ultInput = document.getElementById('ult-input').value;
+            
+            if (!localInput && !ultInput) { alert("Please enter a Progressive Ticker price first."); return; }
             
             activeModalTag = tagType;
-            let currentVal = parseFloat(numInput);
             
             const titles = { 'golden': 'Ledger Entry', 'parrots': 'Ledger Entry', 'big': 'Ledger Entry', 'jackpot': 'Ledger Entry' };
-            document.getElementById('modal-title').innerText = titles[tagType];
+            document.getElementById('modal-title').innerText = titles[tagType] || 'Ledger Entry';
             document.getElementById('hs-total').value = '';
             
-            // Distribute active value to the correct field based on current mode
-            if (isUltimateMode) {
-                document.getElementById('hs-ult-ticker').value = currentVal.toFixed(2);
-                document.getElementById('hs-local-ticker').value = '';
-            } else {
-                document.getElementById('hs-local-ticker').value = currentVal.toFixed(2);
-                document.getElementById('hs-ult-ticker').value = '';
-            }
+            document.getElementById('hs-local-ticker').value = localInput ? parseFloat(localInput).toFixed(2) : '';
+            document.getElementById('hs-ult-ticker').value = ultInput ? parseFloat(ultInput).toFixed(2) : '';
             
             // Auto-fill starting ticker based on active mode history
-            let targetSys = isUltimateMode ? 'U' : 'Live';
-            let sortedHist = [...dataset].filter(d => (isUltimateMode ? d.sys === 'U' : d.sys !== 'U')).sort((a, b) => b.val - a.val);
+            let targetSys = ultInput && !localInput ? 'U' : 'Live';
+            let currentVal = parseFloat(localInput || ultInput);
+            
+            let sortedHist = [...dataset].filter(d => (targetSys === 'U' ? d.sys === 'U' : d.sys !== 'U')).sort((a, b) => b.val - a.val);
             let lastEntry = sortedHist.find(d => d.val < currentVal);
             
             if (lastEntry) { document.getElementById('hs-start-ticker').value = lastEntry.val.toFixed(2); } 
@@ -877,19 +971,15 @@
             calculateInjectedVolume();
             document.getElementById('hsModal').style.display = 'flex';
             
-            // Focus on the new first entry box (Ultimate Ticker)
-            document.getElementById('hs-ult-ticker').focus();
+            document.getElementById(ultInput && !localInput ? 'hs-ult-ticker' : 'hs-local-ticker').focus();
         }
 
         function closeLedgerModal() { document.getElementById('hsModal').style.display = 'none'; }
 
         function calculateInjectedVolume() {
-            let current = 0;
-            if (isUltimateMode) {
-                current = parseFloat(document.getElementById('hs-ult-ticker').value) || 0;
-            } else {
-                current = parseFloat(document.getElementById('hs-local-ticker').value) || 0;
-            }
+            let current = parseFloat(document.getElementById('hs-local-ticker').value);
+            if (isNaN(current)) current = parseFloat(document.getElementById('hs-ult-ticker').value) || 0;
+            
             let start = parseFloat(document.getElementById('hs-start-ticker').value);
             let betSize = parseFloat(document.getElementById('hs-bet-size').value) || 2.00;
             
@@ -930,21 +1020,29 @@
             if (ultValStr && !isNaN(parseFloat(ultValStr))) {
                 processDataEntry(activeModalTag, netDeficit, grossPayout, parseFloat(ultValStr), true);
             }
+            
             document.getElementById('main-input').blur();
+            document.getElementById('ult-input').blur();
         }
 
         function addNumber(tagType) {
             if (tagType === 'blank') {
-                const num = parseFloat(document.getElementById('main-input').value);
-                if(isNaN(num)) return;
-                processDataEntry('blank', 0, 0, num, isUltimateMode);
+                const localNum = parseFloat(document.getElementById('main-input').value);
+                const ultNum = parseFloat(document.getElementById('ult-input').value);
+                
+                if(!isNaN(localNum)) {
+                    processDataEntry('blank', 0, 0, localNum, false);
+                }
+                if(!isNaN(ultNum)) {
+                    processDataEntry('blank', 0, 0, ultNum, true);
+                }
                 document.getElementById('main-input').blur();
+                document.getElementById('ult-input').blur();
             }
         }
 
         function processDataEntry(tagType, netAmt = 0, grossAmt = 0, specificNum = null, isUlt = false) {
-            const inputField = document.getElementById('main-input');
-            const num = specificNum !== null ? specificNum : parseFloat(inputField.value);
+            const num = specificNum !== null ? specificNum : parseFloat(document.getElementById('main-input').value);
             if (isNaN(num)) return;
             
             let sysLabel = isUlt ? 'U' : 'Live';
@@ -965,10 +1063,8 @@
                 saveData(); renderData();
             }
             
-            // Only update predictions if the inserted number matches the active main view
-            if (num === parseFloat(inputField.value)) {
-                generatePredictions(num, tagType);
-            }
+            // Force interface refresh based on live states
+            handleInput();
         }
 
         function renderData() {
@@ -999,7 +1095,11 @@
 
             sortedVals.forEach(item => {
                 const li = document.createElement('li'); li.className = 'history-item';
-                let tagsHtml = item.tags.map(t => `<span class="tag color-${t}" ${t === 'blank' ? 'style="background:#222;border:1px dashed #555;"' : ''}>${t}</span>`).join('');
+                let tagsHtml = item.tags.map(t => {
+                    let st = t === 'golden' ? 'GLD' : (t === 'parrots' ? 'PRT' : (t === 'jackpot' ? 'JKP' : (t === 'big' ? 'BIG' : 'SRT')));
+                    return `<span class="tag" ${t === 'blank' ? 'style="background:#222;color:#888;"' : (t === 'jackpot' ? 'style="background:#eee;color:#000;"' : '')}>${st}</span>`;
+                }).join('');
+
                 let sysClass = 'sys-tag';
                 if (item.sys === 'Live') sysClass = 'sys-tag sys-tag-live';
                 else if (item.sys === 'U') sysClass = 'sys-tag sys-tag-ult';
@@ -1007,9 +1107,9 @@
                 let payoutText = '';
                 if (item.net !== undefined && item.net !== 0) {
                     if (item.net > 0) {
-                        payoutText = ` <span style="color:var(--accent-golden);font-size:0.75rem;">[Deficit: -$${item.net.toLocaleString(undefined, {minimumFractionDigits: 2})}]</span>`;
+                        payoutText = ` <span style="color:#aaa;font-size:0.75rem;">[-$${item.net.toLocaleString(undefined, {minimumFractionDigits: 2})}]</span>`;
                     } else {
-                        payoutText = ` <span style="color:var(--alert-surplus);font-size:0.75rem;">[Surplus: +$${Math.abs(item.net).toLocaleString(undefined, {minimumFractionDigits: 2})}]</span>`;
+                        payoutText = ` <span style="color:#fff;font-size:0.75rem;">[+$${Math.abs(item.net).toLocaleString(undefined, {minimumFractionDigits: 2})}]</span>`;
                     }
                 }
                 
@@ -1037,7 +1137,7 @@
             let finalHtml = '';
 
             // --- GRAND JACKPOT RADAR LOGIC ---
-            if (!isUltimateMode && ((currentNum >= 880 && currentNum < 891) || (currentNum >= 920 && currentNum < 930))) {
+            if (((currentNum >= 880 && currentNum < 891) || (currentNum >= 920 && currentNum < 930))) {
                 let lastFeature = [...dataset].filter(d => d.tag !== 'blank' && d.val < currentNum && d.sys !== 'U').sort((a,b) => b.val - a.val)[0];
                 let distance = lastFeature ? (currentNum - lastFeature.val) : 999;
                 
@@ -1059,18 +1159,7 @@
                 }
             }
 
-            // 1. ROUTE TO ULTIMATE JACKPOT LOGIC
-            if (isUltimateMode) {
-                finalHtml += generateUltimatePredictions(currentNum);
-                area.innerHTML = finalHtml;
-                stateBadge.className = 'state-badge state-surplus'; 
-                stateBadge.innerText = 'CAPPED $1250 (NETWORK SNIPER)';
-                modeDesc.innerText = 'Grand Jackpot is frozen. Let the public push the Ultimate meter. Only inject 3-5 spins when entering the 3-cent pre-buffer zones.';
-                predPanel.style.borderColor = 'var(--alert-ultimate)';
-                return;
-            }
-            
-            // 2. STANDARD LOCAL LOGIC
+            // STANDARD LOCAL LOGIC
             finalHtml += updateLiveIntegerFilter(currentNum);
             
             let chronoData = [...dataset].filter(d => d.sys !== 'U').sort((a, b) => a.val - b.val);
