@@ -94,14 +94,14 @@
         }
         .btn-step:active { background-color: #ffffff; color: #000000; border-color: #ffffff; }
 
-        .tag-buttons-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 20px; }
+        .tag-buttons-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px; }
         .tag-btn {
-            border: none; padding: 10px 4px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem;
+            border: none; padding: 10px 2px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.75rem;
             display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px;
             transition: opacity 0.2s; touch-action: manipulation; text-align: center;
         }
         .tag-btn span {
-            font-size: 0.7rem; background: rgba(128,128,128,0.3); padding: 2px 6px;
+            font-size: 0.65rem; background: rgba(128,128,128,0.3); padding: 2px 6px;
             border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
         }
         .tag-btn:active { opacity: 0.6; }
@@ -110,6 +110,7 @@
         .btn-parrots { background-color: #cccccc; color: #000000; }
         .btn-big { background-color: #333333; color: #ffffff; border: 1px solid #555555; }
         .btn-blank { background-color: #111111; color: #aaaaaa; border: 1px dashed #555555; }
+        .btn-jackpot { background-color: #ffaa00; color: #000000; }
 
         .pred-card {
             background-color: var(--bg-color); padding: 10px 12px; margin-bottom: 8px; border-radius: 4px;
@@ -121,6 +122,7 @@
         .card-golden { border-left-color: var(--accent-golden); }
         .card-parrots { border-left-color: var(--accent-parrots); }
         .card-big { border-left-color: var(--accent-big); }
+        .card-jackpot { border-left-color: var(--alert-grand); }
         .card-void { border-left-color: var(--alert-red); background-color: rgba(255, 0, 0, 0.05); }
         .card-cluster { border-left-color: var(--alert-hot); border-color: var(--alert-hot); }
         .card-surplus { border-left-color: var(--alert-surplus); border-color: var(--alert-surplus-muted); background-color: rgba(0, 229, 255, 0.05); }
@@ -157,9 +159,8 @@
 
         .mode-description { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
         .util-bar { display: flex; gap: 10px; margin-top: 10px; width: 100%; flex-wrap: wrap; }
-        .btn-clear { flex: 1 1 calc(33% - 10px); background: none; border: 1px solid #555; color: #888; padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: all 0.2s; text-align: center; }
+        .btn-clear { flex: 1 1 calc(50% - 5px); background: none; border: 1px solid #555; color: #888; padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: all 0.2s; text-align: center; }
         .btn-clear:hover { background: #222; color: #fff; border-color: #fff; }
-        .btn-mode-toggle { border-color: var(--alert-mode); color: #fff; background: rgba(255,0,255,0.1); }
         .btn-ultimate-toggle { border-color: #555; color: #888; }
         
         .section-divider { margin-top: 24px; margin-bottom: 8px; font-size: 0.95rem; color: #fff; border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; }
@@ -200,29 +201,29 @@
             <h3 id="modal-title">Ledger Entry</h3>
             <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">Enter both tickers simultaneously to map dual-node network cross-strikes.</div>
             
-            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid var(--alert-mode);">
-                <label style="color:#fff;">Active Bet Size</label>
-                <select id="hs-bet-size">
-                    <option value="0.50">$0.50 / Spin</option>
-                    <option value="1.00">$1.00 / Spin</option>
-                    <option value="2.00">$2.00 / Spin</option>
-                    <option value="2.50">$2.50 / Spin</option>
-                </select>
+            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid var(--alert-ultimate);">
+                <label style="color:var(--alert-ultimate);">Ultimate Ticker</label>
+                <input type="number" id="hs-ult-ticker" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
             </div>
 
             <div class="modal-row" style="border-left: 2px solid #fff;">
                 <label>Gross Payout / Cashout ($)</label>
                 <input type="number" id="hs-total" value="" placeholder="0.00" step="0.01" inputmode="decimal">
             </div>
-            
+
             <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid #888;">
                 <label style="color:#ccc;">Local Ticker</label>
                 <input type="number" id="hs-local-ticker" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
             </div>
-            
-            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid var(--alert-ultimate);">
-                <label style="color:var(--alert-ultimate);">Ultimate Ticker</label>
-                <input type="number" id="hs-ult-ticker" placeholder="0.00" step="0.01" inputmode="decimal" oninput="calculateInjectedVolume()">
+
+            <div class="modal-row" style="background: #1a1a1a; border-left: 2px solid var(--alert-mode);">
+                <label style="color:#fff;">Active Bet Size</label>
+                <select id="hs-bet-size">
+                    <option value="0.50">$0.50 / Spin</option>
+                    <option value="1.00">$1.00 / Spin</option>
+                    <option value="2.00" selected>$2.00 / Spin</option>
+                    <option value="2.50">$2.50 / Spin</option>
+                </select>
             </div>
 
             <div class="modal-row" style="border-left: 2px solid #00e5ff; margin-top: 10px;">
@@ -257,10 +258,10 @@
                 <button class="tag-btn btn-parrots" onclick="openLedgerModal('parrots')">PARROT <span id="count-parrots">0</span></button>
                 <button class="tag-btn btn-big" onclick="openLedgerModal('big')">BIG <span id="count-big">0</span></button>
                 <button class="tag-btn btn-blank" onclick="addNumber('blank')">START <span id="count-blank">0</span></button>
+                <button class="tag-btn btn-jackpot" onclick="openLedgerModal('jackpot')">JACKPOT <span id="count-jackpot">0</span></button>
             </div>
             
             <div class="util-bar">
-                <button class="btn-clear btn-mode-toggle" id="btnBetToggle" onclick="toggleBetSize()">MODE: $2.00 BET</button>
                 <button class="btn-clear btn-ultimate-toggle" id="btnJackpotToggle" onclick="toggleJackpotMode()">TRACK: LOCAL</button>
                 <button class="btn-clear" onclick="clearData()">Reset DB</button>
             </div>
@@ -310,7 +311,7 @@
 
             <div class="manual-step">
                 <h4>Tier 4: Adaptive Capital Injection ($0.50 to $2.50)</h4>
-                <p>Ensure your bet matches your selected injection ratio. Use the Mode Toggle so predictions match your pushes.</p>
+                <p>Ensure your bet matches your selected injection ratio. Select your mode in the entry popup to align the prediction logic.</p>
             </div>
 
             <div class="manual-step">
@@ -630,14 +631,6 @@
         let activeModalTag = '';
 
         // --- TOGGLES ---
-        function toggleBetSize() {
-            let currentIndex = betSizes.indexOf(globalBetSize);
-            globalBetSize = betSizes[(currentIndex + 1) % betSizes.length];
-            document.getElementById('btnBetToggle').innerText = `MODE: $${globalBetSize.toFixed(2)} BET`;
-            document.getElementById('hs-bet-size').value = globalBetSize.toFixed(2);
-            refreshPrediction();
-        }
-
         function toggleJackpotMode() {
             isUltimateMode = !isUltimateMode;
             const btn = document.getElementById('btnJackpotToggle');
@@ -657,7 +650,6 @@
 
         document.getElementById('hs-bet-size').addEventListener('change', function() {
             globalBetSize = parseFloat(this.value);
-            document.getElementById('btnBetToggle').innerText = `MODE: $${globalBetSize.toFixed(2)} BET`;
             calculateInjectedVolume();
         });
 
@@ -686,7 +678,7 @@
             if (!input.value) return;
             let currentNum = parseFloat(input.value);
             if (!isNaN(currentNum)) {
-                let increment = globalBetSize * 0.005; // 0.50 -> 0.0025 | 1.00 -> 0.005 | 2.00 -> 0.01 | 2.50 -> 0.0125
+                let increment = globalBetSize * 0.005; 
                 currentNum = currentNum + increment;
                 input.value = (Math.round(currentNum * 100) / 100).toFixed(2);
                 isManualTracking = true; 
@@ -861,7 +853,7 @@
             activeModalTag = tagType;
             let currentVal = parseFloat(numInput);
             
-            const titles = { 'golden': 'Ledger Entry', 'parrots': 'Ledger Entry', 'big': 'Ledger Entry' };
+            const titles = { 'golden': 'Ledger Entry', 'parrots': 'Ledger Entry', 'big': 'Ledger Entry', 'jackpot': 'Ledger Entry' };
             document.getElementById('modal-title').innerText = titles[tagType];
             document.getElementById('hs-total').value = '';
             
@@ -884,7 +876,9 @@
             
             calculateInjectedVolume();
             document.getElementById('hsModal').style.display = 'flex';
-            document.getElementById('hs-total').focus();
+            
+            // Focus on the new first entry box (Ultimate Ticker)
+            document.getElementById('hs-ult-ticker').focus();
         }
 
         function closeLedgerModal() { document.getElementById('hsModal').style.display = 'none'; }
@@ -978,9 +972,12 @@
         }
 
         function renderData() {
-            const counts = { golden: 0, parrots: 0, big: 0, blank: 0 };
+            const counts = { golden: 0, parrots: 0, big: 0, blank: 0, jackpot: 0 };
             dataset.forEach(item => { if (counts[item.tag] !== undefined) counts[item.tag]++; });
-            ['golden', 'parrots', 'big', 'blank'].forEach(t => { document.getElementById(`count-${t}`).innerText = counts[t]; });
+            ['golden', 'parrots', 'big', 'blank', 'jackpot'].forEach(t => { 
+                const el = document.getElementById(`count-${t}`);
+                if (el) el.innerText = counts[t]; 
+            });
 
             const listLive = document.getElementById('historyListLive');
             const listBaseline = document.getElementById('historyListBaseline');
@@ -1090,7 +1087,7 @@
 
             let isDarkZone = (tagType === 'blank' && effectiveTag === 'blank'); 
             let isFreeSpin = (effectiveTag === 'parrots'); 
-            let isPayoutEvent = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'parrots');
+            let isPayoutEvent = (effectiveTag === 'golden' || effectiveTag === 'big' || effectiveTag === 'parrots' || effectiveTag === 'jackpot');
             
             let tickerIncrement = globalBetSize * 0.005;
             let ticksSinceAnchor = Math.round((currentNum - anchorNum) / tickerIncrement);
