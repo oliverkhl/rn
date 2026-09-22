@@ -80,21 +80,23 @@
         .state-waypoint { background-color: #111; color: var(--state-waypoint); border: 1px dashed var(--state-waypoint); }
         .state-freespin { background-color: #ffffff; color: #000000; border: 1px solid #ffffff; }
 
-        .main-input-group { display: flex; gap: 8px; margin-bottom: 16px; align-items: stretch; }
+        .main-input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .input-row { display: flex; gap: 8px; }
+
         .main-input-col { display: flex; flex-direction: column; gap: 8px; flex: 1; }
 
-        .main-input-col input {
+        .input-row input {
             width: 100%; background-color: #000000; border: 1px solid #555555;
-            color: #ffffff; padding: 14px; border-radius: 4px;
-            font-family: monospace; font-size: 1.3rem; text-align: center; transition: border-color 0.2s ease;
+            color: #ffffff; padding: 12px; border-radius: 4px;
+            font-family: monospace; font-size: 1.2rem; text-align: center; transition: border-color 0.2s ease;
         }
-        .main-input-col input:focus { outline: none; border-color: #ffffff; }
-        .main-input-col input::placeholder { color: #555; font-size: 1rem; }
+        .input-row input:focus { outline: none; border-color: #ffffff; }
+        .input-row input::placeholder { color: #555; font-size: 0.9rem; }
 
         .btn-step {
             background-color: #111; border: 1px solid #555; color: #ffffff;
-            padding: 0 16px; border-radius: 4px; font-weight: bold; font-size: 1.1rem;
-            cursor: pointer; transition: all 0.2s ease; white-space: nowrap; width: 80px;
+            padding: 0 16px; border-radius: 4px; font-weight: bold; font-size: 1.0rem;
+            cursor: pointer; transition: all 0.2s ease; white-space: nowrap; width: 70px;
         }
         .btn-step:active { background-color: #ffffff; color: #000000; border-color: #ffffff; }
 
@@ -255,11 +257,14 @@
             <h2>Note</h2>
 
             <div class="main-input-group">
-                <div class="main-input-col">
-                    <input type="number" id="main-input" step="0.01" inputmode="decimal" placeholder="Local Ticker Price...">
-                    <input type="number" id="ult-input" step="0.01" inputmode="decimal" placeholder="Ultimate Grand Ticker...">
+                <div class="input-row">
+                    <input type="text" id="main-input" inputmode="decimal" placeholder="Local Ticker (e.g. 4834)...">
+                    <button class="btn-step" onclick="stepNumber('local')">TCK</button>
                 </div>
-                <button id="btn-step" class="btn-step" onclick="stepNumber()">TCK</button>
+                <div class="input-row">
+                    <input type="text" id="ult-input" inputmode="decimal" placeholder="Ultimate Grand (e.g. 0625)...">
+                    <button class="btn-step" onclick="stepNumber('ult')">TCK</button>
+                </div>
             </div>
 
             <div class="tag-buttons-grid">
@@ -332,15 +337,16 @@
                     <li><strong>Terminal Payload Block:</strong> .70 to .87</li>
                 </ul>
             </div>
-			<div class="manual-step">
-				<h4>Tier 6: Grand Jackpot Avoidance & Strike Protocol</h4>
-				<p>When playing in the $880s, $890s, or $920s, watch the in-app Radar for instructions:</p>
-				<ul>
-					<li><strong>⚠️ The Warning Cascade:</strong> 2 to 3 Goldens drop rapidly.</li>
-					<li><strong>💀 The Starvation Trap (Death Valley):</strong> After a massive hit ($300+ payout) or the cascade, the machine will go dead for $1.50 to $3.00 of ticker movement. DO NOT FUND THIS. Step away.</li>
-					<li><strong>🎯 Terminal Node Execution:</strong> Once the public funds the void, snipe ONLY on the proven execution nodes: .15 / .18, .31 / .32, or .76 / .81.</li>
-				</ul>
-			</div>
+
+            <div class="manual-step">
+                <h4>Tier 6: Grand Jackpot Avoidance & Strike Protocol</h4>
+                <p>When playing in the $880s, $890s, or $920s, watch the in-app Radar for instructions:</p>
+                <ul>
+                    <li><strong>⚠️ The Warning Cascade:</strong> 2 to 3 Goldens drop rapidly.</li>
+                    <li><strong>💀 The Starvation Trap (Death Valley):</strong> After a massive hit ($300+ payout) or the cascade, the machine will go dead for $1.50 to $3.00 of ticker movement. DO NOT FUND THIS. Step away.</li>
+                    <li><strong>🎯 Terminal Node Execution:</strong> Once the public funds the void, snipe ONLY on the proven execution nodes: .15 / .18, .31 / .32, or .76 / .81.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -488,13 +494,8 @@
             {val: 1138.90, tag: 'blank', sys: 'D', block: 7, gross: 0, net: 0},
             {val: 1138.96, tag: 'golden', sys: 'D', block: 7, gross: 0, net: 0},
             {val: 1139.01, tag: 'golden', sys: 'D', block: 7, gross: 0, net: 0},
-            // CROSS-NODE LOCAL: DOLPHIN DOUBLE-MINI HIT
             {val: 848.34, tag: 'jackpot', sys: 'D', block: 3, gross: 600.00, net: 0},
-
-            // --- SYSTEM T: SANDOWN TIGER (NEW - POST RECOVERY) ---
             {val: 850.62, tag: 'blank', sys: 'T', block: 1, gross: 0, net: 0},
-
-            // --- SYSTEM S: SANDOWN HOTEL SOLDIER ---
             {val: 808.92, tag: 'blank', sys: 'S', block: 1, gross: 0, net: 0},
             {val: 809.13, tag: 'parrots', sys: 'S', block: 1, gross: 121.80, net: 0},
             {val: 809.78, tag: 'golden', sys: 'S', block: 1, gross: 85.00, net: 0},
@@ -505,8 +506,6 @@
             {val: 847.90, tag: 'blank', sys: 'S', block: 2, gross: 0, net: 0},
             {val: 848.16, tag: 'blank', sys: 'S', block: 2, gross: 0, net: 0},
             {val: 848.43, tag: 'blank', sys: 'S', block: 2, gross: 0, net: 0},
-
-            // --- SYSTEM G: GARDEN HOTEL ---
             {val: 878.90, tag: 'blank', sys: 'G', block: 1, gross: 0, net: 0},
             {val: 879.20, tag: 'golden', sys: 'G', block: 1, gross: 32.00, net: 0},
             {val: 879.32, tag: 'big', sys: 'G', block: 1, gross: 6.40, net: 0},
@@ -621,8 +620,6 @@
             {val: 23902.81, tag: 'parrots', sys: 'U', block: 1, gross: 257.00, net: 0},
             {val: 23903.53, tag: 'golden', sys: 'U', block: 1, gross: 97.50, net: 0},
             {val: 23903.57, tag: 'blank', sys: 'U', block: 1, gross: 0, net: 0},
-            
-            // CROSS-NODE ULTIMATE: DOLPHIN DOUBLE-MINI HIT & TIGER RECOVERY
             {val: 23906.25, tag: 'jackpot', sys: 'U', block: 2, gross: 600.00, net: 0},
             {val: 23907.81, tag: 'blank', sys: 'U', block: 2, gross: 0, net: 0}
         ];
@@ -633,8 +630,37 @@
         else { dataset = [...baselineDataset]; }
 
         const terminalSuffixes = [0.15, 0.18, 0.23, 0.24, 0.31, 0.32, 0.42, 0.50, 0.76, 0.81];
-        let isManualTracking = false;
         let activeModalTag = '';
+
+        // --- FAST INPUT PARSER (2 DIGITS DOLLARS + 2 DIGITS DECIMAL WITHOUT DOT) ---
+        function parseInput(rawStr, isUltimate = false) {
+            if (!rawStr) return NaN;
+            let clean = rawStr.trim();
+            if (clean.includes('.')) {
+                return parseFloat(clean);
+            }
+            let digits = clean.replace(/\D/g, '');
+            if (digits.length === 4) {
+                let d2 = parseInt(digits.substring(0, 2), 10);
+                let c2 = parseInt(digits.substring(2, 4), 10);
+                let base = isUltimate ? 23900 : 800;
+                let lastEntries = dataset.filter(d => isUltimate ? d.sys === 'U' : d.sys !== 'U');
+                if (lastEntries.length > 0) {
+                    let sorted = [...lastEntries].sort((a,b) => b.val - a.val);
+                    base = Math.floor(sorted[0].val / 100) * 100;
+                }
+                return base + d2 + (c2 / 100);
+            }
+            return parseFloat(clean);
+        }
+
+        function getParsedLocal() {
+            return parseInput(document.getElementById('main-input').value, false);
+        }
+
+        function getParsedUlt() {
+            return parseInput(document.getElementById('ult-input').value, true);
+        }
 
         document.getElementById('hs-bet-size').addEventListener('change', function() {
             globalBetSize = parseFloat(this.value);
@@ -643,9 +669,8 @@
 
         // --- UNIFIED INPUT LISTENER ---
         function handleInput() {
-            isManualTracking = false;
-            let localVal = parseFloat(document.getElementById('main-input').value);
-            let ultVal = parseFloat(document.getElementById('ult-input').value);
+            let localVal = getParsedLocal();
+            let ultVal = getParsedUlt();
             
             if (!isNaN(localVal) && !isNaN(ultVal)) {
                 generateCrossNodePredictions(localVal, ultVal);
@@ -674,27 +699,19 @@
         document.getElementById('main-input').addEventListener('input', handleInput);
         document.getElementById('ult-input').addEventListener('input', handleInput);
 
-        document.getElementById('main-input').addEventListener('focus', function() {
-            this.value = ''; 
-            handleInput();
-        });
+        document.getElementById('main-input').addEventListener('focus', function() { this.value = ''; handleInput(); });
+        document.getElementById('ult-input').addEventListener('focus', function() { this.value = ''; handleInput(); });
         
-        document.getElementById('ult-input').addEventListener('focus', function() {
-            this.value = ''; 
-            handleInput();
-        });
-        
-        function stepNumber() {
-            const input = document.getElementById('main-input');
-            if (!input.value) return;
-            let currentNum = parseFloat(input.value);
-            if (!isNaN(currentNum)) {
-                let increment = globalBetSize * 0.005; 
-                currentNum = currentNum + increment;
-                input.value = (Math.round(currentNum * 100) / 100).toFixed(2);
-                isManualTracking = true; 
-                handleInput();
+        function stepNumber(target) {
+            const input = document.getElementById(target === 'ult' ? 'ult-input' : 'main-input');
+            let currentNum = parseInput(input.value, target === 'ult');
+            if (isNaN(currentNum)) {
+                currentNum = target === 'ult' ? 23900.00 : 850.00;
             }
+            let increment = globalBetSize * 0.005; 
+            currentNum = currentNum + increment;
+            input.value = (Math.round(currentNum * 100) / 100).toFixed(2);
+            handleInput();
         }
 
         function generateCrossNodePredictions(localNum, ultNum) {
@@ -703,7 +720,6 @@
             const modeDesc = document.getElementById('modeDescription');
             const predPanel = document.getElementById('predictionPanel');
 
-            // Evaluate Local
             let lBaseInt = Math.floor(localNum);
             let lOnes = lBaseInt % 10;
             let lTens = Math.floor((lBaseInt % 100) / 10);
@@ -714,7 +730,6 @@
             let lIsNode = (lCents >= 15 && lCents <= 18) || (lCents >= 31 && lCents <= 35) || (lCents >= 76 && lCents <= 81);
             let lScore = lMacroScore + lMicroScore + (lIsNode ? 2 : 0);
 
-            // Evaluate Ultimate
             let uBaseInt = Math.floor(ultNum);
             let uTens = Math.floor((uBaseInt % 100) / 10);
             let uCents = Math.round((ultNum % 1) * 100);
@@ -734,7 +749,7 @@
 
                 finalHtml = `<div class="tactical-card" style="border-color: #ffffff; background-color: #1a1a1a; color: #ffffff; border-width: 2px;">
                     <strong style="font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #ffffff; padding-bottom: 4px; display: block; margin-bottom: 8px;">DOLPHIN-CLASS DROPS IMMINENT</strong>
-                    Local Ticker (${localNum}) and Ultimate Ticker (${ultNum}) are simultaneously crossing terminal execution nodes in Overdrive zones. Authorize maximum push for massive feature drop.
+                    Local Ticker (${localNum.toFixed(2)}) and Ultimate Ticker (${ultNum.toFixed(2)}) are simultaneously crossing terminal execution nodes in Overdrive zones. Authorize maximum push for massive feature drop.
                 </div>`;
             } else {
                 stateBadge.className = 'state-badge state-waypoint'; 
@@ -749,16 +764,15 @@
             }
 
             finalHtml += `<div style="border-top: 1px dashed #333; margin-top: 15px; padding-top: 15px;">
-                <h3 style="color:#aaaaaa; font-size:0.9rem; margin-top:0;">Local Overlay (${localNum})</h3>
+                <h3 style="color:#aaaaaa; font-size:0.9rem; margin-top:0;">Local Overlay (${localNum.toFixed(2)})</h3>
                 ${updateLiveIntegerFilter(localNum)}
-                <h3 style="color:#aaaaaa; font-size:0.9rem; margin-top:15px;">Ultimate Overlay (${ultNum})</h3>
+                <h3 style="color:#aaaaaa; font-size:0.9rem; margin-top:15px;">Ultimate Overlay (${ultNum.toFixed(2)})</h3>
                 ${generateUltimatePredictionsRaw(ultNum)}
             </div>`;
 
             area.innerHTML = finalHtml;
         }
 
-        // --- ULTIMATE PREDICTION LOGIC (MACRO-FORECASTING + LATENCY) ---
         function generateUltimatePredictionsRaw(currentNum) {
             let baseInt = Math.floor(currentNum);
             let tensDigit = Math.floor((baseInt % 100) / 10);
@@ -846,7 +860,6 @@
             return html;
         }
 
-        // --- LOCAL 3-TIER FILTER LOGIC ---
         function updateLiveIntegerFilter(currentNum) {
             let baseInt = Math.floor(currentNum);
             let onesDigit = baseInt % 10;
@@ -883,7 +896,7 @@
                 if (cents === 60) nanoHtml = `<strong style="color:#ffcc00;">[NANO: .60 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
                 else if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .50-.60 MUST EXECUTE]</strong><br>Conditions optimal. Sweep to .60.`;
                 else if (totalScore <= 1) nanoHtml = `<strong style="color:#ff5555;">[NANO: TESTING LUCK ONLY]</strong><br>Test the luck from .50 to .60 walk away.`;
-                else nanoHtml = `<strong style="color:#ffffff;">[NANO: .50-.60 ENTRY ZONE]</strong><br>Sweep full trap to .60.`;
+                else nanoHtml = `<strong style="color:#ffffff;">[NANO: .50-.60 ENTRY ZONE]</strong><br>Sweep to .60.`;
             } else if (cents <= 81) { 
                 if (cents === 81) nanoHtml = `<strong style="color:#ffcc00;">[NANO: .81 ZONE END]</strong><br>Zone exhausted. Stop pushing.`;
                 else if (totalScore >= 3) nanoHtml = `<strong style="color:#00e5ff;">[NANO: .76-.81 GRAND TRAP - MUST EXECUTE]</strong><br>Critical payload zone aligned with Macro/Micro. Fire full sweep to .81.`;
@@ -900,7 +913,6 @@
                     </div>`;
         }
 
-        // --- UTILS ---
         function saveData() { localStorage.setItem('rngTrackerData', JSON.stringify(dataset)); }
 
         function clearData() {
@@ -908,14 +920,11 @@
                 localStorage.removeItem('rngTrackerData');
                 dataset = [...baselineDataset];
                 document.getElementById('predictionsArea').innerHTML = '';
-                isManualTracking = false; 
                 document.getElementById('main-input').value = '';
                 document.getElementById('ult-input').value = '';
                 renderData();
             }
         }
-
-        function getLatestBlock() { return dataset.length > 0 ? Math.max(...dataset.map(d => d.block)) : 1; }
 
         function formatDeltaPrice(targetNum, currentNum) {
             let diff = Math.abs(targetNum - currentNum);
@@ -942,25 +951,21 @@
                     </div>`;
         }
 
-        // --- MODAL & DATA CAPTURE ---
         function openLedgerModal(tagType) {
-            const localInput = document.getElementById('main-input').value;
-            const ultInput = document.getElementById('ult-input').value;
+            const localNum = getParsedLocal();
+            const ultNum = getParsedUlt();
             
-            if (!localInput && !ultInput) { alert("Please enter a Progressive Ticker price first."); return; }
+            if (isNaN(localNum) && isNaN(ultNum)) { alert("Please enter at least one Progressive Ticker price first."); return; }
             
             activeModalTag = tagType;
-            
-            const titles = { 'golden': 'Ledger Entry', 'parrots': 'Ledger Entry', 'big': 'Ledger Entry', 'jackpot': 'Ledger Entry' };
-            document.getElementById('modal-title').innerText = titles[tagType] || 'Ledger Entry';
+            document.getElementById('modal-title').innerText = 'Ledger Entry';
             document.getElementById('hs-total').value = '';
             
-            document.getElementById('hs-local-ticker').value = localInput ? parseFloat(localInput).toFixed(2) : '';
-            document.getElementById('hs-ult-ticker').value = ultInput ? parseFloat(ultInput).toFixed(2) : '';
+            document.getElementById('hs-local-ticker').value = !isNaN(localNum) ? localNum.toFixed(2) : '';
+            document.getElementById('hs-ult-ticker').value = !isNaN(ultNum) ? ultNum.toFixed(2) : '';
             
-            // Auto-fill starting ticker based on active mode history
-            let targetSys = ultInput && !localInput ? 'U' : 'Live';
-            let currentVal = parseFloat(localInput || ultInput);
+            let currentVal = !isNaN(localNum) ? localNum : ultNum;
+            let targetSys = !isNaN(localNum) ? 'Live' : 'U';
             
             let sortedHist = [...dataset].filter(d => (targetSys === 'U' ? d.sys === 'U' : d.sys !== 'U')).sort((a, b) => b.val - a.val);
             let lastEntry = sortedHist.find(d => d.val < currentVal);
@@ -970,8 +975,7 @@
             
             calculateInjectedVolume();
             document.getElementById('hsModal').style.display = 'flex';
-            
-            document.getElementById(ultInput && !localInput ? 'hs-ult-ticker' : 'hs-local-ticker').focus();
+            document.getElementById(!isNaN(localNum) ? 'hs-local-ticker' : 'hs-ult-ticker').focus();
         }
 
         function closeLedgerModal() { document.getElementById('hsModal').style.display = 'none'; }
@@ -1013,12 +1017,15 @@
             
             closeLedgerModal(); 
             
-            // Allows dual-node logging if both fields are populated
-            if (localValStr && !isNaN(parseFloat(localValStr))) {
-                processDataEntry(activeModalTag, netDeficit, grossPayout, parseFloat(localValStr), false);
-            }
-            if (ultValStr && !isNaN(parseFloat(ultValStr))) {
-                processDataEntry(activeModalTag, netDeficit, grossPayout, parseFloat(ultValStr), true);
+            let lNum = parseFloat(localValStr);
+            let uNum = parseFloat(ultValStr);
+            
+            if (!isNaN(lNum) && !isNaN(uNum)) {
+                // Dual entry link
+                processDualDataEntry(activeModalTag, netDeficit, grossPayout, lNum, uNum);
+            } else {
+                if (!isNaN(lNum)) processDataEntry(activeModalTag, netDeficit, grossPayout, lNum, false);
+                if (!isNaN(uNum)) processDataEntry(activeModalTag, netDeficit, grossPayout, uNum, true);
             }
             
             document.getElementById('main-input').blur();
@@ -1027,24 +1034,22 @@
 
         function addNumber(tagType) {
             if (tagType === 'blank') {
-                const localNum = parseFloat(document.getElementById('main-input').value);
-                const ultNum = parseFloat(document.getElementById('ult-input').value);
+                let localNum = getParsedLocal();
+                let ultNum = getParsedUlt();
                 
-                if(!isNaN(localNum)) {
-                    processDataEntry('blank', 0, 0, localNum, false);
-                }
-                if(!isNaN(ultNum)) {
-                    processDataEntry('blank', 0, 0, ultNum, true);
+                if (!isNaN(localNum) && !isNaN(ultNum)) {
+                    processDualDataEntry('blank', 0, 0, localNum, ultNum);
+                } else {
+                    if (!isNaN(localNum)) processDataEntry('blank', 0, 0, localNum, false);
+                    if (!isNaN(ultNum)) processDataEntry('blank', 0, 0, ultNum, true);
                 }
                 document.getElementById('main-input').blur();
                 document.getElementById('ult-input').blur();
             }
         }
 
-        function processDataEntry(tagType, netAmt = 0, grossAmt = 0, specificNum = null, isUlt = false) {
-            const num = specificNum !== null ? specificNum : parseFloat(document.getElementById('main-input').value);
+        function processDataEntry(tagType, netAmt = 0, grossAmt = 0, num, isUlt = false) {
             if (isNaN(num)) return;
-            
             let sysLabel = isUlt ? 'U' : 'Live';
             let filteredDB = dataset.filter(d => d.sys === sysLabel);
             let sortedDB = [...filteredDB].sort((a, b) => b.val - a.val);
@@ -1062,9 +1067,23 @@
                 dataset.push({val: num, tag: tagType, sys: sysLabel, block: currentBlock, net: netAmt, gross: grossAmt});
                 saveData(); renderData();
             }
-            
-            // Force interface refresh based on live states
             handleInput();
+        }
+
+        function processDualDataEntry(tagType, netAmt, grossAmt, lNum, uNum) {
+            let blockLive = getBlockForVal(lNum, 'Live');
+            let blockUlt = getBlockForVal(uNum, 'U');
+            
+            dataset.push({val: lNum, ultVal: uNum, tag: tagType, sys: 'Dual', block: blockLive, net: netAmt, gross: grossAmt});
+            saveData(); renderData();
+            handleInput();
+        }
+
+        function getBlockForVal(num, sysLabel) {
+            let filteredDB = dataset.filter(d => d.sys === sysLabel || d.sys === 'Dual');
+            if (filteredDB.length === 0) return 1;
+            let maxBlock = Math.max(...filteredDB.map(d => d.block));
+            return maxBlock;
         }
 
         function renderData() {
@@ -1082,8 +1101,8 @@
             let hasLive = false;
             const grouped = {};
             dataset.forEach(d => {
-                let uid = `${d.val}-${d.sys}`; // Differentiate local and ultimate same-values
-                if(!grouped[uid]) grouped[uid] = { val: d.val, sys: d.sys, tags: [], net: d.net, gross: d.gross };
+                let uid = `${d.val}-${d.ultVal || ''}-${d.sys}`;
+                if(!grouped[uid]) grouped[uid] = { val: d.val, ultVal: d.ultVal, sys: d.sys, tags: [], net: d.net, gross: d.gross, block: d.block };
                 grouped[uid].tags.push(d.tag);
                 if(d.net !== undefined && (grouped[uid].net === undefined || Math.abs(d.net) > Math.abs(grouped[uid].net))) {
                     grouped[uid].net = d.net;
@@ -1101,7 +1120,7 @@
                 }).join('');
 
                 let sysClass = 'sys-tag';
-                if (item.sys === 'Live') sysClass = 'sys-tag sys-tag-live';
+                if (item.sys === 'Live' || item.sys === 'Dual') sysClass = 'sys-tag sys-tag-live';
                 else if (item.sys === 'U') sysClass = 'sys-tag sys-tag-ult';
                 
                 let payoutText = '';
@@ -1113,11 +1132,22 @@
                     }
                 }
                 
+                let displayValStr = "";
+                if (item.sys === 'Dual' && item.ultVal) {
+                    let lCents = (item.val % 1).toFixed(2).substring(1);
+                    let uCents = (item.ultVal % 1).toFixed(2).substring(1);
+                    displayValStr = `${Math.floor(item.val)}${lCents} (${Math.floor(item.ultVal)}${uCents})${payoutText}`;
+                } else if (item.sys === 'Dual') {
+                    displayValStr = `${item.val.toFixed(2)}${payoutText}`;
+                } else {
+                    displayValStr = `${item.val.toFixed(2)}${payoutText}`;
+                }
+
                 li.innerHTML = `
-                    <div><span class="${sysClass}">Sys ${item.sys}</span><span>${item.val.toFixed(2)}${payoutText}</span></div>
+                    <div><span class="${sysClass}">Live</span><span>${displayValStr}</span></div>
                     <div class="tag-group">${tagsHtml}</div>`;
                 
-                if (item.sys === 'Live' || (item.sys === 'U' && item.block > 1 && item.val < 23800)) { 
+                if (item.sys === 'Live' || item.sys === 'Dual' || (item.sys === 'U' && item.block > 1 && item.val < 23800)) { 
                     listLive.appendChild(li); hasLive = true; 
                 } 
                 else { listBaseline.appendChild(li); }
@@ -1126,7 +1156,6 @@
             if (!hasLive) { listLive.innerHTML = '<div class="empty-placeholder">No new data entries yet.</div>'; }
         }
 
-        // --- MASTER PREDICTIONS (ROUTING) ---
         function generatePredictions(currentNum, tagType) {
             const area = document.getElementById('predictionsArea');
             const stateBadge = document.getElementById('stateBadge');
@@ -1136,7 +1165,6 @@
             area.innerHTML = '';
             let finalHtml = '';
 
-            // --- GRAND JACKPOT RADAR LOGIC ---
             if (((currentNum >= 880 && currentNum < 891) || (currentNum >= 920 && currentNum < 930))) {
                 let lastFeature = [...dataset].filter(d => d.tag !== 'blank' && d.val < currentNum && d.sys !== 'U').sort((a,b) => b.val - a.val)[0];
                 let distance = lastFeature ? (currentNum - lastFeature.val) : 999;
@@ -1159,7 +1187,6 @@
                 }
             }
 
-            // STANDARD LOCAL LOGIC
             finalHtml += updateLiveIntegerFilter(currentNum);
             
             let chronoData = [...dataset].filter(d => d.sys !== 'U').sort((a, b) => a.val - b.val);
@@ -1204,8 +1231,6 @@
                 stateBadge.className = 'state-badge state-dormant'; stateBadge.innerText = 'STATE: NUCLEAR WINTER (ALGORITHMIC VOID)';
                 modeDesc.innerText = `Micro-cluster window failed. System is locked down to recoup the $${netDeficit.toLocaleString()} net deficit.`;
                 predPanel.style.borderColor = 'var(--alert-red)';
-            } else if (isPayoutEvent && netDeficit === 0 && !isMicroClusterWindow) {
-                // Handled below
             } else {
                 stateBadge.className = 'state-badge state-waypoint'; stateBadge.innerText = `STATE: SEARCHING (CLIMB)`;
                 modeDesc.innerText = `Hunting the next decimal grid trap.`;
@@ -1278,19 +1303,6 @@
                                 <strong>Instant Clear Recovery</strong>
                                 This dead Parrot only cost the machine $${globalBetSize.toFixed(2)} net. Because the recovery void is so small, it is instantly cleared while you test the 3-to-10 spin cluster window. Expect high probability of rapid chaining.
                             </div>
-                         </div>`;
-            }
-
-            if (isPayoutEvent && netDeficit > 0 && !isMicroClusterWindow) {
-                // Nuclear winter already styled in the header
-            } else if (isPayoutEvent && netDeficit === 0 && !isMicroClusterWindow) {
-                finalHtml += `<div class="prediction-category">
-                            <h3 style="color:var(--alert-red);">⚠️ Unknown Liability Dead Zone</h3>
-                            <div class="tactical-card tactical-warning">
-                                <strong>No Payout Value Entered</strong>
-                                Cluster window failed and payout size is unknown. Enforce a strict stop-loss at the next hardcoded resistance node.
-                            </div>
-                            ${buildCard(nextSuffixes[0], 'golden', `Primary Decimal Resistance (Stop-Loss)`, currentNum, "+")}
                          </div>`;
             }
 
