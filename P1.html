@@ -1123,9 +1123,9 @@
     };
 
     // Replace with your GitHub details or backend dispatch endpoint
-    const GITHUB_REPO_OWNER = oliverkhl;
-    const GITHUB_REPO_NAME = rn;
-    const GITHUB_PAT = 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; // Or trigger via serverless proxy / GitHub Dispatch API
+    const GITHUB_REPO_OWNER = 'oliverkhl';
+    const GITHUB_REPO_NAME = 'rn';
+    const GITHUB_PAT = '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'; // Or trigger via serverless proxy / GitHub Dispatch API
 
     try {
         const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/dispatches`, {
