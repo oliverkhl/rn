@@ -1,0 +1,34 @@
+name: Update Budget Inputs from Browser
+
+on:
+  repository_dispatch:
+    types: [save_budget_input]
+  workflow_dispatch:
+
+jobs:
+  update-budget:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run Python Update Script
+        env:
+          CLIENT_PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: |
+          python P1.py '$CLIENT_PAYLOAD'
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json index.html
+          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: update budget input values from web submission" && git push)
